@@ -61,10 +61,12 @@ $stmt->bind_param(
 if ($stmt->execute()) {
 
     header("Location: index.php?mensaje=guardado");
+    exit;
 
 } else {
 
-    echo "Error al guardar: " . $stmt->error;
+    header("Location: agregar.php?mensaje=error");
+    exit;
 
 }
 
