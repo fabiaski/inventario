@@ -33,7 +33,6 @@ if (isset($_GET['buscar'])) {
 }
 
 include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/navbar.php';
 
 ?>
 

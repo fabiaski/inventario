@@ -1,18 +1,37 @@
-<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
 
     <div class="container-fluid">
 
-        <button class="btn btn-outline-primary me-3" id="btnMenu">
+        <!-- Botón Sidebar -->
+        <button class="btn btn-outline-primary" id="btnMenu">
+
             <i class="bi bi-list"></i>
+
         </button>
 
-        <span class="navbar-brand fw-bold">
+        <!-- Nombre del sistema -->
+        <span class="navbar-brand ms-3 fw-bold">
+
+            <i class="bi bi-box-seam-fill text-primary"></i>
+
             Sistema de Inventario
+
         </span>
 
-        <div class="ms-auto">
+        <!-- Menú derecho -->
+        <div class="ms-auto d-flex align-items-center">
 
-            <i class="bi bi-person-circle fs-4"></i>
+            <span class="me-3 text-muted">
+
+                Bienvenido
+
+            </span>
+
+            <button class="btn btn-light border rounded-circle">
+
+                <i class="bi bi-person-circle fs-5"></i>
+
+            </button>
 
         </div>
 
