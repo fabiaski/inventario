@@ -1,5 +1,3 @@
-
-
 <?php
 
 require_once __DIR__ . '/../config/conexion.php';
@@ -13,7 +11,7 @@ if (isset($_GET['buscar'])) {
     $sql = "SELECT * FROM productos
             WHERE nombre_producto LIKE ?
             OR proveedor LIKE ?
-            ORDER BY id DESC";
+            ORDER BY id ASC";
 
     $stmt = $conexion->prepare($sql);
 
@@ -27,7 +25,7 @@ if (isset($_GET['buscar'])) {
 
 } else {
 
-    $sql = "SELECT * FROM productos ORDER BY id DESC";
+    $sql = "SELECT * FROM productos ORDER BY id ASC";
     $resultado = $conexion->query($sql);
 
 }
@@ -36,119 +34,118 @@ include __DIR__ . '/../includes/header.php';
 
 ?>
 
-<div class="container-fluid">
+<div class="admin-main">
+    <!-- 1 -->
+    <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-    <div class="row">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
-        <div class="col-md-2 p-0">
 
-            <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
-        </div>
 
-        <div class="col-md-10 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-
-    <h3>Productos</h3>
-
-    <a href="agregar.php" class="btn btn-success">
-
-        <i class="bi bi-plus-circle"></i>
-
-        Agregar Producto
-
-    </a>
-
-</div>
-   <!-- AQUÍ VAN LAS ALERTAS -->
+    <!-- AQUÍ VAN LAS ALERTAS -->
 
     <?php if (isset($_GET['mensaje'])): ?>
 
-        <?php if ($_GET['mensaje'] == 'guardado'): ?>
+    <?php if ($_GET['mensaje'] == 'guardado'): ?>
 
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>¡Éxito!</strong> El producto fue registrado correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>¡Éxito!</strong> El producto fue registrado correctamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-        <?php elseif ($_GET['mensaje'] == 'actualizado'): ?>
+    <?php elseif ($_GET['mensaje'] == 'actualizado'): ?>
 
-            <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                <strong>¡Éxito!</strong> El producto fue actualizado correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        <strong>¡Éxito!</strong> El producto fue actualizado correctamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-        <?php elseif ($_GET['mensaje'] == 'eliminado'): ?>
+    <?php elseif ($_GET['mensaje'] == 'eliminado'): ?>
 
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>¡Éxito!</strong> El producto fue eliminado correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>¡Éxito!</strong> El producto fue eliminado correctamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-        <?php elseif ($_GET['mensaje'] == 'errorEliminar'): ?>
+    <?php elseif ($_GET['mensaje'] == 'errorEliminar'): ?>
 
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Error.</strong> No fue posible eliminar el producto.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Error.</strong> No fue posible eliminar el producto.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-        <?php endif; ?>
+    <?php endif; ?>
 
     <?php endif; ?>
 
     <!-- FIN DE LAS ALERTAS -->
-<form method="GET" class="mb-3">
 
-    <div class="input-group">
 
-        <input
-            type="text"
-            name="buscar"
-            class="form-control"
-            placeholder="Buscar por producto o proveedor..."
-            value="<?= htmlspecialchars($buscar) ?>">
+    <section class="panel">
 
-        <button
-            class="btn btn-primary"
-            type="submit">
+        <div class="panel-header">
 
-            <i class="bi bi-search"></i>
+            <div>
 
-            Buscar
+                <h2 class="h5 mb-1 section-title">
 
-        </button>
+                    <i class="bi bi-box-seam"></i>
 
-        <a
-            href="index.php"
-            class="btn btn-secondary">
+                    <span>Productos Registrados</span>
 
-            Limpiar
+                </h2>
 
-        </a>
+                <p class="text-muted mb-0">
 
-    </div>
+                    Consulta, busca y administra los productos del inventario.
 
-</form>
+                </p>
 
-<div class="card">
+            </div>
 
-    <div class="card-body">
+            <form method="GET" class="d-flex">
+
+                <input type="search" name="buscar" class="form-control form-control-sm table-search me-2"
+                    placeholder="Buscar producto o proveedor..." value="<?= htmlspecialchars($buscar) ?>">
+
+                <button class="btn btn-primary btn-sm">
+
+                    <i class="bi bi-search"></i>
+
+                </button>
+
+                <a href="index.php" class="btn btn-outline-secondary btn-sm ms-2">
+
+                    Limpiar
+
+                </a>
+
+            </form>
+
+        </div>
 
         <div class="table-responsive">
 
-            <table class="table table-bordered table-hover align-middle">
+            <table class="table align-middle mb-0">
 
-                <thead class="table-dark">
+                <thead>
 
                     <tr>
 
-                        <th>#</th>
+                        <th>ID</th>
+
                         <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
+
                         <th>Proveedor</th>
+
+                        <th>Cantidad</th>
+
+                        <th>Precio</th>
+
                         <th>Fecha</th>
-                        <th width="130">Acciones</th>
+
+                        <th class="text-end">Acciones</th>
 
                     </tr>
 
@@ -156,57 +153,102 @@ include __DIR__ . '/../includes/header.php';
 
                 <tbody>
 
+                    <?php if($resultado->num_rows > 0): ?>
 
-                <?php while($fila = $resultado->fetch_assoc()): ?>
+                    <?php while($fila = $resultado->fetch_assoc()): ?>
 
-<tr>
+                    <tr>
 
-    <td><?= $fila['id'] ?></td>
+                        <td class="fw-semibold">
 
-    <td><?= htmlspecialchars($fila['nombre_producto']) ?></td>
+                            #<?= $fila['id'] ?>
 
-    <td>
+                        </td>
 
-        <?= $fila['cantidad'] ?>
+                        <td>
 
-        <?= htmlspecialchars($fila['unidad_medida']) ?>
+                            <strong>
 
-    </td>
+                                <?= htmlspecialchars($fila['nombre_producto']) ?>
 
-    <td>
+                            </strong>
 
-        $<?= number_format($fila['precio'],0,',','.') ?>
+                            <?php if(!empty($fila['especificaciones'])): ?>
 
-    </td>
+                            <br>
 
-    <td><?= htmlspecialchars($fila['proveedor']) ?></td>
+                            <small class="text-muted">
 
-    <td><?= $fila['fecha_cotizacion'] ?></td>
+                                <?= htmlspecialchars($fila['especificaciones']) ?>
 
-    <td>
+                            </small>
 
-        <a
-            href="editar.php?id=<?= $fila['id'] ?>"
-            class="btn btn-warning btn-sm">
+                            <?php endif; ?>
 
-            <i class="bi bi-pencil"></i>
+                        </td>
 
-        </a>
+                        <td>
 
-     <a
-    href="eliminar.php?id=<?= $fila['id'] ?>"
-    class="btn btn-danger btn-sm"
-    onclick="return confirm('¿Está seguro de eliminar este producto?');">
+                            <?= htmlspecialchars($fila['proveedor']) ?>
 
-    <i class="bi bi-trash"></i>
+                        </td>
 
-</a>
+                        <td>
 
-    </td>
+                            <?= $fila['cantidad'] ?>
 
-</tr>
+                            <?= htmlspecialchars($fila['unidad_medida']) ?>
 
-<?php endwhile; ?>
+                        </td>
+
+                        <td>
+
+                            $<?= number_format($fila['precio'],0,',','.') ?>
+
+                        </td>
+
+                        <td>
+
+                            <?= date('d/m/Y', strtotime($fila['fecha_cotizacion'])) ?>
+
+                        </td>
+
+                        <td class="text-end">
+
+                            <a href="editar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm">
+
+                                <i class="bi bi-pencil"></i>
+
+                            </a>
+
+                            <a href="eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm text-danger"
+                                onclick="return confirm('¿Desea eliminar este producto?')">
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <?php endwhile; ?>
+
+                    <?php else: ?>
+
+                    <tr>
+
+                        <td colspan="7" class="text-center py-5">
+
+                            <i class="bi bi-inbox fs-1 d-block text-secondary mb-2"></i>
+
+                            No existen productos registrados.
+
+                        </td>
+
+                    </tr>
+
+                    <?php endif; ?>
 
                 </tbody>
 
@@ -214,13 +256,15 @@ include __DIR__ . '/../includes/header.php';
 
         </div>
 
-    </div>
-
-</div>
-        </div>
-
-    </div>
+    </section>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+
+
+<script src="../assets/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>
+
+</html>

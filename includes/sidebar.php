@@ -1,107 +1,25 @@
-<div class="sidebar">
+    <div class="sidebar-backdrop" data-sidebar-close></div>
 
-    <!-- Logo -->
-    <div class="text-center py-4 border-bottom">
-
-        <i class="bi bi-box-seam-fill text-primary fs-1"></i>
-
-        <h5 class="mt-2 mb-0 fw-bold">
-            Inventario
-        </h5>
-
-    </div>
-
-
-
-    <!-- Productos -->
-    <a
-        class="menu-link"
-        data-bs-toggle="collapse"
-        href="#productosMenu"
-        role="button"
-        aria-expanded="true">
-
-        <i class="bi bi-box-seam me-2"></i>
-
-        Productos
-
-        <i class="bi bi-chevron-down float-end"></i>
-
-    </a>
-
-    <div class="collapse show" id="productosMenu">
-
-        <a href="<?= BASE_URL ?>productos/index.php" class="submenu-link">
-
-            <i class="bi bi-list-ul me-2"></i>
-
-            Ver Productos
-
+    <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <a class="brand-mark" href="index.php" aria-label="adminHMD dashboard">
+          <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
+          <span class="brand-copy">
+            <span class="brand-title">adminHMD</span>
+            <span class="brand-subtitle">Admin Template</span>
+          </span>
         </a>
+      </div>
 
-        <a href="<?= BASE_URL ?>productos/agregar.php" class="submenu-link">
 
-            <i class="bi bi-plus-circle me-2"></i>
-
-            Agregar Producto
-
+          <nav class="sidebar-nav">
+        <a class="nav-link active" href="<?= BASE_URL ?>productos/index.php" aria-current="page">
+          <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
+          <span class="nav-text">Ver Productos</span>
         </a>
-
-    </div>
-
-    <!-- Proveedores -->
-    <a
-        class="menu-link"
-        data-bs-toggle="collapse"
-        href="#proveedoresMenu"
-        role="button">
-
-        <i class="bi bi-truck me-2"></i>
-
-        Proveedores
-
-        <i class="bi bi-chevron-down float-end"></i>
-
-    </a>
-
-    <div class="collapse" id="proveedoresMenu">
-
-        <a href="#" class="submenu-link">
-
-            <i class="bi bi-list-ul me-2"></i>
-
-            Ver Proveedores
-
+        <a class="nav-link" href="<?= BASE_URL ?>productos/agregar.php"">
+          <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+          <span class="nav-text"> Agregar Producto</span>
         </a>
-
-        <a href="#" class="submenu-link">
-
-            <i class="bi bi-plus-circle me-2"></i>
-
-            Agregar Proveedor
-
-        </a>
-
-    </div>
-
-    <!-- Reportes -->
-
-    <a href="#" class="menu-link">
-
-        <i class="bi bi-file-earmark-bar-graph me-2"></i>
-
-        Reportes
-
-    </a>
-
-    <!-- Configuración -->
-
-    <a href="#" class="menu-link">
-
-        <i class="bi bi-gear me-2"></i>
-
-        Configuración
-
-    </a>
-
-</div>
+             
+    </aside>

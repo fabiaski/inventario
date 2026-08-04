@@ -25,7 +25,6 @@ if ($resultado->num_rows == 0) {
 $producto = $resultado->fetch_assoc();
 
 include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/navbar.php';
 
 ?>
 

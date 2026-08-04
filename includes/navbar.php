@@ -1,40 +1,23 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
 
-    <div class="container-fluid">
-
-        <!-- Botón Sidebar -->
-        <button class="btn btn-outline-primary" id="btnMenu">
-
-            <i class="bi bi-list"></i>
-
+<nav class="navbar admin-navbar navbar-expand bg-white">
+    <div class="container-fluid px-3 px-lg-4">
+        <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar"
+            aria-expanded="true" aria-label="Toggle sidebar">
+            <span></span>
+            <span></span>
+            <span></span>
         </button>
 
-        <!-- Nombre del sistema -->
-        <span class="navbar-brand ms-3 fw-bold">
+       
 
-            <i class="bi bi-box-seam-fill text-primary"></i>
-
-            Sistema de Inventario
-
-        </span>
-
-        <!-- Menú derecho -->
-        <div class="ms-auto d-flex align-items-center">
-
-            <span class="me-3 text-muted">
-
-                Bienvenido
-
-            </span>
-
-            <button class="btn btn-light border rounded-circle">
-
-                <i class="bi bi-person-circle fs-5"></i>
-
+        <div class="navbar-actions ms-auto">
+            <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"
+                title="Switch color theme">
+                <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
             </button>
+          
 
+        
         </div>
-
     </div>
-
 </nav>
