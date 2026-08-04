@@ -1,34 +1,36 @@
-//--
-
-<?php if (isset($_GET['mensaje'])): ?>
-
-    <?php if ($_GET['mensaje'] == 'guardado'): ?>
-
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-
-            <strong>¡Éxito!</strong> El producto fue registrado correctamente.
-
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert">
-            </button>
-
-        </div>
-
-    <?php endif; ?>
-
-<?php endif; ?>
-
-
 
 
 <?php
 
 require_once __DIR__ . '/../config/conexion.php';
 
-$sql = "SELECT * FROM productos ORDER BY id DESC";
-$resultado = $conexion->query($sql);
+$buscar = "";
+
+if (isset($_GET['buscar'])) {
+
+    $buscar = trim($_GET['buscar']);
+
+    $sql = "SELECT * FROM productos
+            WHERE nombre_producto LIKE ?
+            OR proveedor LIKE ?
+            ORDER BY id DESC";
+
+    $stmt = $conexion->prepare($sql);
+
+    $texto = "%$buscar%";
+
+    $stmt->bind_param("ss", $texto, $texto);
+
+    $stmt->execute();
+
+    $resultado = $stmt->get_result();
+
+} else {
+
+    $sql = "SELECT * FROM productos ORDER BY id DESC";
+    $resultado = $conexion->query($sql);
+
+}
 
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/navbar.php';
@@ -59,15 +61,75 @@ include __DIR__ . '/../includes/navbar.php';
     </a>
 
 </div>
+   <!-- AQUÍ VAN LAS ALERTAS -->
 
-<div class="mb-3">
+    <?php if (isset($_GET['mensaje'])): ?>
 
-    <input
-        type="text"
-        class="form-control"
-        placeholder="Buscar producto...">
+        <?php if ($_GET['mensaje'] == 'guardado'): ?>
 
-</div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>¡Éxito!</strong> El producto fue registrado correctamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        <?php elseif ($_GET['mensaje'] == 'actualizado'): ?>
+
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <strong>¡Éxito!</strong> El producto fue actualizado correctamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        <?php elseif ($_GET['mensaje'] == 'eliminado'): ?>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>¡Éxito!</strong> El producto fue eliminado correctamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        <?php elseif ($_GET['mensaje'] == 'errorEliminar'): ?>
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Error.</strong> No fue posible eliminar el producto.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+    <!-- FIN DE LAS ALERTAS -->
+<form method="GET" class="mb-3">
+
+    <div class="input-group">
+
+        <input
+            type="text"
+            name="buscar"
+            class="form-control"
+            placeholder="Buscar por producto o proveedor..."
+            value="<?= htmlspecialchars($buscar) ?>">
+
+        <button
+            class="btn btn-primary"
+            type="submit">
+
+            <i class="bi bi-search"></i>
+
+            Buscar
+
+        </button>
+
+        <a
+            href="index.php"
+            class="btn btn-secondary">
+
+            Limpiar
+
+        </a>
+
+    </div>
+
+</form>
 
 <div class="card">
 
@@ -132,14 +194,14 @@ include __DIR__ . '/../includes/navbar.php';
 
         </a>
 
-        <a
-            href="eliminar.php?id=<?= $fila['id'] ?>"
-            class="btn btn-danger btn-sm"
-            onclick="return confirm('¿Desea eliminar este producto?');">
+     <a
+    href="eliminar.php?id=<?= $fila['id'] ?>"
+    class="btn btn-danger btn-sm"
+    onclick="return confirm('¿Está seguro de eliminar este producto?');">
 
-            <i class="bi bi-trash"></i>
+    <i class="bi bi-trash"></i>
 
-        </a>
+</a>
 
     </td>
 
