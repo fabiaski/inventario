@@ -1,16 +1,18 @@
+<?php
 
-<?php 
 require_once __DIR__ . '/../config/conexion.php';
 
 include __DIR__ . '/../includes/header.php';
-?>
 
-<?php include __DIR__ . '/../includes/sidebar.php'; ?>
+?>
 
 <div class="admin-main">
 
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+
+    <!-- ALERTAS -->
 
     <?php if (isset($_GET['mensaje'])): ?>
 
@@ -164,9 +166,14 @@ include __DIR__ . '/../includes/header.php';
         </form>
 
     </section>
-    
+
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
-<?php include __DIR__ . '/../includes/scripts.php'; ?>
+
+
+<script src="../assets/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>

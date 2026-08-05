@@ -22,3 +22,21 @@ Invetario, para tener los provedores
 | `proveedor`        | VARCHAR(150)  | Nombre del proveedor                                        |
 
 | `fecha_cotizacion` | DATE          | Fecha de la cotización                                      |
+
+#para gregar pagina
+
+<?php include __DIR__ . '/../../includes/header.php'; ?>
+
+<?php include __DIR__ . '/../../includes/sidebar.php'; ?>
+
+<div class="admin-main">
+
+    <?php include __DIR__ . '/../../includes/navbar.php'; ?>
+
+    <!-- Aquí va el formulario -->
+
+    <?php include __DIR__ . '/../../includes/footer.php'; ?>
+
+</div>
+
+<?php include __DIR__ . '/../../includes/scripts.php'; ?>
