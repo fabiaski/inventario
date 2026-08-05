@@ -8,7 +8,6 @@ Invetario, para tener los provedores
 
 | Campo              | Tipo          | Descripción                                                 |
 
-| ------------------ | ------------- | ----------------------------------------------------------- |
 
 | `id`               | INT           | Identificador interno (no se muestra al usuario)            |
 
