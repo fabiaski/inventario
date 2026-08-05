@@ -9,9 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 $id = intval($_POST['id']);
 
-$nombre_producto = trim($_POST['nombre_producto']);
+$producto = trim($_POST['producto']);
 $proveedor = trim($_POST['proveedor']);
-$especificaciones = trim($_POST['especificaciones']);
 $cantidad = $_POST['cantidad'];
 $unidad_medida = trim($_POST['unidad_medida']);
 $precio = $_POST['precio'];
@@ -19,9 +18,8 @@ $fecha_cotizacion = $_POST['fecha_cotizacion'];
 
 $sql = "UPDATE productos
 SET
-    nombre_producto = ?,
+    producto = ?,
     proveedor = ?,
-    especificaciones = ?,
     cantidad = ?,
     unidad_medida = ?,
     precio = ?,
@@ -31,10 +29,9 @@ WHERE id = ?";
 $stmt = $conexion->prepare($sql);
 
 $stmt->bind_param(
-    "sssdsdsi",
-    $nombre_producto,
+    "ssdsdsi",
+    $producto,
     $proveedor,
-    $especificaciones,
     $cantidad,
     $unidad_medida,
     $precio,

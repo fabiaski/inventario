@@ -43,7 +43,7 @@ include __DIR__ . '/../includes/header.php';
                 <div class="card-header">
 
                     <h4 class="mb-0">
-                        Editar Producto
+                        Editar Registro
                     </h4>
 
                 </div>
@@ -52,53 +52,28 @@ include __DIR__ . '/../includes/header.php';
 
                     <form action="actualizar.php" method="POST">
 
-                        <input
-                            type="hidden"
-                            name="id"
-                            value="<?= $producto['id'] ?>">
+                        <input type="hidden" name="id" value="<?= $producto['id'] ?>">
 
                         <div class="row">
-
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-8 mb-3">
 
                                 <label class="form-label">
-                                    Nombre del producto
+                                    Producto / Descripción
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="nombre_producto"
-                                    class="form-control"
-                                    value="<?= htmlspecialchars($producto['nombre_producto']) ?>"
-                                    required>
+                                <textarea name="producto" class="form-control" rows="3" maxlength="255"
+                                    required><?= htmlspecialchars($producto['producto']) ?></textarea>
 
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
 
                                 <label class="form-label">
                                     Proveedor
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="proveedor"
-                                    class="form-control"
-                                    value="<?= htmlspecialchars($producto['proveedor']) ?>"
-                                    required>
-
-                            </div>
-
-                            <div class="col-12 mb-3">
-
-                                <label class="form-label">
-                                    Especificaciones
-                                </label>
-
-                                <textarea
-                                    name="especificaciones"
-                                    class="form-control"
-                                    rows="3"><?= htmlspecialchars($producto['especificaciones']) ?></textarea>
+                                <input type="text" name="proveedor" class="form-control" maxlength="150"
+                                    value="<?= htmlspecialchars($producto['proveedor']) ?>" placeholder="Opcional">
 
                             </div>
 
@@ -108,13 +83,8 @@ include __DIR__ . '/../includes/header.php';
                                     Cantidad
                                 </label>
 
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    name="cantidad"
-                                    class="form-control"
-                                    value="<?= $producto['cantidad'] ?>"
-                                    required>
+                                <input type="number" step="0.01" name="cantidad" class="form-control"
+                                    value="<?= $producto['cantidad'] ?>" required>
 
                             </div>
 
@@ -124,10 +94,7 @@ include __DIR__ . '/../includes/header.php';
                                     Unidad
                                 </label>
 
-                                <select
-                                    name="unidad_medida"
-                                    class="form-select"
-                                    required>
+                                <select name="unidad_medida" class="form-select" required>
 
                                     <?php
                                     $unidades = [
@@ -151,13 +118,8 @@ include __DIR__ . '/../includes/header.php';
                                     Precio
                                 </label>
 
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    name="precio"
-                                    class="form-control"
-                                    value="<?= $producto['precio'] ?>"
-                                    required>
+                                <input type="number" step="0.01" name="precio" class="form-control"
+                                    value="<?= $producto['precio'] ?>" required>
 
                             </div>
 
@@ -167,12 +129,8 @@ include __DIR__ . '/../includes/header.php';
                                     Fecha de cotización
                                 </label>
 
-                                <input
-                                    type="date"
-                                    name="fecha_cotizacion"
-                                    class="form-control"
-                                    value="<?= $producto['fecha_cotizacion'] ?>"
-                                    required>
+                                <input type="date" name="fecha_cotizacion" class="form-control"
+                                    value="<?= $producto['fecha_cotizacion'] ?>" required>
 
                             </div>
 
@@ -180,17 +138,13 @@ include __DIR__ . '/../includes/header.php';
 
                         <hr>
 
-                        <button
-                            class="btn btn-primary"
-                            type="submit">
+                        <button class="btn btn-primary" type="submit">
 
                             Actualizar Producto
 
                         </button>
 
-                        <a
-                            href="index.php"
-                            class="btn btn-secondary">
+                        <a href="index.php" class="btn btn-secondary">
 
                             Cancelar
 

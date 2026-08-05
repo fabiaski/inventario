@@ -61,35 +61,24 @@ include __DIR__ . '/../includes/header.php';
 
             <div class="row g-3">
 
-                <div class="col-md-6">
+                <div class="col-md-8">
 
                     <label class="form-label">
-                        Nombre del producto
+                        Producto / Descripción
                     </label>
 
-                    <input type="text" name="nombre_producto" class="form-control" maxlength="150" required>
+                    <textarea name="producto" class="form-control" rows="3" maxlength="255"
+                        placeholder="Ej: Pintura tipo 1 color verde, marca Pintuco" required></textarea>
 
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
 
                     <label class="form-label">
                         Proveedor
                     </label>
 
-                    <input type="text" name="proveedor" class="form-control" maxlength="150" required>
-
-                </div>
-
-                <div class="col-12">
-
-                    <label class="form-label">
-                        Especificaciones
-                    </label>
-
-                    <textarea name="especificaciones" rows="3" class="form-control"
-                        placeholder="Color, marca, referencia, observaciones..."></textarea>
-
+                    <input type="text" name="proveedor" class="form-control" maxlength="150" placeholder="Opcional">
                 </div>
 
                 <div class="col-md-3">
@@ -99,7 +88,6 @@ include __DIR__ . '/../includes/header.php';
                     </label>
 
                     <input type="number" name="cantidad" class="form-control" step="0.01" min="0" required>
-
                 </div>
 
                 <div class="col-md-3">
@@ -109,7 +97,6 @@ include __DIR__ . '/../includes/header.php';
                     </label>
 
                     <select name="unidad_medida" class="form-select" required>
-
                         <option value="">Seleccione...</option>
                         <option>Unidad</option>
                         <option>kg</option>
@@ -131,7 +118,7 @@ include __DIR__ . '/../includes/header.php';
 
                 </div>
 
-                <div class="col-md-3">
+                                <div class="col-md-3">
 
                     <label class="form-label">
                         Precio
@@ -186,5 +173,3 @@ include __DIR__ . '/../includes/header.php';
 <script src="../assets/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/main.js"></script>
 </body>
-
-</html>

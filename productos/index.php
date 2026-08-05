@@ -9,9 +9,9 @@ if (isset($_GET['buscar'])) {
     $buscar = trim($_GET['buscar']);
 
     $sql = "SELECT * FROM productos
-            WHERE nombre_producto LIKE ?
-            OR proveedor LIKE ?
-            ORDER BY id ASC";
+        WHERE producto LIKE ?
+        OR proveedor LIKE ?
+        ORDER BY id ASC";
 
     $stmt = $conexion->prepare($sql);
 
@@ -98,7 +98,7 @@ include __DIR__ . '/../includes/header.php';
 
                 <p class="text-muted mb-0">
 
-                    Consulta, busca y administra los productos del inventario.
+                    Se encontraron <strong><?= $resultado->num_rows ?></strong> producto(s).
 
                 </p>
 
@@ -133,7 +133,7 @@ include __DIR__ . '/../includes/header.php';
 
                     <tr>
 
-                        <th>ID</th>
+                        <th>#</th>
 
                         <th>Producto</th>
 
@@ -141,9 +141,11 @@ include __DIR__ . '/../includes/header.php';
 
                         <th>Cantidad</th>
 
+                        <th>Unidad</th>
+
                         <th>Precio</th>
 
-                        <th>Fecha</th>
+                        <th>Fecha de cotización</th>
 
                         <th class="text-end">Acciones</th>
 
@@ -154,48 +156,42 @@ include __DIR__ . '/../includes/header.php';
                 <tbody>
 
                     <?php if($resultado->num_rows > 0): ?>
-
+                    <?php $numero = 1; ?>
                     <?php while($fila = $resultado->fetch_assoc()): ?>
 
                     <tr>
 
                         <td class="fw-semibold">
 
-                            #<?= $fila['id'] ?>
+                            <?= $numero++ ?>
 
                         </td>
 
                         <td>
 
                             <strong>
-
-                                <?= htmlspecialchars($fila['nombre_producto']) ?>
-
+                                <?= htmlspecialchars($fila['producto']) ?>
                             </strong>
 
-                            <?php if(!empty($fila['especificaciones'])): ?>
-
-                            <br>
-
-                            <small class="text-muted">
-
-                                <?= htmlspecialchars($fila['especificaciones']) ?>
-
-                            </small>
-
-                            <?php endif; ?>
-
                         </td>
-
                         <td>
 
+                            <?php if (!empty(trim($fila['proveedor']))): ?>
                             <?= htmlspecialchars($fila['proveedor']) ?>
-
+                            <?php else: ?>
+                            <span class="text-secondary fst-italic">
+                                Sin proveedor
+                            </span>
+                            <?php endif; ?>
                         </td>
 
                         <td>
 
                             <?= $fila['cantidad'] ?>
+
+                        </td>
+
+                        <td>
 
                             <?= htmlspecialchars($fila['unidad_medida']) ?>
 
@@ -257,10 +253,10 @@ include __DIR__ . '/../includes/header.php';
         </div>
 
     </section>
-    <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
 
 <script src="../assets/js/bootstrap.bundle.min.js"></script>
