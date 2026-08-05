@@ -11,7 +11,6 @@ $id = intval($_POST['id']);
 
 $producto = trim($_POST['producto']);
 $proveedor = trim($_POST['proveedor']);
-$cantidad = $_POST['cantidad'];
 $unidad_medida = trim($_POST['unidad_medida']);
 $precio = $_POST['precio'];
 $fecha_cotizacion = $_POST['fecha_cotizacion'];
@@ -20,7 +19,6 @@ $sql = "UPDATE productos
 SET
     producto = ?,
     proveedor = ?,
-    cantidad = ?,
     unidad_medida = ?,
     precio = ?,
     fecha_cotizacion = ?
@@ -32,7 +30,6 @@ $stmt->bind_param(
     "ssdsdsi",
     $producto,
     $proveedor,
-    $cantidad,
     $unidad_medida,
     $precio,
     $fecha_cotizacion,

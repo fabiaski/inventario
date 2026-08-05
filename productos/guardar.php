@@ -19,7 +19,6 @@ $fecha_cotizacion = $_POST['fecha_cotizacion'];
 // Validación
 if (
     empty($producto) ||
-    empty($cantidad) ||
     empty($unidad_medida) ||
     empty($precio) ||
     empty($fecha_cotizacion)
@@ -37,14 +36,13 @@ $sql = "INSERT INTO productos
 (
     producto,
     proveedor,
-    cantidad,
     unidad_medida,
     precio,
     fecha_cotizacion
 )
 VALUES
 (
-    ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?
 )";
 
 $stmt = $conexion->prepare($sql);
@@ -53,7 +51,6 @@ $stmt->bind_param(
     "ssdssd",
     $producto,
     $proveedor,
-    $cantidad,
     $unidad_medida,
     $precio,
     $fecha_cotizacion

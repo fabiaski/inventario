@@ -139,8 +139,6 @@ include __DIR__ . '/../includes/header.php';
 
                         <th>Proveedor</th>
 
-                        <th>Cantidad</th>
-
                         <th>Unidad</th>
 
                         <th>Precio</th>
@@ -185,11 +183,7 @@ include __DIR__ . '/../includes/header.php';
                             <?php endif; ?>
                         </td>
 
-                        <td>
-
-                            <?= $fila['cantidad'] ?>
-
-                        </td>
+                       
 
                         <td>
 

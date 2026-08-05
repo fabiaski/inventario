@@ -81,15 +81,7 @@ include __DIR__ . '/../includes/header.php';
                     <input type="text" name="proveedor" class="form-control" maxlength="150" placeholder="Opcional">
                 </div>
 
-                <div class="col-md-3">
-
-                    <label class="form-label">
-                        Cantidad
-                    </label>
-
-                    <input type="number" name="cantidad" class="form-control" step="0.01" min="0" required>
-                </div>
-
+               
                 <div class="col-md-3">
 
                     <label class="form-label">
@@ -97,28 +89,40 @@ include __DIR__ . '/../includes/header.php';
                     </label>
 
                     <select name="unidad_medida" class="form-select" required>
+
                         <option value="">Seleccione...</option>
+
+                        <option>Global</option>
+
                         <option>Unidad</option>
+                        <option>Caja</option>
+                        <option>Paquete</option>
+                        <option>Bolsa</option>
+                        <option>Frasco</option>
+                        <option>Botellón</option>
+                        <option>Kit</option>
+                        <option>Dúo</option>
+                        <option>Bulto</option>
+                        <option>Rollo</option>
+
                         <option>kg</option>
                         <option>g</option>
                         <option>lb</option>
+
                         <option>m</option>
                         <option>cm</option>
                         <option>mm</option>
                         <option>m²</option>
                         <option>m³</option>
+
                         <option>L</option>
                         <option>ml</option>
                         <option>Galón</option>
-                        <option>Caja</option>
-                        <option>Bulto</option>
-                        <option>Rollo</option>
 
                     </select>
-
                 </div>
 
-                                <div class="col-md-3">
+                <div class="col-md-3">
 
                     <label class="form-label">
                         Precio
@@ -164,7 +168,7 @@ include __DIR__ . '/../includes/header.php';
     </section>
 
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
