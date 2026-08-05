@@ -27,7 +27,7 @@ WHERE id = ?";
 $stmt = $conexion->prepare($sql);
 
 $stmt->bind_param(
-    "ssdsdsi",
+    "sssdsi",
     $producto,
     $proveedor,
     $unidad_medida,

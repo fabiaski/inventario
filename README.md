@@ -23,7 +23,7 @@ Invetario, para tener los provedores
 
 | `fecha_cotizacion` | DATE          | Fecha de la cotización                                      |
 
-#para gregar pagina
+# para gregar pagina
 
 <?php include __DIR__ . '/../../includes/header.php'; ?>
 

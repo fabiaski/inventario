@@ -11,7 +11,7 @@ if (isset($_GET['buscar'])) {
     $sql = "SELECT * FROM productos
         WHERE producto LIKE ?
         OR proveedor LIKE ?
-        ORDER BY id ASC";
+        ORDER BY id DESC";
 
     $stmt = $conexion->prepare($sql);
 
@@ -25,7 +25,7 @@ if (isset($_GET['buscar'])) {
 
 } else {
 
-    $sql = "SELECT * FROM productos ORDER BY id ASC";
+    $sql = "SELECT * FROM productos ORDER BY id DESC";
     $resultado = $conexion->query($sql);
 
 }
@@ -81,10 +81,24 @@ include __DIR__ . '/../includes/header.php';
 
     <!-- FIN DE LAS ALERTAS -->
 
+    <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
+                <div>
+                    <p class="eyebrow mb-1">Data</p>
+                    <h1 class="h3 mb-1">Tables</h1>
+                    <p class="text-muted mb-0">Use responsive, searchable tables for operational records.
+                    </p>
+                </div>
+            </div>
 
-    <section class="panel">
+        </div>
 
-        <div class="panel-header">
+        <section class="panel">
+
+            <!--buscar-->
+           <div class="panel-header">
 
             <div>
 
@@ -123,11 +137,12 @@ include __DIR__ . '/../includes/header.php';
 
             </form>
 
+
         </div>
+            <!--buscar-->
 
-        <div class="table-responsive">
-
-            <table class="table align-middle mb-0">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
 
                 <thead>
 
@@ -183,7 +198,7 @@ include __DIR__ . '/../includes/header.php';
                             <?php endif; ?>
                         </td>
 
-                       
+
 
                         <td>
 
@@ -243,18 +258,20 @@ include __DIR__ . '/../includes/header.php';
                 </tbody>
 
             </table>
-
-        </div>
-
-    </section>
-
-</div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+            </div>
+        </section>
 
 
-<script src="../assets/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/main.js"></script>
-</body>
+    </div>
 
-</html>
+   
+
+
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
+
+
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    </body>
+
+    </html>
