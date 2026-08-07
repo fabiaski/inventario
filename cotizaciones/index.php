@@ -312,7 +312,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                         type="number"
                                         id="retencion"
                                         class="form-control"
-                                        value="0">
+                                        value="19">
 
                                 </td>
 

@@ -118,8 +118,6 @@ const cantidad = document.getElementById("cantidad");
 
 const incremento = document.getElementById("incremento");
 
-//const unidad = document.getElementById("unidad");
-
 const btnAgregar = document.getElementById("btnAgregar");
 
 const tbody = document.querySelector("#tablaCotizacion tbody");
@@ -289,6 +287,8 @@ if(filaEditando){
 
     limpiarFormulario();
 
+    recalcularTotales();
+
 }
 
 
@@ -393,20 +393,15 @@ function formato(valor){
 
 function limpiarFormulario(){
 
-    txtBuscar.value="";
+    txtBuscar.value = "";
 
-    productoId.value="";
+    productoId.value = "";
 
-    valorUnidad.value="";
+    valorUnidad.value = "";
 
-if(unidad){
+    cantidad.value = 1;
 
-    unidad.value = "";
-
-}
-    cantidad.value=1;
-
-    incremento.value=0;
+    incremento.value = 0;
 
 }
 //========================================
@@ -433,6 +428,7 @@ function editarFila(fila){
 
         valorUnidad.value = formato(producto.precio);
 
+        
     }
 
     cantidad.value = fila.cells[2].innerText;
@@ -445,6 +441,7 @@ function editarFila(fila){
         Actualizar
     `;
 
+    
 }
 
 //========================================
@@ -470,5 +467,47 @@ function recalcularTotales(){
         totalVenta.innerHTML = formato(totalGeneral);
 
     }
+        calcularRetencion();
+
 
 }
+
+
+
+const retencion = document.getElementById("retencion");
+
+const valorRetencion = document.getElementById("valorRetencion");
+
+//========================================
+// CALCULAR RETENCIÓN
+//========================================
+
+function calcularRetencion(){
+
+    let totalGeneral = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalGeneral += Number(td.dataset.total) || 0;
+
+    });
+
+    const porcentaje = Number(retencion.value) || 0;
+
+    const valor = Math.round(
+        totalGeneral * (porcentaje / 100)
+    );
+
+    valorRetencion.innerHTML = formato(valor);
+
+}
+
+//========================================
+// CAMBIO DE RETENCIÓN
+//========================================
+
+retencion.addEventListener("input", function(){
+
+    calcularRetencion();
+
+});
