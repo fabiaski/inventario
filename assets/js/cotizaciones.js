@@ -532,35 +532,3 @@ retencion.addEventListener("input", function(){
     calcularRetencion();
 
 });
-
-function calcularPagos(){
-
-    let totalGeneral = 0;
-
-    tbody.querySelectorAll(".totalVenta").forEach(function(td){
-
-        totalGeneral += Number(td.dataset.total) || 0;
-
-    });
-
-    let porcentajePagos = 0;
-
-    if(chkPago1.checked){
-
-        porcentajePagos += 10;
-
-    }
-
-    if(chkPago2.checked){
-
-        porcentajePagos += 10;
-
-    }
-
-    const totalPagos = Math.round(
-        totalGeneral * (porcentajePagos / 100)
-    );
-
-    valorPagos.innerHTML = formato(totalPagos);
-
-}
