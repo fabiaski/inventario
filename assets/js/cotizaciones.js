@@ -448,6 +448,7 @@ function editarFila(fila){
 // RECALCULAR TOTAL VENTA
 //========================================
 
+
 function recalcularTotales(){
 
     let totalGeneral = 0;
@@ -531,19 +532,6 @@ retencion.addEventListener("input", function(){
     calcularRetencion();
 
 });
-
-
-
-const chkPago1 = document.getElementById("chkPago1");
-
-const chkPago2 = document.getElementById("chkPago2");
-
-const valorPagos = document.getElementById("valorPagos");
-
-
-//========================================
-// CALCULAR PAGOS
-//========================================
 
 function calcularPagos(){
 
