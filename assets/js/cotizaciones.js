@@ -467,7 +467,27 @@ function recalcularTotales(){
         totalVenta.innerHTML = formato(totalGeneral);
 
     }
-        calcularRetencion();
+        // Actualizar retención
+    calcularRetencion();
+
+    // Actualizar pagos
+    calcularPagos();
+
+    //========================================
+// CAMBIO DE PAGOS
+//========================================
+
+chkPago1.addEventListener("change", function(){
+
+    calcularPagos();
+
+});
+
+chkPago2.addEventListener("change", function(){
+
+    calcularPagos();
+
+});
 
 
 }
@@ -511,3 +531,48 @@ retencion.addEventListener("input", function(){
     calcularRetencion();
 
 });
+
+
+
+const chkPago1 = document.getElementById("chkPago1");
+
+const chkPago2 = document.getElementById("chkPago2");
+
+const valorPagos = document.getElementById("valorPagos");
+
+
+//========================================
+// CALCULAR PAGOS
+//========================================
+
+function calcularPagos(){
+
+    let totalGeneral = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalGeneral += Number(td.dataset.total) || 0;
+
+    });
+
+    let porcentajePagos = 0;
+
+    if(chkPago1.checked){
+
+        porcentajePagos += 10;
+
+    }
+
+    if(chkPago2.checked){
+
+        porcentajePagos += 10;
+
+    }
+
+    const totalPagos = Math.round(
+        totalGeneral * (porcentajePagos / 100)
+    );
+
+    valorPagos.innerHTML = formato(totalPagos);
+
+}
