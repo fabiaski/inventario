@@ -31,10 +31,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
             </div>
 
-            <button
-                type="button"
-                class="btn btn-success"
-                id="btnGuardar">
+            <button type="button" class="btn btn-success" id="btnGuardar">
 
                 <i class="bi bi-floppy"></i>
 
@@ -60,10 +57,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="text"
-                    id="cliente"
-                    class="form-control">
+                <input type="text" id="cliente" class="form-control">
 
             </div>
 
@@ -75,11 +69,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="date"
-                    id="fecha"
-                    class="form-control"
-                    value="<?= date('Y-m-d') ?>">
+                <input type="date" id="fecha" class="form-control" value="<?= date('Y-m-d') ?>">
 
             </div>
 
@@ -91,10 +81,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="text"
-                    id="observaciones"
-                    class="form-control">
+                <input type="text" id="observaciones" class="form-control">
 
             </div>
 
@@ -122,20 +109,12 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="text"
-                    id="buscarProducto"
-                    class="form-control"
-                    autocomplete="off"
+                <input type="text" id="buscarProducto" class="form-control" autocomplete="off"
                     placeholder="Buscar producto...">
 
-                <input
-                    type="hidden"
-                    id="producto_id">
+                <input type="hidden" id="producto_id">
 
-                <div
-                    id="listaProductos"
-                    class="list-group position-absolute w-100 shadow"
+                <div id="listaProductos" class="list-group position-absolute w-100 shadow"
                     style="display:none; z-index:9999; max-height:250px; overflow:auto;">
 
                 </div>
@@ -150,12 +129,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="number"
-                    id="cantidad"
-                    class="form-control"
-                    value="1"
-                    min="1">
+                <input type="number" id="cantidad" class="form-control" value="1" min="1">
 
             </div>
 
@@ -167,11 +141,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="text"
-                    id="valorUnidad"
-                    class="form-control"
-                    readonly>
+                <input type="text" id="valorUnidad" class="form-control" readonly>
 
             </div>
 
@@ -183,22 +153,13 @@ include __DIR__ . '/../includes/sidebar.php';
 
                 </label>
 
-                <input
-                    type="number"
-                    id="incremento"
-                    class="form-control"
-                    value="0"
-                    min="0"
-                    step="0.01">
+                <input type="number" id="incremento" class="form-control" value="0" min="0" step="0.01">
 
             </div>
 
             <div class="col-md-2">
 
-                <button
-                    type="button"
-                    id="btnAgregar"
-                    class="btn btn-primary w-100">
+                <button type="button" id="btnAgregar" class="btn btn-primary w-100">
 
                     <i class="bi bi-plus-circle"></i>
 
@@ -218,9 +179,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
         <div class="table-responsive">
 
-            <table
-                class="table table-bordered align-middle"
-                id="tablaCotizacion">
+            <table class="table table-bordered align-middle" id="tablaCotizacion">
 
                 <thead class="table-light">
 
@@ -308,11 +267,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <td>
 
-                                    <input
-                                        type="number"
-                                        id="retencion"
-                                        class="form-control"
-                                        value="19">
+                                    <input type="number" id="retencion" class="form-control" value="19">
 
                                 </td>
 
@@ -338,11 +293,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                     <div class="form-check form-switch">
 
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            id="chkPago1"
-                                            checked>
+                                        <input class="form-check-input" type="checkbox" id="chkPago1" checked>
 
                                     </div>
 
@@ -358,10 +309,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                     <div class="form-check form-switch">
 
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            id="chkPago2">
+                                        <input class="form-check-input" type="checkbox" id="chkPago2">
 
                                     </div>
 
@@ -407,6 +355,10 @@ include __DIR__ . '/../includes/sidebar.php';
 
                         <table class="table table-borderless">
 
+                            <tr>
+                                <th>Valor total unidad</th>
+                                <td class="text-end" id="valorTotalUnidad">$0</td>
+                            </tr>
                             <tr>
 
                                 <th>Llega</th>
@@ -484,10 +436,8 @@ while($fila = $sql->fetch_assoc()){
 ?>
 
 <script>
-
 const productos = <?= json_encode($productos) ?>;
-
-</script> 
+</script>
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 <?php include __DIR__ . '/../includes/scripts.php'; ?>
 
