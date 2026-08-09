@@ -469,10 +469,20 @@ function recalcularTotales(){
 
     }
         // Actualizar retención
-    calcularRetencion();
+ calcularRetencion();
 
-    // Actualizar pagos
-    calcularPagos();
+calcularPagos();
+
+calcularLlega();
+
+calcularValorTotalUnidad();
+
+calcularGanancia();
+
+calcularGananciaIdeal();
+
+calcularDiferencia();
+
 
     //========================================
 // CAMBIO DE PAGOS
@@ -532,3 +542,209 @@ retencion.addEventListener("input", function(){
     calcularRetencion();
 
 });
+
+
+function calcularPagos(){
+
+    let totalGeneral = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalGeneral += Number(td.dataset.total) || 0;
+
+    });
+
+    let porcentajePagos = 0;
+
+    if(chkPago1.checked){
+
+        porcentajePagos += 10;
+
+    }
+
+    if(chkPago2.checked){
+
+        porcentajePagos += 10;
+
+    }
+
+    const totalPagos = Math.round(
+        totalGeneral * (porcentajePagos / 100)
+    );
+
+    valorPagos.innerHTML = formato(totalPagos);
+
+}
+
+
+//========================================
+// CALCULAR VALOR TOTAL UNIDAD
+//========================================
+
+function calcularValorTotalUnidad(){
+
+    let total = 0;
+
+    tbody.querySelectorAll("tr").forEach(function(fila){
+
+        if(fila.id == "sinProductos"){
+            return;
+        }
+
+        const valor = Number(
+            fila.cells[5].innerText
+                .replace(/\D/g, "")
+        ) || 0;
+
+        total += valor;
+
+    });
+
+    const resultado = document.getElementById("valorTotalUnidad");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(total);
+
+    }
+
+}
+
+
+//========================================
+// CALCULAR LLEGA
+//========================================
+
+function calcularLlega(){
+
+    let totalVenta = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalVenta += Number(td.dataset.total) || 0;
+
+    });
+
+
+    // Obtener retención
+    const valorRet = document.getElementById("valorRetencion");
+
+    const retencion = valorRet
+        ? Number(
+            valorRet.innerText
+                .replace(/\D/g, "")
+          ) || 0
+        : 0;
+
+
+    // Obtener pagos
+    const valorPagos = document.getElementById("valorPagos");
+
+    const pagos = valorPagos
+        ? Number(
+            valorPagos.innerText
+                .replace(/\D/g, "")
+          ) || 0
+        : 0;
+
+
+    // Calcular llega
+    const llega = totalVenta - retencion - pagos;
+
+
+    const resultado = document.getElementById("llega");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(llega);
+
+    }
+
+}
+
+//========================================
+// CALCULAR GANANCIA
+//========================================
+
+function calcularGanancia(){
+
+    const valorTotalUnidad =
+        Number(
+            document.getElementById("valorTotalUnidad")
+                ?.innerText
+                .replace(/\D/g, "")
+        ) || 0;
+
+
+    const llega =
+        Number(
+            document.getElementById("llega")
+                ?.innerText
+                .replace(/\D/g, "")
+        ) || 0;
+
+
+    const ganancia =llega - valorTotalUnidad;
+
+
+    const resultado = document.getElementById("ganancia");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(ganancia);
+
+    }
+
+}
+
+//========================================
+// CALCULAR GANANCIA IDEAL
+//========================================
+
+function calcularGananciaIdeal(){
+
+    let totalVenta = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalVenta += Number(td.dataset.total) || 0;
+
+    });
+
+    const gananciaIdeal = Math.round(totalVenta * 0.20);
+
+    const resultado = document.getElementById("gananciaIdeal");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(gananciaIdeal);
+
+    }
+
+}
+
+//========================================
+// CALCULAR GANANCIA IDEAL
+//========================================
+
+function calcularGananciaIdeal(){
+
+    let totalVenta = 0;
+
+    tbody.querySelectorAll(".totalVenta").forEach(function(td){
+
+        totalVenta += Number(td.dataset.total) || 0;
+
+    });
+
+    const gananciaIdeal = Math.round(totalVenta * 0.20);
+
+    const resultado = document.getElementById("gananciaIdeal");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(gananciaIdeal);
+
+    }
+
+}
