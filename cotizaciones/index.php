@@ -391,11 +391,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <th>Diferencia</th>
 
-                                <td class="text-end" id="diferencia">
-
-                                    $0
-
-                                </td>
+                                <td class="text-end" id="diferencia"> $0 </td>
 
                             </tr>
 

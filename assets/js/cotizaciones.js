@@ -723,6 +723,8 @@ function calcularGananciaIdeal(){
 
 }
 
+
+
 //========================================
 // CALCULAR GANANCIA IDEAL
 //========================================
@@ -744,6 +746,38 @@ function calcularGananciaIdeal(){
     if(resultado){
 
         resultado.innerHTML = formato(gananciaIdeal);
+
+    }
+
+}
+
+//========================================
+// CALCULAR DIFERENCIA
+//========================================
+
+function calcularDiferencia(){
+
+    const gananciaIdeal =
+        Number(
+            document.getElementById("gananciaIdeal")
+                ?.innerText
+                .replace(/\D/g, "")
+        ) || 0;
+
+    const ganancia =
+        Number(
+            document.getElementById("ganancia")
+                ?.innerText
+                .replace(/\D/g, "")
+        ) || 0;
+
+    const diferencia = gananciaIdeal - ganancia;
+
+    const resultado = document.getElementById("diferencia");
+
+    if(resultado){
+
+        resultado.innerHTML = formato(diferencia);
 
     }
 
