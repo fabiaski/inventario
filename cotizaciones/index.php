@@ -31,13 +31,15 @@ include __DIR__ . '/../includes/sidebar.php';
 
             </div>
 
-            <button type="button" class="btn btn-success" id="btnGuardar">
+            <button type="button" class="btn btn-success"     id="btnGuardarCotizacion"
+>
 
                 <i class="bi bi-floppy"></i>
 
                 Guardar Cotización
 
             </button>
+            
 
         </div>
 

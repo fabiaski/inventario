@@ -1,3 +1,5 @@
+console.log("COTIZACIONES.JS CARGADO");
+
 //========================================
 // INPUTS
 //========================================
@@ -136,6 +138,8 @@ btnAgregar.addEventListener("click", agregarProducto);
 //========================================
 // AGREGAR PRODUCTO
 //========================================
+
+
 
 function agregarProducto(){
 
@@ -780,5 +784,517 @@ function calcularDiferencia(){
         resultado.innerHTML = formato(diferencia);
 
     }
+
+}
+
+
+//========================================
+// OBTENER PRODUCTOS DE LA COTIZACIÓN
+//========================================
+
+function obtenerProductosCotizacion(){
+
+    const productosCotizacion = [];
+
+    tbody.querySelectorAll("tr").forEach(function(fila){
+
+        // Ignorar fila vacía
+        if(fila.id === "sinProductos"){
+            return;
+        }
+
+        const nombreProducto = fila.cells[1].innerText.trim();
+
+        const producto = productos.find(function(p){
+
+            return p.producto === nombreProducto;
+
+        });
+
+        if(!producto){
+            return;
+        }
+
+        const cantidad = Number(fila.cells[2].innerText);
+
+        const valorUnidad = Number(producto.precio);
+
+        const porcentajeIncremento =
+            Number(
+                fila.cells[6].innerText
+                .replace("%","")
+                .trim()
+            );
+
+        const valorIncremento =
+            Number(
+                fila.cells[7].innerText
+                .replace("$","")
+                .replace(/\./g,"")
+                .replace(/\s/g,"")
+                .trim()
+            );
+
+        const valorUnidadIncremento =
+            Number(
+                fila.cells[8].innerText
+                .replace("$","")
+                .replace(/\./g,"")
+                .replace(/\s/g,"")
+                .trim()
+            );
+
+        const valorTotalUnidad =
+            Number(
+                fila.cells[5].innerText
+                .replace("$","")
+                .replace(/\./g,"")
+                .replace(/\s/g,"")
+                .trim()
+            );
+
+        const totalVenta =
+            Number(fila.cells[9].dataset.total) || 0;
+
+
+        productosCotizacion.push({
+
+            producto_id: producto.id,
+
+            cantidad: cantidad,
+
+            valor_unidad: valorUnidad,
+
+            porcentaje_incremento: porcentajeIncremento,
+
+            valor_incremento: valorIncremento,
+
+            valor_unidad_incremento: valorUnidadIncremento,
+
+            valor_total_unidad: valorTotalUnidad,
+
+            total_venta: totalVenta
+
+        });
+
+    });
+
+    return productosCotizacion;
+
+}
+
+//========================================
+// BOTON GUARDAR COTIZACIÓN
+//========================================
+
+const btnGuardarCotizacion =
+    document.getElementById("btnGuardarCotizacion");
+
+console.log("BOTÓN:", btnGuardarCotizacion);
+
+if(btnGuardarCotizacion){
+
+    btnGuardarCotizacion.addEventListener("click", function(){
+
+        console.log("SE HIZO CLIC EN GUARDAR");
+
+
+        //========================================
+        // OBTENER PRODUCTOS
+        //========================================
+
+        const productosCotizacion = [];
+
+        tbody.querySelectorAll("tr").forEach(function(fila){
+
+            // Ignorar fila vacía
+
+            if(fila.id === "sinProductos"){
+
+                return;
+
+            }
+
+
+            const nombreProducto =
+                fila.cells[1].innerText.trim();
+
+
+            const producto = productos.find(function(p){
+
+                return p.producto === nombreProducto;
+
+            });
+
+
+            if(!producto){
+
+                console.log(
+                    "Producto no encontrado:",
+                    nombreProducto
+                );
+
+                return;
+
+            }
+
+
+            const cantidadProducto =
+                Number(fila.cells[2].innerText);
+
+
+            const valorUnidadProducto =
+                Number(producto.precio);
+
+
+            const porcentajeIncremento =
+                Number(
+                    fila.cells[6]
+                        .innerText
+                        .replace("%","")
+                        .trim()
+                );
+
+
+            const valorIncremento =
+                Number(
+                    fila.cells[7]
+                        .innerText
+                        .replace("$","")
+                        .replace(/\./g,"")
+                        .replace(/\s/g,"")
+                        .trim()
+                );
+
+
+            const valorUnidadIncremento =
+                Number(
+                    fila.cells[8]
+                        .innerText
+                        .replace("$","")
+                        .replace(/\./g,"")
+                        .replace(/\s/g,"")
+                        .trim()
+                );
+
+
+            const valorTotalUnidad =
+                Number(
+                    fila.cells[5]
+                        .innerText
+                        .replace("$","")
+                        .replace(/\./g,"")
+                        .replace(/\s/g,"")
+                        .trim()
+                );
+
+
+            const totalVentaProducto =
+                Number(fila.cells[9].dataset.total) || 0;
+
+
+            productosCotizacion.push({
+
+                producto_id: producto.id,
+
+                cantidad: cantidadProducto,
+
+                valor_unidad: valorUnidadProducto,
+
+                porcentaje_incremento:
+                    porcentajeIncremento,
+
+                valor_incremento:
+                    valorIncremento,
+
+                valor_unidad_incremento:
+                    valorUnidadIncremento,
+
+                valor_total_unidad:
+                    valorTotalUnidad,
+
+                total_venta:
+                    totalVentaProducto
+
+            });
+
+        });
+
+//========================================
+// DATOS DE LA COTIZACIÓN
+//========================================
+
+const cliente =
+    document.getElementById("cliente").value.trim();
+
+const fecha =
+    document.getElementById("fecha").value;
+
+const observaciones =
+    document.getElementById("observaciones").value.trim();
+
+
+//========================================
+// RETENCIÓN
+//========================================
+
+const porcentajeRetencion =
+    Number(
+        document.getElementById("retencion").value
+    ) || 0;
+
+const valorRetencion =
+    Number(
+        document
+            .getElementById("valorRetencion")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// PAGOS
+//========================================
+
+const chkPago1 =
+    document.getElementById("pago1");
+
+const chkPago2 =
+    document.getElementById("pago2");
+
+const aplicaPago1 =
+    chkPago1 && chkPago1.checked ? 1 : 0;
+
+const aplicaPago2 =
+    chkPago2 && chkPago2.checked ? 1 : 0;
+
+
+const valorPagos =
+    Number(
+        document
+            .getElementById("valorPagos")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// TOTAL VENTA
+//========================================
+
+const totalVenta =
+    Number(
+        document
+            .getElementById("totalVenta")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// LLEGA
+//========================================
+
+const llega =
+    Number(
+        document
+            .getElementById("llega")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// GANANCIA
+//========================================
+
+const ganancia =
+    Number(
+        document
+            .getElementById("ganancia")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// GANANCIA IDEAL
+//========================================
+
+const porcentajeGananciaIdeal = 20;
+
+const gananciaIdeal =
+    Number(
+        document
+            .getElementById("gananciaIdeal")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// DIFERENCIA
+//========================================
+
+const diferencia =
+    Number(
+        document
+            .getElementById("diferencia")
+            .innerText
+            .replace("$","")
+            .replace(/\./g,"")
+            .replace(/\s/g,"")
+    ) || 0;
+
+
+//========================================
+// VALIDAR PRODUCTOS
+//========================================
+
+if(productosCotizacion.length === 0){
+
+    alert("Agregue al menos un producto.");
+
+    return;
+
+}
+
+
+//========================================
+// ENVIAR A GUARDAR.PHP
+//========================================
+
+const datos = new FormData();
+
+datos.append("cliente", cliente);
+
+datos.append("fecha", fecha);
+
+datos.append("observaciones", observaciones);
+
+datos.append(
+    "porcentaje_retencion",
+    porcentajeRetencion
+);
+
+datos.append(
+    "aplica_pago1",
+    aplicaPago1
+);
+
+datos.append(
+    "aplica_pago2",
+    aplicaPago2
+);
+
+datos.append(
+    "porcentaje_ganancia_ideal",
+    porcentajeGananciaIdeal
+);
+
+datos.append(
+    "total_venta",
+    totalVenta
+);
+
+datos.append(
+    "valor_retencion",
+    valorRetencion
+);
+
+datos.append(
+    "valor_pagos",
+    valorPagos
+);
+
+datos.append(
+    "llega",
+    llega
+);
+
+datos.append(
+    "ganancia",
+    ganancia
+);
+
+datos.append(
+    "ganancia_ideal",
+    gananciaIdeal
+);
+
+datos.append(
+    "diferencia",
+    diferencia
+);
+
+datos.append(
+    "productos",
+    JSON.stringify(productosCotizacion)
+);
+
+
+//========================================
+// POST
+//========================================
+
+fetch("guardar.php", {
+
+    method: "POST",
+
+    body: datos
+
+})
+.then(function(response){
+
+    if(!response.ok){
+
+        throw new Error(
+            "Error HTTP: " + response.status
+        );
+
+    }
+
+    return response.text();
+
+})
+.then(function(resultado){
+
+    console.log(
+        "RESPUESTA guardar.php:",
+        resultado
+    );
+        window.location.href = "ver.php?id=" + resultado;
+
+
+    // El PHP debería redireccionar,
+    // por lo que normalmente aquí no necesitamos hacer nada.
+
+})
+.catch(function(error){
+
+    console.error(
+        "ERROR AL GUARDAR:",
+        error
+    );
+
+    alert(
+        "Ocurrió un error al guardar la cotización."
+    );
+
+});
+
+    });
 
 }
