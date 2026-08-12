@@ -40,3 +40,17 @@ Invetario, para tener los provedores
 </div>
 
 <?php include __DIR__ . '/../../includes/scripts.php'; ?>
+
+
+
+
+Composer
+
+https://getcomposer.org/Composer-Setup.exe?utm_source=chatgpt.com
+
+Composer --version
+
+
+composer require dompdf/dompdf
+
+composer require phpoffice/phpspreadsheet☺

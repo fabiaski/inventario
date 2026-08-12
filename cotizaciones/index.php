@@ -12,6 +12,7 @@ $sql = "
         id,
         cliente,
         fecha,
+        observaciones,
         porcentaje_retencion,
         total_venta,
         valor_retencion,
@@ -76,10 +77,7 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
 
 
-            <a
-                href="agregar.php"
-                class="btn btn-success"
-            >
+            <a href="agregar.php" class="btn btn-success">
 
                 <i class="bi bi-plus-circle"></i>
 
@@ -137,221 +135,219 @@ include __DIR__ . '/../includes/sidebar.php';
                     <?php if ($resultado->num_rows > 0): ?>
 
 
-                        <?php while ($cotizacion = $resultado->fetch_assoc()): ?>
+                    <?php while ($cotizacion = $resultado->fetch_assoc()): ?>
 
 
-                            <tr>
+                    <tr>
 
 
-                                <!-- ID -->
+                        <!-- ID -->
 
-                                <td>
+                        <td>
 
-                                    <?= $cotizacion['id'] ?>
+                            <?= $cotizacion['id'] ?>
 
-                                </td>
-
-
-                                <!-- CLIENTE -->
-
-                                <td>
-
-                                    <?= htmlspecialchars(
-                                        $cotizacion['cliente']
-                                    ) ?>
-
-                                </td>
+                        </td>
 
 
-                                <!-- FECHA -->
+                        <!-- CLIENTE -->
 
-                                <td>
+                        <td>
 
-                                    <?= date(
+                            <div>
+                                <?= htmlspecialchars($cotizacion['cliente']) ?>
+                            </div>
+
+                            <?php if (!empty(trim($cotizacion['observaciones']))): ?>
+
+                            <div class="text-muted small mt-1">
+                                <?= nl2br(
+                htmlspecialchars(
+                    $cotizacion['observaciones']
+                )
+            ) ?>
+                            </div>
+
+                            <?php endif; ?>
+
+                        </td>
+
+
+                        <!-- FECHA -->
+
+                        <td>
+
+                            <?= date(
                                         'd/m/Y',
                                         strtotime(
                                             $cotizacion['fecha']
                                         )
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- TOTAL VENTA -->
+                        <!-- TOTAL VENTA -->
 
-                                <td class="text-end">
+                        <td class="text-end">
 
-                                    $<?= number_format(
+                            $<?= number_format(
                                         $cotizacion['total_venta'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- LLEGA -->
+                        <!-- LLEGA -->
 
-                                <td class="text-end">
+                        <td class="text-end">
 
-                                    $<?= number_format(
+                            $<?= number_format(
                                         $cotizacion['llega'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- GANANCIA -->
+                        <!-- GANANCIA -->
 
-                                <td class="text-end">
+                        <td class="text-end">
 
-                                    $<?= number_format(
+                            $<?= number_format(
                                         $cotizacion['ganancia'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- GANANCIA IDEAL -->
+                        <!-- GANANCIA IDEAL -->
 
-                                <td class="text-end">
+                        <td class="text-end">
 
-                                    $<?= number_format(
+                            $<?= number_format(
                                         $cotizacion['ganancia_ideal'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- DIFERENCIA -->
+                        <!-- DIFERENCIA -->
 
-                                <td class="text-end">
+                        <td class="text-end">
 
-                                    $<?= number_format(
+                            $<?= number_format(
                                         $cotizacion['diferencia'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
 
-                                </td>
+                        </td>
 
 
-                                <!-- ESTADO -->
+                        <!-- ESTADO -->
 
-                                <td>
+                        <td>
 
-                                    <?php if (
+                            <?php if (
                                         $cotizacion['estado']
                                         === 'Finalizada'
                                     ): ?>
 
-                                        <span class="badge bg-success">
+                            <span class="badge bg-success">
 
-                                            Finalizada
+                                Finalizada
 
-                                        </span>
+                            </span>
 
-                                    <?php else: ?>
+                            <?php else: ?>
 
-                                        <span class="badge bg-secondary">
+                            <span class="badge bg-secondary">
 
-                                            Borrador
+                                Borrador
 
-                                        </span>
+                            </span>
 
-                                    <?php endif; ?>
+                            <?php endif; ?>
 
-                                </td>
-
-
-                                <!-- ACCIONES -->
-
-                                <td>
-
-                                    <div class="d-flex gap-1">
+                        </td>
 
 
-                                        <!-- VER -->
+                        <!-- ACCIONES -->
 
-                                        <a
-                                            href="ver.php?id=<?= $cotizacion['id'] ?>"
-                                            class="btn btn-info btn-sm"
-                                            title="Ver"
-                                        >
+                        <td>
 
-                                            <i class="bi bi-eye"></i>
-
-                                        </a>
+                            <div class="d-flex gap-1">
 
 
-                                        <!-- EDITAR -->
+                                <!-- VER -->
 
-                                        <a
-                                            href="editar.php?id=<?= $cotizacion['id'] ?>"
-                                            class="btn btn-warning btn-sm"
-                                            title="Editar"
-                                        >
+                                <a href="ver.php?id=<?= $cotizacion['id'] ?>" class="btn btn-info btn-sm" title="Ver">
 
-                                            <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-eye"></i>
 
-                                        </a>
+                                </a>
 
 
-                                        <!-- ELIMINAR -->
+                                <!-- EDITAR -->
 
-                                        <a
-                                            href="eliminar.php?id=<?= $cotizacion['id'] ?>"
-                                            class="btn btn-danger btn-sm"
-                                            title="Eliminar"
-                                            onclick="
+                                <a href="editar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm"
+                                    title="Editar">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+
+                                <!-- ELIMINAR -->
+
+                                <a href="eliminar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger btn-sm"
+                                    title="Eliminar" onclick="
                                                 return confirm(
                                                     '¿Está seguro de eliminar esta cotización?'
                                                 );
-                                            "
-                                        >
+                                            ">
 
-                                            <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash"></i>
 
-                                        </a>
-
-
-                                    </div>
-
-                                </td>
+                                </a>
 
 
-                            </tr>
+                            </div>
+
+                        </td>
 
 
-                        <?php endwhile; ?>
+                    </tr>
+
+
+                    <?php endwhile; ?>
 
 
                     <?php else: ?>
 
 
-                        <tr>
+                    <tr>
 
-                            <td
-                                colspan="10"
-                                class="text-center text-muted py-4"
-                            >
+                        <td colspan="10" class="text-center text-muted py-4">
 
-                                No hay cotizaciones registradas.
+                            No hay cotizaciones registradas.
 
-                            </td>
+                        </td>
 
-                        </tr>
+                    </tr>
 
 
                     <?php endif; ?>
