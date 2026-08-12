@@ -99,22 +99,22 @@ $productosCotizacion = $stmtProductos->get_result();
 
             <div class="card-header d-flex justify-content-between align-items-center">
 
-    <strong>
-        Cotización #<?= $cotizacion['id'] ?>
-    </strong>
+                <strong>
+                    Cotización #<?= $cotizacion['id'] ?>
+                </strong>
 
-    <a
-        href="editar.php?id=<?= $cotizacion['id'] ?>"
-        class="btn btn-warning btn-sm"
-    >
 
-        <i class="bi bi-pencil"></i>
 
-        Editar
 
-    </a>
+                <a href="editar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm">
 
-</div>
+                    <i class="bi bi-pencil"></i>
+
+                    Editar
+
+                </a>
+
+            </div>
 
             <div class="card-body">
 
@@ -486,8 +486,38 @@ $productosCotizacion = $stmtProductos->get_result();
             </div>
 
         </div>
+        <?php if ($cotizacion['estado'] === 'Borrador'): ?>
 
+        <form action="finalizar.php" method="POST" class="d-inline"
+            onsubmit="return confirm('¿Desea finalizar esta cotización?');">
+
+            <input type="hidden" name="cotizacion_id" value="<?= $cotizacion['id'] ?>">
+
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i>
+                Finalizar Cotización
+            </button>
+
+        </form>
+
+        <?php endif; ?>
+
+
+        <?php if ($cotizacion['estado'] === 'Finalizada'): ?>
+
+        <a href="pdf.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger" target="_blank">
+            <i class="bi bi-file-earmark-pdf"></i>
+            Descargar PDF
+        </a>
+
+        <a href="excel.php?id=<?= $cotizacion['id'] ?>" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i>
+            Descargar Excel
+        </a>
+
+        <?php endif; ?>
     </div>
+
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
