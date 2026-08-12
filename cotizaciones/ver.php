@@ -97,9 +97,24 @@ $productosCotizacion = $stmtProductos->get_result();
 
         <div class="card mb-4">
 
-            <div class="card-header">
-                <strong>Cotización #<?= $cotizacion['id'] ?></strong>
-            </div>
+            <div class="card-header d-flex justify-content-between align-items-center">
+
+    <strong>
+        Cotización #<?= $cotizacion['id'] ?>
+    </strong>
+
+    <a
+        href="editar.php?id=<?= $cotizacion['id'] ?>"
+        class="btn btn-warning btn-sm"
+    >
+
+        <i class="bi bi-pencil"></i>
+
+        Editar
+
+    </a>
+
+</div>
 
             <div class="card-body">
 
@@ -241,7 +256,7 @@ $productosCotizacion = $stmtProductos->get_result();
                                 </td>
 
                                 <td>
-                                    <?= $producto['porcentaje_incremento'] ?>%
+                                    <?= rtrim(rtrim(number_format($producto['porcentaje_incremento'], 5, '.', ''), '0'), '.') ?>%
                                 </td>
 
                                 <td>
@@ -322,8 +337,8 @@ $productosCotizacion = $stmtProductos->get_result();
                     <tr>
 
                         <th>
-                            Retención 19%
-                          (<?= $cotizacion['porcentaje_retencion'] ?>%)
+                            Retención
+                            (<?= rtrim(rtrim(number_format($cotizacion['porcentaje_retencion'], 5, '.', ''), '0'), '.') ?>%)
                         </th>
 
                         <td class="text-end">

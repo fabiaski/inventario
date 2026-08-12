@@ -1,6 +1,9 @@
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php
+require_once __DIR__ . '/../config/conexion.php';
 
-<?php include __DIR__ . '/../includes/sidebar.php'; ?>
+include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../includes/sidebar.php';
+?>
 
 <div class="admin-main">
 
@@ -16,59 +19,71 @@
 
                     <i class="bi bi-file-earmark-text"></i>
 
-                    <span>Nueva Cotización</span>
+                    Nueva Cotización
 
                 </h2>
 
                 <p class="text-muted mb-0">
 
-                    Agrega los productos que harán parte de la cotización.
+                    Agregue los productos que harán parte de la cotización.
 
                 </p>
 
             </div>
 
-            <button type="button" class="btn btn-success">
+            <button type="button" class="btn btn-success"     id="btnGuardarCotizacion"
+>
 
                 <i class="bi bi-floppy"></i>
 
                 Guardar Cotización
 
             </button>
+            
 
         </div>
 
-        <!-- Información general -->
+        <hr>
+
+        <!-- ========================= -->
+        <!-- DATOS DE LA COTIZACIÓN -->
+        <!-- ========================= -->
 
         <div class="row g-3 mb-4">
 
             <div class="col-md-5">
 
                 <label class="form-label">
+
                     Cliente
+
                 </label>
 
-                <input type="text" class="form-control" placeholder="Nombre del cliente">
+                <input type="text" id="cliente" class="form-control">
 
             </div>
 
             <div class="col-md-3">
 
                 <label class="form-label">
+
                     Fecha
+
                 </label>
 
-                <input type="date" class="form-control" value="<?= date('Y-m-d') ?>">
+                <input type="date" id="fecha" class="form-control" value="<?= date('Y-m-d') ?>">
 
             </div>
 
             <div class="col-md-4">
 
                 <label class="form-label">
+
                     Observaciones
+
                 </label>
 
-                <input type="text" class="form-control">
+                <input type="text" id="observaciones" class="form-control">
 
             </div>
 
@@ -76,7 +91,9 @@
 
         <hr>
 
-        <!-- Agregar productos -->
+        <!-- ========================= -->
+        <!-- AGREGAR PRODUCTO -->
+        <!-- ========================= -->
 
         <h5 class="mb-3">
 
@@ -89,19 +106,23 @@
             <div class="col-md-4 position-relative">
 
                 <label class="form-label">
-                    Buscar Producto
+
+                    Producto
+
                 </label>
 
-                <input type="text" id="buscarProducto" class="form-control"
-                    placeholder="Escriba el nombre del producto...">
+                <input type="text" id="buscarProducto" class="form-control" autocomplete="off"
+                    placeholder="Buscar producto...">
 
                 <input type="hidden" id="producto_id">
 
                 <div id="listaProductos" class="list-group position-absolute w-100 shadow"
-                    style="z-index:1000; display:none; max-height:250px; overflow:auto;">
+                    style="display:none; z-index:9999; max-height:250px; overflow:auto;">
+
                 </div>
 
             </div>
+
             <div class="col-md-1">
 
                 <label class="form-label">
@@ -110,7 +131,7 @@
 
                 </label>
 
-                <input type="number" class="form-control" value="1">
+                <input type="number" id="cantidad" class="form-control" value="1" min="1">
 
             </div>
 
@@ -118,11 +139,11 @@
 
                 <label class="form-label">
 
-                    Valor Unidad
+                    Valor UND
 
                 </label>
 
-                <input type="text" class="form-control" readonly>
+                <input type="text" id="valorUnidad" class="form-control" readonly>
 
             </div>
 
@@ -134,13 +155,13 @@
 
                 </label>
 
-                <input type="number" class="form-control" placeholder="0">
+                <input type="number" id="incremento" class="form-control" value="0" min="0" step="0.01">
 
             </div>
 
             <div class="col-md-2">
 
-                <button class="btn btn-primary w-100">
+                <button type="button" id="btnAgregar" class="btn btn-primary w-100">
 
                     <i class="bi bi-plus-circle"></i>
 
@@ -154,11 +175,13 @@
 
         <hr class="my-4">
 
-        <!-- Tabla -->
+        <!-- ========================= -->
+        <!-- TABLA -->
+        <!-- ========================= -->
 
         <div class="table-responsive">
 
-            <table class="table table-bordered align-middle">
+            <table class="table table-bordered align-middle" id="tablaCotizacion">
 
                 <thead class="table-light">
 
@@ -192,7 +215,7 @@
 
                 <tbody>
 
-                    <tr>
+                    <tr id="sinProductos">
 
                         <td colspan="11" class="text-center text-muted">
 
@@ -208,38 +231,35 @@
 
         </div>
 
+        <!-- ========================= -->
+        <!-- RESUMEN -->
+        <!-- ========================= -->
+
         <div class="row mt-4">
 
-            <!-- Resumen de descuentos -->
             <div class="col-lg-6">
 
-                <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm">
 
-                    <div class="card-header bg-white">
+                    <div class="card-header">
 
-                        <h6 class="mb-0 fw-bold">
+                        <strong>
 
-                            <i class="bi bi-calculator"></i>
+                            Resumen
 
-                            Resumen de la Cotización
-
-                        </h6>
+                        </strong>
 
                     </div>
 
                     <div class="card-body">
 
-                        <table class="table table-borderless align-middle mb-0">
+                        <table class="table table-borderless">
 
                             <tr>
 
-                                <th width="45%">Total Venta</th>
+                                <th>Total Venta</th>
 
-                                <td class="text-end fw-bold" id="totalVenta">
-
-                                    $ 0
-
-                                </td>
+                                <td class="text-end" id="totalVenta">$0</td>
 
                             </tr>
 
@@ -249,8 +269,7 @@
 
                                 <td>
 
-                                    <input type="number" class="form-control form-control-sm" id="retencion" value="0"
-                                        min="0" step="0.01">
+                                    <input type="number" id="retencion" class="form-control" value="19">
 
                                 </td>
 
@@ -262,7 +281,7 @@
 
                                 <td class="text-end" id="valorRetencion">
 
-                                    $ 0
+                                    $0
 
                                 </td>
 
@@ -276,7 +295,7 @@
 
                                     <div class="form-check form-switch">
 
-                                        <input class="form-check-input" type="checkbox" id="chkPago1">
+                                        <input class="form-check-input" type="checkbox" id="chkPago1" checked>
 
                                     </div>
 
@@ -306,7 +325,7 @@
 
                                 <td class="text-end" id="valorPagos">
 
-                                    $ 0
+                                    $0
 
                                 </td>
 
@@ -320,36 +339,33 @@
 
             </div>
 
-            <!-- Resultados -->
             <div class="col-lg-6">
 
-                <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm">
 
-                    <div class="card-header bg-white">
+                    <div class="card-header">
 
-                        <h6 class="mb-0 fw-bold">
-
-                            <i class="bi bi-graph-up-arrow"></i>
+                        <strong>
 
                             Resultado Final
 
-                        </h6>
+                        </strong>
 
                     </div>
 
                     <div class="card-body">
 
-                        <table class="table table-borderless align-middle mb-0">
+                        <table class="table table-borderless">
 
                             <tr>
+                                <th>Valor total unidad</th>
+                                <td class="text-end" id="valorTotalUnidad">$0</td>
+                            </tr>
+                            <tr>
 
-                                <th width="45%">Llega</th>
+                                <th>Llega</th>
 
-                                <td class="text-end fw-bold text-primary" id="llega">
-
-                                    $ 0
-
-                                </td>
+                                <td class="text-end" id="llega">$0</td>
 
                             </tr>
 
@@ -357,11 +373,7 @@
 
                                 <th>Ganancia</th>
 
-                                <td class="text-end text-success fw-bold" id="ganancia">
-
-                                    $ 0
-
-                                </td>
+                                <td class="text-end" id="ganancia">$0</td>
 
                             </tr>
 
@@ -371,21 +383,17 @@
 
                                 <td class="text-end" id="gananciaIdeal">
 
-                                    $ 0
+                                    $0
 
                                 </td>
 
                             </tr>
 
-                            <tr class="table-light">
+                            <tr>
 
                                 <th>Diferencia</th>
 
-                                <td class="text-end fw-bold" id="diferencia">
-
-                                    $ 0
-
-                                </td>
+                                <td class="text-end" id="diferencia"> $0 </td>
 
                             </tr>
 
@@ -400,10 +408,35 @@
         </div>
 
     </section>
-    <script src="<?= BASE_URL ?>assets/js/cotizaciones.js"></script>
-
-    <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
+<?php
+
+$productos = [];
+
+$sql = $conexion->query("
+    SELECT
+        id,
+        producto,
+        unidad_medida,
+        precio
+    FROM productos
+    ORDER BY producto
+");
+
+while($fila = $sql->fetch_assoc()){
+
+    $productos[] = $fila;
+
+}
+
+?>
+
+<script>
+const productos = <?= json_encode($productos) ?>;
+</script>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 <?php include __DIR__ . '/../includes/scripts.php'; ?>
+
+<script src="<?= BASE_URL ?>assets/js/cotizaciones.js"></script>
