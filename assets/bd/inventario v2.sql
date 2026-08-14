@@ -32,7 +32,7 @@ CREATE TABLE `cotizaciones` (
   `cliente` varchar(150) NOT NULL,
   `fecha` date NOT NULL,
   `observaciones` text DEFAULT NULL,
-  `porcentaje_retencion` decimal(8,5) DEFAULT 0.00000,
+  `porcentaje_retencion` decimal(8,2) DEFAULT 0.00,
   `aplica_pago1` tinyint(1) DEFAULT 0,
   `aplica_pago2` tinyint(1) DEFAULT 0,
   `porcentaje_ganancia_ideal` decimal(8,5) DEFAULT 20.00000,
