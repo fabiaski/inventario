@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 // Obtener datos
 $producto = trim($_POST['producto']);
 $proveedor = trim($_POST['proveedor']);
-$cantidad = $_POST['cantidad'];
 $unidad_medida = trim($_POST['unidad_medida']);
 $precio = $_POST['precio'];
 $fecha_cotizacion = $_POST['fecha_cotizacion'];
@@ -48,7 +47,7 @@ VALUES
 $stmt = $conexion->prepare($sql);
 
 $stmt->bind_param(
-    "ssdssd",
+    "ssssd",
     $producto,
     $proveedor,
     $unidad_medida,
