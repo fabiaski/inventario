@@ -345,6 +345,13 @@ foreach ($facturas as $factura) {
 }
 
 
+// IVA TOTAL DE TODAS LAS FACTURAS
+
+$totalIvaFacturado = array_sum(
+    $ivaPorcentaje
+);
+
+
 // IVA 19%
 
 $ivaFacturas19 =
@@ -352,12 +359,11 @@ $ivaFacturas19 =
 
 
 // SALDO DIAN
+// Se mantiene únicamente con el IVA del 19%
 
 $saldoDian =
     $ivaContrato
     - $ivaFacturas19;
-
-
 // Ordenar porcentajes
 
 ksort($ivaPorcentaje);
@@ -413,7 +419,7 @@ include __DIR__ . '/../includes/sidebar.php';
                 </a>
 
 
-                <a href="agregar.php?contrato_id=<?= $contratoId ?>" class="btn btn-success">
+                <a href="agregar_factura.php?id=<?= $contratoId ?>" class="btn btn-success">
 
                     <i class="bi bi-plus-circle"></i>
 
@@ -596,7 +602,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                             <small class="text-muted">
 
-                                Valor del Contrato con 19%
+                                Valor del Contrato sin IVA 19%
 
                             </small>
 
@@ -662,8 +668,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                     </div>
 
-
-                    <!-- IVA 19 -->
+                    <!-- TOTAL IVA FACTURADO -->
 
                     <div class="col-md-4">
 
@@ -671,22 +676,21 @@ include __DIR__ . '/../includes/sidebar.php';
 
                             <small class="text-muted">
 
-                                IVA de Facturas 19%
+                                Total de IVA Facturado
 
                             </small>
 
                             <h5 class="mb-0">
 
                                 <?= dinero(
-                                    $ivaFacturas19
-                                ) ?>
+                $totalIvaFacturado
+            ) ?>
 
                             </h5>
 
                         </div>
 
                     </div>
-
 
                     <!-- SALDO DIAN -->
 

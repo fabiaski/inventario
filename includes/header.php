@@ -20,9 +20,9 @@ if (!isset($titulo)) {
     <meta name="description" content="adminHMD professional admin dashboard template">
     <title>myg</title>
 
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/vendors/bootstrap-icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/vendors/bootstrap-icons/bootstrap-icons.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 
 <!--head -->

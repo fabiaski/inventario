@@ -14,7 +14,9 @@ use Dompdf\Options;
 $cotizacionId = (int) ($_GET['id'] ?? 0);
 
 if ($cotizacionId <= 0) {
+
     exit('Cotización no válida.');
+
 }
 
 
@@ -32,39 +34,58 @@ $sqlCotizacion = "
     WHERE id = ?
 ";
 
-$stmtCotizacion = $conexion->prepare($sqlCotizacion);
+
+$stmtCotizacion =
+    $conexion->prepare($sqlCotizacion);
+
 
 if (!$stmtCotizacion) {
-    exit('Error preparando la consulta de cotización.');
+
+    exit(
+        'Error preparando la consulta de cotización: '
+        . $conexion->error
+    );
+
 }
+
 
 $stmtCotizacion->bind_param(
     "i",
     $cotizacionId
 );
 
+
 $stmtCotizacion->execute();
+
 
 $resultadoCotizacion =
     $stmtCotizacion->get_result();
 
+
 $cotizacion =
     $resultadoCotizacion->fetch_assoc();
+
 
 $stmtCotizacion->close();
 
 
 if (!$cotizacion) {
+
     exit('La cotización no existe.');
+
 }
 
 
 //==================================================
-// VERIFICAR QUE ESTÉ FINALIZADA
+// VERIFICAR ESTADO
 //==================================================
 
 if ($cotizacion['estado'] !== 'Finalizada') {
-    exit('La cotización todavía no está finalizada.');
+
+    exit(
+        'La cotización todavía no está finalizada.'
+    );
+
 }
 
 
@@ -88,24 +109,36 @@ $sqlProductos = "
     ORDER BY dc.id ASC
 ";
 
+
 $stmtProductos =
     $conexion->prepare($sqlProductos);
 
+
 if (!$stmtProductos) {
-    exit('Error preparando la consulta de productos.');
+
+    exit(
+        'Error preparando la consulta de productos: '
+        . $conexion->error
+    );
+
 }
+
 
 $stmtProductos->bind_param(
     "i",
     $cotizacionId
 );
 
+
 $stmtProductos->execute();
+
 
 $resultadoProductos =
     $stmtProductos->get_result();
 
+
 $productos = [];
+
 
 while (
     $fila =
@@ -113,7 +146,9 @@ while (
 ) {
 
     $productos[] = $fila;
+
 }
+
 
 $stmtProductos->close();
 
@@ -124,18 +159,22 @@ $stmtProductos->close();
 
 function dinero($valor)
 {
-    return '$' . number_format(
+
+    return '$ ' . number_format(
         (float) $valor,
         0,
         ',',
         '.'
     );
+
 }
 
 
 function cantidad($valor)
 {
+
     $valor = (float) $valor;
+
 
     if ($valor == floor($valor)) {
 
@@ -145,7 +184,9 @@ function cantidad($valor)
             ',',
             '.'
         );
+
     }
+
 
     return number_format(
         $valor,
@@ -153,6 +194,22 @@ function cantidad($valor)
         ',',
         '.'
     );
+
+}
+
+
+//==================================================
+// CALCULAR TOTAL
+//==================================================
+
+$total = 0;
+
+
+foreach ($productos as $producto) {
+
+    $total +=
+        (float) $producto['total_venta'];
+
 }
 
 
@@ -170,134 +227,439 @@ $html = '
 
 <meta charset="UTF-8">
 
+
 <style>
 
-    @page {
-        margin: 35px 35px 40px 35px;
-    }
 
-    .titulo {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 25px;
+/*==================================================
+CONFIGURACIÓN DE PÁGINA
+==================================================*/
+
+@page {
+
+    margin: 35px 35px 45px 35px;
+
 }
-    
-    body {
-        font-family: DejaVu Sans, sans-serif;
-        font-size: 11px;
-        color: #222;
-    }
 
-    .informacion {
-        width: 100%;
-        margin-bottom: 20px;
-    }
 
-    .informacion td {
-        padding: 5px;
-        vertical-align: top;
-    }
+/*==================================================
+GENERAL
+==================================================*/
 
-    .tabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
+body {
 
-    .tabla th {
-        background-color: #eeeeee;
-        border: 1px solid #444;
-        padding: 7px;
-        text-align: center;
-        font-weight: bold;
-    }
+    font-family: DejaVu Sans, sans-serif;
 
-    .tabla td {
-        border: 1px solid #444;
-        padding: 7px;
-    }
+    font-size: 10px;
 
-    .centrado {
-        text-align: center;
-    }
+    color: #333;
 
-    .derecha {
-        text-align: right;
-    }
+    margin: 0;
 
-    .total {
-        margin-top: 15px;
-        width: 100%;
-        border-collapse: collapse;
-    }
+}
 
-    .total td {
-        border: 1px solid #444;
-        padding: 8px;
-        font-size: 13px;
-        font-weight: bold;
-    }
 
-    .total-label {
-        width: 70%;
-    }
+/*==================================================
+ENCABEZADO
+==================================================*/
 
-    .total-valor {
-        width: 30%;
-        text-align: right;
-    }
+.header {
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.header h1 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: #222;
+
+}
+
+
+.header h2 {
+
+    margin: 6px 0 0 0;
+
+    font-size: 13px;
+
+    font-weight: normal;
+
+    color: #666;
+
+}
+
+
+.header p {
+
+    margin: 5px 0 0 0;
+
+    font-size: 9px;
+
+    color: #777;
+
+}
+
+
+/*==================================================
+SECCIONES
+==================================================*/
+
+.seccion {
+
+    margin-top: 18px;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #333;
+
+    border-bottom: 2px solid #343a40;
+
+    padding-bottom: 5px;
+
+}
+
+
+/*==================================================
+INFORMACIÓN
+==================================================*/
+
+.informacion {
+
+    width: 100%;
+
+    border-collapse: separate;
+
+    border-spacing: 6px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.informacion td {
+
+    width: 50%;
+
+    border: 1px solid #ddd;
+
+    background: #f8f9fa;
+
+    padding: 10px;
+
+    vertical-align: top;
+
+}
+
+
+.etiqueta {
+
+    display: block;
+
+    font-size: 9px;
+
+    color: #777;
+
+    margin-bottom: 4px;
+
+}
+
+
+.valor-info {
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    color: #333;
+
+}
+
+
+/*==================================================
+TABLA
+==================================================*/
+
+.tabla {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 10px;
+
+}
+
+
+.tabla th {
+
+    background: #343a40;
+
+    color: #fff;
+
+    border: 1px solid #343a40;
+
+    padding: 8px 6px;
+
+    text-align: center;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+}
+
+
+.tabla td {
+
+    border: 1px solid #ddd;
+
+    padding: 7px 6px;
+
+    font-size: 9px;
+
+}
+
+
+.tabla tbody tr:nth-child(even) td {
+
+    background: #f8f9fa;
+
+}
+
+
+/*==================================================
+ALINEACIONES
+==================================================*/
+
+.centrado {
+
+    text-align: center;
+
+}
+
+
+.derecha {
+
+    text-align: right;
+
+}
+
+
+/*==================================================
+TOTAL
+==================================================*/
+
+.total {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 15px;
+
+}
+
+
+.total td {
+
+    padding: 10px;
+
+    border: 1px solid #ddd;
+
+}
+
+
+.total-label {
+
+    width: 70%;
+
+    background: #f1f3f5;
+
+    text-align: right;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+.total-valor {
+
+    width: 30%;
+
+    background: #343a40;
+
+    color: #fff;
+
+    text-align: right;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+}
+
+
+/*==================================================
+ESTADO
+==================================================*/
+
+.estado {
+
+    display: inline-block;
+
+    background: #e9f7ef;
+
+    color: #198754;
+
+    border: 1px solid #b7e4c7;
+
+    padding: 4px 8px;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+}
+
+
+/*==================================================
+PIE DE PÁGINA
+==================================================*/
+
+.footer {
+
+    margin-top: 25px;
+
+    padding-top: 8px;
+
+    border-top: 1px solid #ddd;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 8px;
+
+}
+
 
 </style>
 
 </head>
 
+
 <body>
 
-<div class="titulo">
-    COTIZACIÓN
+
+<!--==================================================
+ENCABEZADO
+==================================================-->
+
+<div class="header">
+
+    <h1>
+
+        COTIZACIÓN
+
+    </h1>
+
+
+
 </div>
 
-<!-- ==========================================
-     INFORMACIÓN DE LA COTIZACIÓN
-     ========================================== -->
+
+<!--==================================================
+INFORMACIÓN
+==================================================-->
+
+<div class="seccion">
+
+    Información de la cotización
+
+</div>
+
 
 <table class="informacion">
 
     <tr>
 
-        <td width="50%">
 
-            <strong>Cliente:</strong>
+        <td>
 
-            ' . htmlspecialchars(
-                $cotizacion['cliente']
-            ) . '
+            <span class="etiqueta">
+
+                Cliente
+
+            </span>
+
+
+            <span class="valor-info">
+
+                ' . htmlspecialchars(
+                    $cotizacion['cliente']
+                ) . '
+
+            </span>
+
+        </td>
+
+
+        <td>
+
+            <span class="etiqueta">
+
+                Fecha
+
+            </span>
+
+
+            <span class="valor-info">
+
+                ' . date(
+                    'd/m/Y',
+                    strtotime(
+                        $cotizacion['fecha']
+                    )
+                ) . '
+
+            </span>
 
         </td>
 
-
-        <td width="50%">
-
-            <strong>Fecha:</strong>
-
-            ' . date(
-                'd/m/Y',
-                strtotime(
-                    $cotizacion['fecha']
-                )
-            ) . '
-
-        </td>
 
     </tr>
+
 
 </table>
 
 
-<!-- ==========================================
-     TABLA DE PRODUCTOS
-     ========================================== -->
+<!--==================================================
+DETALLE
+==================================================-->
+
+<div class="seccion">
+
+    Detalle de productos
+
+</div>
+
 
 <table class="tabla">
 
@@ -305,31 +667,49 @@ $html = '
 
         <tr>
 
+
             <th width="7%">
+
                 Item
+
             </th>
 
-            <th width="35%">
+
+            <th width="38%">
+
                 Descripción
+
             </th>
+
 
             <th width="13%">
-                Cantidades
+
+                Cantidad
+
             </th>
+
 
             <th width="20%">
+
                 Valor UND
+
             </th>
 
-            <th width="25%">
+
+            <th width="22%">
+
                 Valor Total
+
             </th>
+
 
         </tr>
 
     </thead>
 
+
     <tbody>
+
 ';
 
 
@@ -337,29 +717,32 @@ $html = '
 // PRODUCTOS
 //==================================================
 
-$total = 0;
-
-$item = 1;
+if (!empty($productos)) {
 
 
-foreach ($productos as $producto) {
-
-    $cantidadProducto =
-        (float) $producto['cantidad'];
-
-    $valorUnidad =
-        (float)
-        $producto['valor_unidad_incremento'];
-
-    $totalProducto =
-        (float) $producto['total_venta'];
-
-    $total += $totalProducto;
+    $item = 1;
 
 
-    $html .= '
+    foreach ($productos as $producto) {
+
+
+        $cantidadProducto =
+            (float) $producto['cantidad'];
+
+
+        $valorUnidad =
+            (float)
+            $producto['valor_unidad_incremento'];
+
+
+        $totalProducto =
+            (float) $producto['total_venta'];
+
+
+        $html .= '
 
         <tr>
+
 
             <td class="centrado">
 
@@ -403,12 +786,38 @@ foreach ($productos as $producto) {
 
             </td>
 
+
+        </tr>
+
+        ';
+
+
+        $item++;
+
+    }
+
+
+} else {
+
+
+    $html .= '
+
+        <tr>
+
+            <td
+                colspan="5"
+                class="centrado"
+            >
+
+                No hay productos registrados
+                en esta cotización.
+
+            </td>
+
         </tr>
 
     ';
 
-
-    $item++;
 }
 
 
@@ -419,17 +828,18 @@ $html .= '
 </table>
 
 
-<!-- ==========================================
-     TOTAL
-     ========================================== -->
+<!--==================================================
+TOTAL
+==================================================-->
 
 <table class="total">
 
     <tr>
 
+
         <td class="total-label">
 
-            Total
+            TOTAL COTIZACIÓN
 
         </td>
 
@@ -440,9 +850,20 @@ $html .= '
 
         </td>
 
+
     </tr>
 
 </table>
+
+
+<!--==================================================
+PIE
+==================================================-->
+
+<div class="footer">
+
+   
+</div>
 
 
 </body>
@@ -457,15 +878,18 @@ $html .= '
 
 $options = new Options();
 
+
 $options->set(
     'isHtml5ParserEnabled',
     true
 );
 
+
 $options->set(
     'isRemoteEnabled',
     true
 );
+
 
 $options->set(
     'defaultFont',
@@ -473,9 +897,8 @@ $options->set(
 );
 
 
-$dompdf = new Dompdf(
-    $options
-);
+$dompdf =
+    new Dompdf($options);
 
 
 //==================================================
@@ -487,10 +910,12 @@ $dompdf->loadHtml(
     'UTF-8'
 );
 
+
 $dompdf->setPaper(
     'A4',
     'portrait'
 );
+
 
 $dompdf->render();
 
@@ -500,10 +925,14 @@ $dompdf->render();
 //==================================================
 
 $dompdf->stream(
+
     'cotizacion_' . $cotizacionId . '.pdf',
+
     [
         'Attachment' => true
     ]
+
 );
+
 
 exit;
