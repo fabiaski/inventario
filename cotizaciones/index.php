@@ -48,7 +48,21 @@ include __DIR__ . '/../includes/sidebar.php';
 
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
+ <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
+                <div>
+                    <p class="eyebrow mb-1">Data</p>
+                    <h1 class="h3 mb-1">Tables</h1>
+                    <p class="text-muted mb-0">Use responsive, searchable tables for operational records.
+                    </p>
+                </div>
+            </div>
 
+        </div>
+
+        
     <section class="panel">
 
 

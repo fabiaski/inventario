@@ -379,201 +379,123 @@ include __DIR__ . '/../includes/sidebar.php';
 
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
+    <div class="container-fluid px-3 px-lg-4 py-4">
 
-    <section class="panel">
+        <section class="panel">
 
 
-        <!--==================================================
+            <!--==================================================
         ENCABEZADO
         ==================================================-->
 
-        <div class="panel-header">
+            <div class="panel-header">
 
-            <div>
+                <div>
 
-                <h2 class="h5 mb-1 section-title">
+                    <h2 class="h5 mb-1 section-title">
 
-                    <i class="bi bi-receipt"></i>
+                        <i class="bi bi-receipt"></i>
 
-                    Facturación
+                        Facturación
 
-                </h2>
+                    </h2>
 
-                <p class="text-muted mb-0">
+                    <p class="text-muted mb-0">
 
-                    Información y facturas del contrato.
+                        Información y facturas del contrato.
 
-                </p>
+                    </p>
+
+                </div>
+
+
+                <div class="d-flex gap-2">
+
+                    <a href="index.php" class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Volver
+
+                    </a>
+
+
+                    <a href="agregar_factura.php?id=<?= $contratoId ?>" class="btn btn-success">
+
+                        <i class="bi bi-plus-circle"></i>
+
+                        Agregar Factura
+
+                    </a>
+
+                </div>
 
             </div>
 
 
-            <div class="d-flex gap-2">
-
-                <a href="index.php" class="btn btn-secondary">
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Volver
-
-                </a>
+            <hr>
 
 
-                <a href="agregar_factura.php?id=<?= $contratoId ?>" class="btn btn-success">
-
-                    <i class="bi bi-plus-circle"></i>
-
-                    Agregar Factura
-
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <hr>
-
-
-        <!--==================================================
+            <!--==================================================
         INFORMACIÓN DEL CONTRATO
         ==================================================-->
 
-        <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4">
 
-            <div class="card-body">
-
-
-                <div class="row g-3">
+                <div class="card-body">
 
 
-                    <!-- NUMERO -->
+                    <div class="row g-3">
 
-                    <div class="col-md-4">
 
-                        <small class="text-muted">
+                        <!-- NUMERO -->
 
-                            Número de Contrato
+                        <div class="col-md-4">
 
-                        </small>
+                            <small class="text-muted">
 
-                        <div class="fw-bold">
+                                Número de Contrato
 
-                            <?= htmlspecialchars(
+                            </small>
+
+                            <div class="fw-bold">
+
+                                <?= htmlspecialchars(
                                 $contrato['numero_contrato']
                             ) ?>
 
+                            </div>
+
                         </div>
 
-                    </div>
 
+                        <!-- FECHA -->
 
-                    <!-- FECHA -->
+                        <div class="col-md-4">
 
-                    <div class="col-md-4">
+                            <small class="text-muted">
 
-                        <small class="text-muted">
+                                Fecha
 
-                            Fecha
+                            </small>
 
-                        </small>
+                            <div class="fw-bold">
 
-                        <div class="fw-bold">
-
-                            <?= date(
+                                <?= date(
                                 'd/m/Y',
                                 strtotime(
                                     $contrato['fecha']
                                 )
                             ) ?>
 
-                        </div>
-
-                    </div>
-
-
-                    <!-- VALOR -->
-
-                    <div class="col-md-4">
-
-                        <small class="text-muted">
-
-                            Valor del Contrato
-
-                        </small>
-
-                        <div class="fw-bold">
-
-                            <?= dinero(
-                                $valorContrato
-                            ) ?>
+                            </div>
 
                         </div>
 
-                    </div>
 
+                        <!-- VALOR -->
 
-                    <!-- OBJETO -->
-
-                    <div class="col-12">
-
-                        <small class="text-muted">
-
-                            Objeto del Contrato
-
-                        </small>
-
-                        <div>
-
-                            <?= nl2br(
-                                htmlspecialchars(
-                                    $contrato['objeto_contrato']
-                                )
-                            ) ?>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-
-        <!--==================================================
-        RESUMEN
-        ==================================================-->
-
-        <div class="card shadow-sm mb-4">
-
-            <div class="card-header">
-
-                <strong>
-
-                    <i class="bi bi-calculator"></i>
-
-                    Resumen
-
-                </strong>
-
-            </div>
-
-
-            <div class="card-body">
-
-
-                <div class="row g-3">
-
-
-                    <!-- VALOR CONTRATO -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
+                        <div class="col-md-4">
 
                             <small class="text-muted">
 
@@ -581,164 +503,243 @@ include __DIR__ . '/../includes/sidebar.php';
 
                             </small>
 
-                            <h5 class="mb-0">
+                            <div class="fw-bold">
 
                                 <?= dinero(
-                                    $valorContrato
-                                ) ?>
+                                $valorContrato
+                            ) ?>
 
-                            </h5>
+                            </div>
 
                         </div>
 
-                    </div>
 
+                        <!-- OBJETO -->
 
-                    <!-- CONTRATO SIN IVA -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
+                        <div class="col-12">
 
                             <small class="text-muted">
 
-                                Valor del Contrato sin IVA 19%
+                                Objeto del Contrato
 
                             </small>
 
-                            <h5 class="mb-0">
+                            <div>
 
-                                <?= dinero(
-                                    $valorContratoSinIva
-                                ) ?>
+                                <?= nl2br(
+                                htmlspecialchars(
+                                    $contrato['objeto_contrato']
+                                )
+                            ) ?>
 
-                            </h5>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- IVA CONTRATO -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
-
-                            <small class="text-muted">
-
-                                IVA del Contrato
-
-                            </small>
-
-                            <h5 class="mb-0">
-
-                                <?= dinero(
-                                    $ivaContrato
-                                ) ?>
-
-                            </h5>
+                            </div>
 
                         </div>
 
-                    </div>
-
-
-                    <!-- VALOR FACTURAS -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
-
-                            <small class="text-muted">
-
-                                Valor Facturas
-
-                            </small>
-
-                            <h5 class="mb-0">
-
-                                <?= dinero(
-                                    $totalFacturas
-                                ) ?>
-
-                            </h5>
-
-                        </div>
-
-                    </div>
-
-                    <!-- TOTAL IVA FACTURADO -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
-
-                            <small class="text-muted">
-
-                                Total de IVA Facturado
-
-                            </small>
-
-                            <h5 class="mb-0">
-
-                                <?= dinero(
-                $totalIvaFacturado
-            ) ?>
-
-                            </h5>
-
-                        </div>
-
-                    </div>
-
-                    <!-- SALDO DIAN -->
-
-                    <div class="col-md-4">
-
-                        <div class="border rounded p-3">
-
-                            <small class="text-muted">
-
-                                Saldo DIAN
-
-                            </small>
-
-                            <h5 class="mb-0">
-
-                                <?= dinero(
-                                    $saldoDian
-                                ) ?>
-
-                            </h5>
-
-                        </div>
 
                     </div>
 
 
                 </div>
 
+            </div>
 
-                <!--==================================================
+
+            <!--==================================================
+        RESUMEN
+        ==================================================-->
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header">
+
+                    <strong>
+
+                        <i class="bi bi-calculator"></i>
+
+                        Resumen
+
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="row g-3">
+
+
+                        <!-- VALOR CONTRATO -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    Valor del Contrato
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                                    $valorContrato
+                                ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONTRATO SIN IVA -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    Valor del Contrato sin IVA 19%
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                                    $valorContratoSinIva
+                                ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- IVA CONTRATO -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    IVA del Contrato
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                                    $ivaContrato
+                                ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VALOR FACTURAS -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    Valor Facturas
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                                    $totalFacturas
+                                ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                        <!-- TOTAL IVA FACTURADO -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    Total de IVA Facturado
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                $totalIvaFacturado
+            ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                        <!-- SALDO DIAN -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3">
+
+                                <small class="text-muted">
+
+                                    Saldo DIAN
+
+                                </small>
+
+                                <h5 class="mb-0">
+
+                                    <?= dinero(
+                                    $saldoDian
+                                ) ?>
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!--==================================================
                 IVA POR PORCENTAJE
                 ==================================================-->
 
-                <?php if (!empty($ivaPorcentaje)): ?>
+                    <?php if (!empty($ivaPorcentaje)): ?>
 
-                <hr>
+                    <hr>
 
-                <h6>
+                    <h6>
 
-                    IVA de Facturas
+                        IVA de Facturas
 
-                </h6>
-
-
-                <div class="row g-3">
+                    </h6>
 
 
-                    <?php
+                    <div class="row g-3">
+
+
+                        <?php
 
                         ksort(
                             $ivaPorcentaje,
@@ -748,232 +749,232 @@ include __DIR__ . '/../includes/sidebar.php';
                         ?>
 
 
-                    <?php foreach (
+                        <?php foreach (
                             $ivaPorcentaje
                             as $porcentaje => $valor
                         ): ?>
 
 
-                    <div class="col-md-4">
+                        <div class="col-md-4">
 
-                        <div class="border rounded p-3">
+                            <div class="border rounded p-3">
 
-                            <small class="text-muted">
+                                <small class="text-muted">
 
-                                IVA de Facturas
-                                <?= $porcentaje ?>%
+                                    IVA de Facturas
+                                    <?= $porcentaje ?>%
 
-                            </small>
+                                </small>
 
-                            <h5 class="mb-0">
+                                <h5 class="mb-0">
 
-                                <?= dinero(
+                                    <?= dinero(
                                             $valor
                                         ) ?>
 
-                            </h5>
+                                </h5>
+
+                            </div>
 
                         </div>
 
+
+                        <?php endforeach; ?>
+
+
                     </div>
 
-
-                    <?php endforeach; ?>
+                    <?php endif; ?>
 
 
                 </div>
 
-                <?php endif; ?>
-
-
             </div>
 
-        </div>
 
-
-        <!--==================================================
+            <!--==================================================
         FACTURAS
         ==================================================-->
 
-        <div class="card">
+            <div class="card">
 
-            <div class="card-header">
+                <div class="card-header">
 
-                <strong>
+                    <strong>
 
-                    <i class="bi bi-receipt-cutoff"></i>
+                        <i class="bi bi-receipt-cutoff"></i>
 
-                    Facturas
+                        Facturas
 
-                </strong>
+                    </strong>
 
-            </div>
-
-
-            <div class="card-body">
+                </div>
 
 
-                <?php if (!empty($facturas)): ?>
+                <div class="card-body">
 
 
-                <div class="table-responsive">
-
-                    <table class="table table-bordered table-hover align-middle">
+                    <?php if (!empty($facturas)): ?>
 
 
-                        <thead class="table-light">
+                    <div class="table-responsive">
 
-                            <tr>
-
-                                <th>
-                                    #
-                                </th>
-
-                                <th>
-                                    Proveedor
-                                </th>
-
-                                <th>
-                                    N° Factura
-                                </th>
-
-                                <th>
-                                    Valor
-                                </th>
-
-                                <th>
-                                    Valor sin IVA
-                                </th>
-
-                                <th>
-                                    % IVA
-                                </th>
-
-                                <th>
-                                    IVA
-                                </th>
-
-                                <th>
-                                    Observación
-                                </th>
-
-                                <th>
-                                    Soportes
-                                </th>
-
-                                <th>
-                                    Acciones
-                                </th>
-
-                            </tr>
-
-                        </thead>
+                        <table class="table table-bordered table-hover align-middle">
 
 
-                        <tbody>
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Proveedor
+                                    </th>
+
+                                    <th>
+                                        N° Factura
+                                    </th>
+
+                                    <th>
+                                        Valor
+                                    </th>
+
+                                    <th>
+                                        Valor sin IVA
+                                    </th>
+
+                                    <th>
+                                        % IVA
+                                    </th>
+
+                                    <th>
+                                        IVA
+                                    </th>
+
+                                    <th>
+                                        Observación
+                                    </th>
+
+                                    <th>
+                                        Soportes
+                                    </th>
+
+                                    <th>
+                                        Acciones
+                                    </th>
+
+                                </tr>
+
+                            </thead>
 
 
-                            <?php foreach (
+                            <tbody>
+
+
+                                <?php foreach (
                                     $facturas
                                     as $indice => $factura
                                 ): ?>
 
 
-                            <tr>
+                                <tr>
 
 
-                                <!-- # -->
+                                    <!-- # -->
 
-                                <td>
+                                    <td>
 
-                                    <?= $indice + 1 ?>
+                                        <?= $indice + 1 ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- PROVEEDOR -->
+                                    <!-- PROVEEDOR -->
 
-                                <td>
+                                    <td>
 
-                                    <?= htmlspecialchars(
+                                        <?= htmlspecialchars(
                                                 $factura[
                                                     'proveedor'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- NÚMERO -->
+                                    <!-- NÚMERO -->
 
-                                <td>
+                                    <td>
 
-                                    <?= htmlspecialchars(
+                                        <?= htmlspecialchars(
                                                 $factura[
                                                     'numero_factura'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- VALOR -->
+                                    <!-- VALOR -->
 
-                                <td class="text-end">
+                                    <td class="text-end">
 
-                                    <?= dinero(
+                                        <?= dinero(
                                                 $factura[
                                                     'valor'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- SIN IVA -->
+                                    <!-- SIN IVA -->
 
-                                <td class="text-end">
+                                    <td class="text-end">
 
-                                    <?= dinero(
+                                        <?= dinero(
                                                 $factura[
                                                     'valor_sin_iva'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- IVA -->
+                                    <!-- IVA -->
 
-                                <td class="text-center">
+                                    <td class="text-center">
 
-                                    <?= porcentaje(
+                                        <?= porcentaje(
                                                 $factura[
                                                     'porcentaje_iva'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- VALOR IVA -->
+                                    <!-- VALOR IVA -->
 
-                                <td class="text-end">
+                                    <td class="text-end">
 
-                                    <?= dinero(
+                                        <?= dinero(
                                                 $factura[
                                                     'valor_iva'
                                                 ]
                                             ) ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- OBSERVACIÓN -->
+                                    <!-- OBSERVACIÓN -->
 
-                                <td>
+                                    <td>
 
-                                    <?= !empty(
+                                        <?= !empty(
                                                 $factura[
                                                     'observacion'
                                                 ]
@@ -986,14 +987,14 @@ include __DIR__ . '/../includes/sidebar.php';
                                                 : '<span class="text-muted">—</span>'
                                             ?>
 
-                                </td>
+                                    </td>
 
 
-                                <!-- SOPORTES -->
+                                    <!-- SOPORTES -->
 
-                                <td>
+                                    <td>
 
-                                    <?php
+                                        <?php
 
                                             $idFactura =
                                                 (int) $factura['id'];
@@ -1006,29 +1007,29 @@ include __DIR__ . '/../includes/sidebar.php';
                                             ?>
 
 
-                                    <?php if (
+                                        <?php if (
                                                 !empty(
                                                     $soportes
                                                 )
                                             ): ?>
 
 
-                                    <div class="d-flex flex-column gap-1">
+                                        <div class="d-flex flex-column gap-1">
 
-                                        <?php foreach (
+                                            <?php foreach (
                                                         $soportes
                                                         as $soporte
                                                     ): ?>
 
 
-                                        <a href="../uploads/soportes_facturas/<?= rawurlencode(
+                                            <a href="../uploads/soportes_facturas/<?= rawurlencode(
                                                                 $soporte[
                                                                     'archivo'
                                                                 ]
                                                             ) ?>" target="_blank" class="text-decoration-none"
-                                            title="Abrir soporte">
+                                                title="Abrir soporte">
 
-                                            <?php
+                                                <?php
 
                                                             $extension =
                                                                 strtolower(
@@ -1043,130 +1044,130 @@ include __DIR__ . '/../includes/sidebar.php';
                                                             ?>
 
 
-                                            <?php if (
+                                                <?php if (
                                                                 $extension === 'pdf'
                                                             ): ?>
 
-                                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                                <i class="bi bi-file-earmark-pdf text-danger"></i>
 
-                                            <?php else: ?>
+                                                <?php else: ?>
 
-                                            <i class="bi bi-file-earmark-image text-primary"></i>
+                                                <i class="bi bi-file-earmark-image text-primary"></i>
 
-                                            <?php endif; ?>
+                                                <?php endif; ?>
 
 
-                                            <?= htmlspecialchars(
+                                                <?= htmlspecialchars(
                                                                 $soporte[
                                                                     'archivo'
                                                                 ]
                                                             ) ?>
 
-                                        </a>
+                                            </a>
 
 
-                                        <?php endforeach; ?>
+                                            <?php endforeach; ?>
 
-                                    </div>
-
-
-                                    <?php else: ?>
+                                        </div>
 
 
-                                    <span class="text-muted">
-
-                                        Sin soporte
-
-                                    </span>
+                                        <?php else: ?>
 
 
-                                    <?php endif; ?>
+                                        <span class="text-muted">
+
+                                            Sin soporte
+
+                                        </span>
 
 
-                                </td>
+                                        <?php endif; ?>
 
 
-                                <!-- ACCIONES -->
-
-                                <td>
-
-                                    <div class="d-flex gap-1">
+                                    </td>
 
 
-                                        <!-- EDITAR -->
+                                    <!-- ACCIONES -->
 
-                                        <a href="editar_factura.php?id=<?= $factura['id'] ?>"
-                                            class="btn btn-warning btn-sm" title="Editar factura">
+                                    <td>
 
-                                            <i class="bi bi-pencil"></i>
-
-                                        </a>
+                                        <div class="d-flex gap-1">
 
 
-                                        <!-- ELIMINAR -->
+                                            <!-- EDITAR -->
 
-                                        <a href="eliminar_factura.php?id=<?= $factura['id'] ?>"
-                                            class="btn btn-danger btn-sm" title="Eliminar factura" onclick="
+                                            <a href="editar_factura.php?id=<?= $factura['id'] ?>"
+                                                class="btn btn-warning btn-sm" title="Editar factura">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <!-- ELIMINAR -->
+
+                                            <a href="eliminar_factura.php?id=<?= $factura['id'] ?>"
+                                                class="btn btn-danger btn-sm" title="Eliminar factura" onclick="
                                                         return confirm(
                                                             '¿Está seguro de eliminar esta factura?'
                                                         );
                                                     ">
 
-                                            <i class="bi bi-trash"></i>
+                                                <i class="bi bi-trash"></i>
 
-                                        </a>
-
-
-                                    </div>
-
-                                </td>
+                                            </a>
 
 
-                            </tr>
+                                        </div>
+
+                                    </td>
 
 
-                            <?php endforeach; ?>
+                                </tr>
 
 
-                        </tbody>
+                                <?php endforeach; ?>
 
 
-                    </table>
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+
+
+                    <?php else: ?>
+
+
+                    <div class="text-center text-muted py-4">
+
+                        <i class="bi bi-receipt fs-3"></i>
+
+                        <p class="mb-0 mt-2">
+
+                            Este contrato todavía
+                            no tiene facturas.
+
+                        </p>
+
+                    </div>
+
+
+                    <?php endif; ?>
+
 
                 </div>
-
-
-                <?php else: ?>
-
-
-                <div class="text-center text-muted py-4">
-
-                    <i class="bi bi-receipt fs-3"></i>
-
-                    <p class="mb-0 mt-2">
-
-                        Este contrato todavía
-                        no tiene facturas.
-
-                    </p>
-
-                </div>
-
-
-                <?php endif; ?>
-
 
             </div>
 
-        </div>
+
+        </section>
+
+    </div>
 
 
-    </section>
-
-</div>
-
-
-<?php
+    <?php
 
 include __DIR__ . '/../includes/footer.php';
 

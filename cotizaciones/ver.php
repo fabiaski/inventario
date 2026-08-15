@@ -80,15 +80,19 @@ $stmtProductos->execute();
 $productosCotizacion = $stmtProductos->get_result();
 ?>
 
+  <?php 
+include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../includes/sidebar.php';
 
-<?php include __DIR__ . '/../includes/header.php'; ?>
-
-<?php include __DIR__ . '/../includes/sidebar.php'; ?>
+?>
 
 <div class="admin-main">
 
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
+ <div class="container-fluid px-3 px-lg-4 py-4">
+        
+    <section class="panel">
     <div class="container-fluid">
 
         <!-- ========================================
@@ -519,8 +523,9 @@ $productosCotizacion = $stmtProductos->get_result();
     </div>
 
 
-    <?php include __DIR__ . '/../includes/footer.php'; ?>
 
 </div>
 
+    <?php include __DIR__ . '/../includes/footer.php'; ?>v
 <?php include __DIR__ . '/../includes/scripts.php'; ?>
+

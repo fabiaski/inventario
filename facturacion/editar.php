@@ -77,6 +77,7 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="admin-main">
 
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
+     <div class="container-fluid px-3 px-lg-4 py-4">
 
 
     <section class="panel">
