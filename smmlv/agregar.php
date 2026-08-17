@@ -190,6 +190,7 @@ include __DIR__ . '/../includes/sidebar.php';
     <?php
     include __DIR__ . '/../includes/navbar.php';
     ?>
+    <div class="container-fluid px-3 px-lg-4 py-4">
 
 
     <section class="panel">
@@ -288,7 +289,7 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card shadow-sm">
 
 
-            <div class="card-header bg-light">
+            <div class="card-header ">
 
                 <strong>
 
@@ -531,47 +532,7 @@ include __DIR__ . '/../includes/sidebar.php';
                     <hr class="my-4">
 
 
-                    <!--==================================================
-                    INFORMACIÓN SMMLV
-                    ==================================================-->
-
-                    <div class="alert alert-info mb-4">
-
-
-                        <div class="d-flex align-items-start gap-2">
-
-
-                            <i class="bi bi-info-circle fs-5"></i>
-
-
-                            <div>
-
-
-                                <strong>
-
-                                    Cálculo SMMLV
-
-                                </strong>
-
-
-                                <div class="small mt-1">
-
-                                    El sistema utilizará automáticamente
-                                    el salario mínimo correspondiente al
-                                    año del contrato para calcular el
-                                    equivalente en SMMLV.
-
-                                </div>
-
-
-                            </div>
-
-
-                        </div>
-
-
-                    </div>
-
+                  
 
                     <!--==================================================
                     BOTONES

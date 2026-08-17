@@ -177,23 +177,23 @@ include __DIR__ . '/../includes/header.php';
 
 
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table align-middle mb-0" style="table-layout: fixed; width: 100%;">
 
                     <thead>
 
                         <tr>
 
-                            <th>#</th>
+                            <th style="width: 4%;">#</th>
 
                             <th>Producto</th>
 
                             <th>Proveedor</th>
 
-                            <th>Unidad</th>
+                            <th style="width: 12%;">Unidad</th>
 
                             <th>Precio</th>
 
-                            <th>Fecha de cotización</th>
+                            <th class="fw-semibold">Fecha</th>
 
                             <th class="text-end">Acciones</th>
 

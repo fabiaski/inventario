@@ -337,17 +337,17 @@ include __DIR__ . '/../includes/sidebar.php';
 
                     </p>
 
-                     <small class="text-muted">
-                                <i class="bi bi-file-earmark-text text-primary"></i>
+                    <small class="text-muted">
+                        <i class="bi bi-file-earmark-text text-primary"></i>
 
-                                Total contratos = <strong> <?= $totalContratos ?></strong>
+                        Total contratos = <strong> <?= $totalContratos ?></strong>
 
-                            </small>
+                    </small>
 
-                            <h4 class="mb-0">
+                    <h4 class="mb-0">
 
 
-                            </h4>
+                    </h4>
                     <small class="text-muted">
                         <i class="bi bi-currency-dollar text-warning"></i>
 
@@ -380,72 +380,62 @@ include __DIR__ . '/../includes/sidebar.php';
             <hr>
 
 
-<!--==================================================
+            <!--==================================================
 BUSCADOR POR OBJETO
 ==================================================-->
 
-<form method="GET" class="mb-4">
+            <form method="GET" class="mb-4">
 
-    <div class="row g-2">
+                <div class="row g-2">
 
-        <div class="col-md-8">
+                    <div class="col-md-8">
 
-            <div class="input-group">
-
-              
-
-                <input
-                    type="text"
-                    name="buscar"
-                    class="form-control"
-                    placeholder="Buscar por objeto del contrato..."
-                    value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>"
-                >
-
-            </div>
-
-        </div>
+                        <div class="input-group">
 
 
-        <div class="col-md-auto">
 
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
+                            <input type="text" name="buscar" class="form-control"
+                                placeholder="Buscar por objeto del contrato..."
+                                value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
-                <i class="bi bi-search"></i>
+                        </div>
 
-                Buscar
-
-            </button>
-
-        </div>
+                    </div>
 
 
-        <?php if (!empty($_GET['buscar'])): ?>
+                    <div class="col-md-auto">
 
-            <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">
 
-                <a
-                    href="<?= BASE_URL ?>smmlv/index.php"
-                    class="btn btn-secondary"
-                >
+                            <i class="bi bi-search"></i>
 
-                    <i class="bi bi-x-circle"></i>
+                            Buscar
 
-                    Limpiar
+                        </button>
 
-                </a>
-
-            </div>
-
-        <?php endif; ?>
+                    </div>
 
 
-    </div>
+                    <?php if (!empty($_GET['buscar'])): ?>
 
-</form>
+                    <div class="col-md-auto">
+
+                        <a href="<?= BASE_URL ?>smmlv/index.php" class="btn btn-secondary">
+
+                            <i class="bi bi-x-circle"></i>
+
+                            Limpiar
+
+                        </a>
+
+                    </div>
+
+                    <?php endif; ?>
+
+
+                </div>
+
+            </form>
 
             <!--==================================================
         TABLA
