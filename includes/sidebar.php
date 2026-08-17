@@ -405,8 +405,30 @@
             </a>
 
 
+            
         </div>
 
+
+        <!-- tras -- SMMLV -->
+
+<a
+    class="nav-link ps-5"
+    href="<?= BASE_URL ?>smmlv/index.php"
+>
+
+    <span class="nav-icon">
+
+        <i class="bi bi-calculator"></i>
+
+    </span>
+
+    <span class="nav-text">
+
+        SMMLV
+
+    </span>
+
+</a>
 
     </nav>
 

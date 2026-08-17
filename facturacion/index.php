@@ -87,7 +87,7 @@ include __DIR__ . '/../includes/sidebar.php';
                 <!-- RESUMEN -->
 
                 <a
-                    href="resumen.php"
+                    href="../reportes/cuatrimestres.php"
                     class="btn btn-primary"
                 >
 
@@ -128,7 +128,7 @@ include __DIR__ . '/../includes/sidebar.php';
             <table class="table table-bordered table-hover align-middle">
 
 
-                <thead class="table-light">
+                <thead >
 
                     <tr>
 

@@ -363,7 +363,7 @@ $ivaFacturas19 =
 
 $saldoDian =
     $ivaContrato
-    - $ivaFacturas19;
+    - $totalIvaFacturado;
 // Ordenar porcentajes
 
 ksort($ivaPorcentaje);

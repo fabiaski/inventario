@@ -109,12 +109,11 @@ include __DIR__ . '/../includes/sidebar.php';
         TABLA
         ========================================-->
 
-        <div class="table-responsive">
+ <div class="table-responsive">
+                <table class="table align-middle mb-0">
 
-            <table class="table table-bordered table-hover align-middle">
 
-
-                <thead class="table-light">
+                <thead >
 
                     <tr>
 

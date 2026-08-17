@@ -97,174 +97,209 @@ include __DIR__ . '/../includes/header.php';
 
         <section class="panel">
 
+
+
+
             <!--buscar-->
-           <div class="panel-header">
+            <div class="panel-header">
 
-            <div>
+                <div>
 
-                <h2 class="h5 mb-1 section-title">
+                    <h2 class="h5 mb-1 section-title">
 
-                    <i class="bi bi-box-seam"></i>
+                        <i class="bi bi-box-seam"></i>
 
-                    <span>Productos Registrados</span>
+                        <span>Productos Registrados</span>
 
-                </h2>
+                    </h2>
 
-                <p class="text-muted mb-0">
+                    <p class="text-muted mb-0">
 
-                    Se encontraron <strong><?= $resultado->num_rows ?></strong> producto(s).
+                        Se encontraron <strong><?= $resultado->num_rows ?></strong> producto(s).
 
-                </p>
+                    </p>
+
+                </div>
+
+
 
             </div>
+            <!--buscar-->
+            <form method="GET" class="mb-4">
 
-            <form method="GET" class="d-flex">
+                <div class="row g-2">
 
-                <input type="search" name="buscar" class="form-control form-control-sm table-search me-2"
-                    placeholder="Buscar producto o proveedor..." value="<?= htmlspecialchars($buscar) ?>">
+                    <div class="col-md-8">
 
-                <button class="btn btn-primary btn-sm">
+                        <div class="input-group">
+                            <input type="text" name="buscar" class="form-control"
+                                placeholder="Buscar por objeto del contrato..."
+                                value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
-                    <i class="bi bi-search"></i>
+                        </div>
 
-                </button>
+                    </div>
 
-                <a href="index.php" class="btn btn-outline-secondary btn-sm ms-2">
 
-                    Limpiar
+                    <div class="col-md-auto">
 
-                </a>
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="bi bi-search"></i>
+
+                            Buscar
+
+                        </button>
+
+                    </div>
+
+
+                    <?php if (!empty($_GET['buscar'])): ?>
+
+                    <div class="col-md-auto">
+
+                        <a href="<?= BASE_URL ?>productos/index.php" class="btn btn-secondary">
+
+                            <i class="bi bi-x-circle"></i>
+
+                            Limpiar
+
+                        </a>
+
+                    </div>
+
+                    <?php endif; ?>
+
+
+                </div>
 
             </form>
 
 
-        </div>
-            <!--buscar-->
-
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
 
-                <thead>
+                    <thead>
 
-                    <tr>
+                        <tr>
 
-                        <th>#</th>
+                            <th>#</th>
 
-                        <th>Producto</th>
+                            <th>Producto</th>
 
-                        <th>Proveedor</th>
+                            <th>Proveedor</th>
 
-                        <th>Unidad</th>
+                            <th>Unidad</th>
 
-                        <th>Precio</th>
+                            <th>Precio</th>
 
-                        <th>Fecha de cotización</th>
+                            <th>Fecha de cotización</th>
 
-                        <th class="text-end">Acciones</th>
+                            <th class="text-end">Acciones</th>
 
-                    </tr>
+                        </tr>
 
-                </thead>
+                    </thead>
 
-                <tbody>
+                    <tbody>
 
-                    <?php if($resultado->num_rows > 0): ?>
-                    <?php $numero = 1; ?>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
+                        <?php if($resultado->num_rows > 0): ?>
+                        <?php $numero = 1; ?>
+                        <?php while($fila = $resultado->fetch_assoc()): ?>
 
-                    <tr>
+                        <tr>
 
-                        <td class="fw-semibold">
+                            <td class="fw-semibold">
 
-                            <?= $numero++ ?>
+                                <?= $numero++ ?>
 
-                        </td>
+                            </td>
 
-                        <td>
+                            <td>
 
-                            <strong>
-                                <?= htmlspecialchars($fila['producto']) ?>
-                            </strong>
+                                <strong>
+                                    <?= htmlspecialchars($fila['producto']) ?>
+                                </strong>
 
-                        </td>
-                        <td>
+                            </td>
+                            <td>
 
-                            <?php if (!empty(trim($fila['proveedor']))): ?>
-                            <?= htmlspecialchars($fila['proveedor']) ?>
-                            <?php else: ?>
-                            <span class="text-secondary fst-italic">
-                                Sin proveedor
-                            </span>
-                            <?php endif; ?>
-                        </td>
+                                <?php if (!empty(trim($fila['proveedor']))): ?>
+                                <?= htmlspecialchars($fila['proveedor']) ?>
+                                <?php else: ?>
+                                <span class="text-secondary fst-italic">
+                                    Sin proveedor
+                                </span>
+                                <?php endif; ?>
+                            </td>
 
 
 
-                        <td>
+                            <td>
 
-                            <?= htmlspecialchars($fila['unidad_medida']) ?>
+                                <?= htmlspecialchars($fila['unidad_medida']) ?>
 
-                        </td>
+                            </td>
 
-                        <td>
+                            <td>
 
-                            $<?= number_format($fila['precio'],0,',','.') ?>
+                                $<?= number_format($fila['precio'],0,',','.') ?>
 
-                        </td>
+                            </td>
 
-                        <td>
+                            <td>
 
-                            <?= date('d/m/Y', strtotime($fila['fecha_cotizacion'])) ?>
+                                <?= date('d/m/Y', strtotime($fila['fecha_cotizacion'])) ?>
 
-                        </td>
+                            </td>
 
-                        <td class="text-end">
+                            <td class="text-end">
 
-                            <a href="editar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm">
+                                <a href="editar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm">
 
-                                <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil"></i>
 
-                            </a>
+                                </a>
 
-                            <a href="eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm text-danger"
-                                onclick="return confirm('¿Desea eliminar este producto?')">
+                                <a href="eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-light btn-sm text-danger"
+                                    onclick="return confirm('¿Desea eliminar este producto?')">
 
-                                <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash"></i>
 
-                            </a>
+                                </a>
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    <?php endwhile; ?>
+                        <?php endwhile; ?>
 
-                    <?php else: ?>
+                        <?php else: ?>
 
-                    <tr>
+                        <tr>
 
-                        <td colspan="7" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
 
-                            <i class="bi bi-inbox fs-1 d-block text-secondary mb-2"></i>
+                                <i class="bi bi-inbox fs-1 d-block text-secondary mb-2"></i>
 
-                            No existen productos registrados.
+                                No existen productos registrados.
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    <?php endif; ?>
+                        <?php endif; ?>
 
-                </tbody>
+                    </tbody>
 
-            </table>
+                </table>
             </div>
         </section>
 
 
     </div>
 
-   
+
 
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
