@@ -1,5 +1,7 @@
 <?php
 
+$paginaActual = 'SMMLV';
+
 require_once __DIR__ . '/../config/conexion.php';
 
 
