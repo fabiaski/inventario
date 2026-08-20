@@ -54,3 +54,39 @@ Composer --version
 composer require dompdf/dompdf
 
 composer require phpoffice/phpspreadsheet☺
+
+
+1. Abre php.ini
+
+En XAMPP:
+
+XAMPP Control Panel → Apache → Config → PHP (php.ini)
+
+2. Busca esta línea
+
+Presiona Ctrl + F y busca:
+
+;extension=zip
+
+Si está así:
+
+;extension=zip
+
+quita el ;:
+
+extension=zip
+
+
+3. Guarda el archivo
+
+Guarda php.ini.
+
+4. Reinicia Apache
+
+En XAMPP:
+
+Stop Apache
+↓
+Start Apache
+
+Es importante reiniciarlo porque PHP carga las extensiones cuando inicia Apache.
