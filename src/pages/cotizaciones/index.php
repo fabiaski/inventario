@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 
 //========================================
@@ -50,13 +51,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
+                <div class="card " >
 
 
-                    <div class="card-body">
+
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
-                            <div>
+                            <div  class="card ">
 
 
                                 <h2 class=" mb-1 section-title">

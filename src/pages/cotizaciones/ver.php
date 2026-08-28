@@ -87,129 +87,129 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 ?>
 
+<div class="main-panel">
 
- <div class="container-fluid px-3 px-lg-4 py-4">
-        
-    <section class="panel">
-    <div class="container-fluid">
+    <div class="content-wrapper">
+        <div class="row">
 
-        <!-- ========================================
-         DATOS DE LA COTIZACIÓN
-    ========================================= -->
-
-        <div class="card mb-4">
-
-            <div class="card-header d-flex justify-content-between align-items-center">
-
-                <strong>
-                    Cotización #<?= $cotizacion['id'] ?>
-                </strong>
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
+                    <div class="card-body">
+                        <div class="card mb-4 shadow-sm">
+
+                            <div class="card-header d-flex justify-content-between align-items-center">
+
+                                <strong>
+                                    Cotización #<?= $cotizacion['id'] ?>
+                                </strong>
 
 
-                <a href="editar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm">
 
-                    <i class="bi bi-pencil"></i>
 
-                    Editar
+                                <a href="editar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm">
 
-                </a>
+                                    <i class="bi bi-pencil"></i>
 
-            </div>
+                                    Editar
 
-            <div class="card-body">
+                                </a>
 
-                <div class="row">
+                            </div>
 
-                    <div class="col-md-6">
+                            <div class="card-body ">
 
-                        <strong>Cliente:</strong>
+                                <div class="row">
 
-                        <?= htmlspecialchars($cotizacion['cliente']) ?>
+                                    <div class="col-md-6">
 
-                    </div>
+                                        <strong>Cliente:</strong>
 
-                    <div class="col-md-6">
+                                        <?= htmlspecialchars($cotizacion['cliente']) ?>
 
-                        <strong>Fecha:</strong>
+                                    </div>
 
-                        <?= htmlspecialchars($cotizacion['fecha']) ?>
+                                    <div class="col-md-6">
 
-                    </div>
+                                        <strong>Fecha:</strong>
 
-                </div>
+                                        <?= htmlspecialchars($cotizacion['fecha']) ?>
 
-                <?php if (!empty($cotizacion['observaciones'])): ?>
+                                    </div>
 
-                <div class="mt-3">
+                                </div>
 
-                    <strong>Observaciones:</strong>
+                                <?php if (!empty($cotizacion['observaciones'])): ?>
 
-                    <?= nl2br(
+                                <div class="mt-3">
+
+                                    <strong>Observaciones:</strong>
+
+                                    <?= nl2br(
                         htmlspecialchars(
                             $cotizacion['observaciones']
                         )
                     ) ?>
 
-                </div>
+                                </div>
 
-                <?php endif; ?>
+                                <?php endif; ?>
 
-            </div>
+                            </div>
 
-        </div>
+                        </div>
 
 
-        <!-- ========================================
+                        <!-- ========================================
          PRODUCTOS
     ========================================= -->
 
-        <div class="card mb-4">
+                        <div class="card mb-4 shadow-sm">
 
-            <div class="card-header">
+                            <div class="card-header">
 
-                <strong>Productos</strong>
+                                <strong>Productos</strong>
 
-            </div>
+                            </div>
 
-            <div class="card-body">
+                            <div class="card-body">
 
-                <div class="table-responsive">
+                                <div class="table-responsive">
 
-                    <table class="table table-bordered">
+                                    <table class="table table-bordered">
 
-                        <thead>
+                                        <thead>
 
-                            <tr>
+                                            <tr>
 
-                                <th>#</th>
+                                                <th>#</th>
 
-                                <th>Producto</th>
+                                                <th>Producto</th>
 
-                                <th>Cantidad</th>
+                                                <th>Cantidad</th>
 
-                                <th>UND</th>
+                                                <th>UND</th>
 
-                                <th>Valor UND</th>
+                                                <th>Valor UND</th>
 
-                                <th>Total UND</th>
+                                                <th>Total UND</th>
 
-                                <th>% Inc.</th>
+                                                <th>% Inc.</th>
 
-                                <th>Valor Inc.</th>
+                                                <th>Valor Inc.</th>
 
-                                <th>UND + Inc.</th>
+                                                <th>UND + Inc.</th>
 
-                                <th>Total Venta</th>
+                                                <th>Total Venta</th>
 
-                            </tr>
+                                            </tr>
 
-                        </thead>
+                                        </thead>
 
-                        <tbody>
+                                        <tbody>
 
-                            <?php
+                                            <?php
 
                         $numero = 1;
 
@@ -217,313 +217,312 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                         ?>
 
-                            <tr>
+                                            <tr>
 
-                                <td>
-                                    <?= $numero++ ?>
-                                </td>
+                                                <td>
+                                                    <?= $numero++ ?>
+                                                </td>
 
-                                <td>
-                                    <?= htmlspecialchars(
+                                                <td>
+                                                    <?= htmlspecialchars(
                                         $producto['producto']
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    <?= $producto['cantidad'] ?>
-                                </td>
+                                                <td>
+                                                    <?= $producto['cantidad'] ?>
+                                                </td>
 
-                                <td>
-                                    <?= htmlspecialchars(
+                                                <td>
+                                                    <?= htmlspecialchars(
                                         $producto['unidad_medida']
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    $<?= number_format(
+                                                <td>
+                                                    $<?= number_format(
                                         $producto['valor_unidad'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    $<?= number_format(
+                                                <td>
+                                                    $<?= number_format(
                                         $producto['valor_total_unidad'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    <?= rtrim(rtrim(number_format($producto['porcentaje_incremento'], 5, '.', ''), '0'), '.') ?>%
-                                </td>
+                                                <td>
+                                                    <?= rtrim(rtrim(number_format($producto['porcentaje_incremento'], 5, '.', ''), '0'), '.') ?>%
+                                                </td>
 
-                                <td>
-                                    $<?= number_format(
+                                                <td>
+                                                    $<?= number_format(
                                         $producto['valor_incremento'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    $<?= number_format(
+                                                <td>
+                                                    $<?= number_format(
                                         $producto['valor_unidad_incremento'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
-                                </td>
+                                                </td>
 
-                                <td>
-                                    $<?= number_format(
+                                                <td>
+                                                    $<?= number_format(
                                         $producto['total_venta'],
                                         0,
                                         ',',
                                         '.'
                                     ) ?>
-                                </td>
+                                                </td>
 
-                            </tr>
+                                            </tr>
 
-                            <?php endwhile; ?>
+                                            <?php endwhile; ?>
 
-                        </tbody>
+                                        </tbody>
 
-                    </table>
+                                    </table>
 
-                </div>
+                                </div>
 
-            </div>
+                            </div>
 
-        </div>
+                        </div>
 
 
-        <!-- ========================================
+                        <!-- ========================================
          RESUMEN
     ========================================= -->
 
-        <div class="card mb-4">
+                        <div class="card mb-4 shadow-sm">
 
-            <div class="card-header">
+                            <div class="card-header">
 
-                <strong>Resumen</strong>
+                                <strong>Resumen</strong>
 
-            </div>
+                            </div>
 
-            <div class="card-body">
+                            <div class="card-body">
 
-                <table class="table table-borderless">
+                                <table class="table table-borderless">
 
-                    <tr>
+                                    <tr>
 
-                        <th>Total Venta</th>
+                                        <th>Total Venta</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['total_venta'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>
-                            Retención
-                            (<?= rtrim(rtrim(number_format($cotizacion['porcentaje_retencion'], 5, '.', ''), '0'), '.') ?>%)
-                        </th>
+                                        <th>
+                                            Retención
+                                            (<?= rtrim(rtrim(number_format($cotizacion['porcentaje_retencion'], 5, '.', ''), '0'), '.') ?>%)
+                                        </th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['valor_retencion'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>Valor Pagos</th>
+                                        <th>Valor Pagos</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['valor_pagos'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                </table>
+                                </table>
 
-            </div>
+                            </div>
 
-        </div>
+                        </div>
 
 
-        <!-- ========================================
+                        <!-- ========================================
          RESULTADO FINAL
     ========================================= -->
 
-        <div class="card mb-4">
+                        <div class="card mb-4 shadow-sm">
 
-            <div class="card-header">
+                            <div class="card-header">
 
-                <strong>Resultado Final</strong>
+                                <strong>Resultado Final</strong>
 
-            </div>
+                            </div>
 
-            <div class="card-body">
+                            <div class="card-body">
 
-                <table class="table table-borderless">
+                                <table class="table table-borderless">
 
-                    <tr>
+                                    <tr>
 
-                        <th>Valor total unidad</th>
+                                        <th>Valor total unidad</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
         $valorTotalUnidad,
         0,
         ',',
         '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>Llega</th>
+                                        <th>Llega</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['llega'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>Ganancia</th>
+                                        <th>Ganancia</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['ganancia'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>
-                            Ganancia Ideal 20%
-                        </th>
+                                        <th>
+                                            Ganancia Ideal 20%
+                                        </th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['ganancia_ideal'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                    <tr>
+                                    <tr>
 
-                        <th>Diferencia</th>
+                                        <th>Diferencia</th>
 
-                        <td class="text-end">
+                                        <td class="text-end">
 
-                            $<?= number_format(
+                                            $<?= number_format(
                             $cotizacion['diferencia'],
                             0,
                             ',',
                             '.'
                         ) ?>
 
-                        </td>
+                                        </td>
 
-                    </tr>
+                                    </tr>
 
-                </table>
+                                </table>
 
-            </div>
+                            </div>
 
-        </div>
-        <?php if ($cotizacion['estado'] === 'Borrador'): ?>
+                        </div>
+                        <?php if ($cotizacion['estado'] === 'Borrador'): ?>
 
-        <form action="finalizar.php" method="POST" class="d-inline"
-            onsubmit="return confirm('¿Desea finalizar esta cotización?');">
+                        <form action="finalizar.php" method="POST" class="d-inline"
+                            onsubmit="return confirm('¿Desea finalizar esta cotización?');">
 
-            <input type="hidden" name="cotizacion_id" value="<?= $cotizacion['id'] ?>">
+                            <input type="hidden" name="cotizacion_id" value="<?= $cotizacion['id'] ?>">
 
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle"></i>
-                Finalizar Cotización
-            </button>
+                            <button type="submit" class="btn btn-success mb-4">
+                                <i class="bi bi-check-circle"></i>
+                                Finalizar Cotización
+                            </button>
 
-        </form>
+                        </form>
 
-        <?php endif; ?>
-
-
-        <?php if ($cotizacion['estado'] === 'Finalizada'): ?>
-
-        <a href="pdf.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger" target="_blank">
-            <i class="bi bi-file-earmark-pdf"></i>
-            Descargar PDF
-        </a>
-
-        <a href="excel.php?id=<?= $cotizacion['id'] ?>" class="btn btn-success">
-            <i class="bi bi-file-earmark-excel"></i>
-            Descargar Excel
-        </a>
-
-        <?php endif; ?>
-    </div>
+                        <?php endif; ?>
 
 
+                        <?php if ($cotizacion['estado'] === 'Finalizada'): ?>
 
-</div>
+                        <a href="pdf.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger" target="_blank">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            Descargar PDF
+                        </a>
 
-    <?php include __DIR__ . '/../includes/footer.php'; ?>v
-<?php include __DIR__ . '/../includes/scripts.php'; ?>
+                        <a href="excel.php?id=<?= $cotizacion['id'] ?>" class="btn btn-success">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            Descargar Excel
+                        </a>
 
+                        <?php endif; ?>
+                    </div>
+
+
+
+
+
+                    <?php include __DIR__ . '/../includes/footer.php'; ?>
+                    <?php include __DIR__ . '/../includes/scripts.php'; ?>
