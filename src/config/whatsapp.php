@@ -1,0 +1,25 @@
+<?php
+
+define(
+    'WHATSAPP_API_VERSION',
+    'v23.0'
+);
+
+define(
+    'WHATSAPP_PHONE_NUMBER_ID',
+    '974404015762245'
+);
+
+define(
+    'WHATSAPP_RECIPIENT',
+    '573229619350'
+);
+
+define(
+    'WHATSAPP_ACCESS_TOKEN',
+'EAAeo3pOZBwTYBSUbzC3EBn1wuyl20Nl6HDjfFwAaSrUJyCOoqKdgspcnaBQp1REn67t0XNLtEavcQPLz5DneUckEW93J2toOQZC39IcIcOg541M6nbao8JKyQfhmzZABwNrQP1n9AcE9AAa8gzjOSnmqvqriw5FGywBRsp0BJYjBdbZCU3TXMBPMZCeVgL9XBfwZDZD'
+
+);
+?>
+
+
