@@ -1,0 +1,815 @@
+========================================
+2026-08-24 20:15:30
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+========================================
+========================================
+2026-08-24 20:15:31
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+========================================
+========================================
+2026-08-24 20:15:31
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMkVDODcyRjYxOTVDQzJEMkQyAA==","message_status":"accepted"}]}
+ERROR CURL: 
+========================================
+
+========================================
+2026-08-24 20:15:32
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSRDg4MkM0RThCRkZGQ0RCRUQxAA==","message_status":"accepted"}]}
+ERROR CURL: 
+========================================
+
+
+========================================
+2026-08-24 20:22:55
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSNEYzRjE4RDkxNjRCMzc5NzJCAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:22:56
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSRDgxRTdFM0FFMjcxMDFBQURDAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:23:06
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSRTQ2QkExRDlGNUY2QTkxODlGAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:23:07
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+
+========================================
+2026-08-24 20:23:07
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSQUIzNzNBMTU2MTgyRUVBNkUxAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMjYyNjNFQUMxQkQ1MTY5NTI5AA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:23:08
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMEQ5MTIyN0NDRjY1REVBQzNBAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:23:28
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSNThDOTYyQzY0NEY4NUQxM0UzAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:23:29
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMzQ0OTA5NTY3RDAxNUI2OUU5AA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:59:52
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSNTE1RjJEMTcyQ0FFM0I4QTIxAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 20:59:53
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSRDE2MjM3OTIzODlCMTIzMUNBAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 21:05:12
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 2
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_2_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSN0M4Mzc0OUM1QzY4NDc0MTNEAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-24 21:05:13
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 3
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_3_2026-08-24
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMUI2Nzg1RTNGNDJCN0ZFNTNGAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-25 08:00:02
+PROCESO ID: 5
+CONTRATO: Fabián movil
+DÍAS RESTANTES: 1
+PRODUCTOS: Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto
+FECHA ENTREGA: 27/08/2026
+CLAVE ALERTA: 5_1_2026-08-25
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Fabián movil"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Argolla fantasía plateada 0.7 x 8 mm x 125 gr, Balón de baloncesto"
+                    },
+                    {
+                        "type": "text",
+                        "text": "27\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSMUFGMUMwNkQwN0MxNUIwRDQyAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-25 08:00:03
+PROCESO ID: 8
+CONTRATO: Prueba-002
+DÍAS RESTANTES: 2
+PRODUCTOS: Caja de tapabocas mascarilla facial con termosellado
+FECHA ENTREGA: 28/08/2026
+CLAVE ALERTA: 8_2_2026-08-25
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-002"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Caja de tapabocas mascarilla facial con termosellado"
+                    },
+                    {
+                        "type": "text",
+                        "text": "28\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSNUEyMzgxQ0VCNzJBQUUyQkYzAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
+
+========================================
+2026-08-25 08:00:04
+PROCESO ID: 7
+CONTRATO: Prueba-001
+DÍAS RESTANTES: 3
+PRODUCTOS: Aceite para motores 2 tiempos antihumo, Aguja de mano No. 12 x 12 unidades, Suministro de alimento: proteína, carbohidrato, verdura más bebida fría
+FECHA ENTREGA: 29/08/2026
+CLAVE ALERTA: 7_3_2026-08-25
+DATOS ENVIADOS:
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573229619350",
+    "type": "template",
+    "template": {
+        "name": "notificacion_proceso_compra",
+        "language": {
+            "code": "es_AR"
+        },
+        "components": [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "Prueba-001"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Aceite para motores 2 tiempos antihumo, Aguja de mano No. 12 x 12 unidades, Suministro de alimento: proteína, carbohidrato, verdura más bebida fría"
+                    },
+                    {
+                        "type": "text",
+                        "text": "29\/08\/2026"
+                    }
+                ]
+            }
+        ]
+    }
+}
+HTTP: 200
+RESPUESTA META:
+{"messaging_product":"whatsapp","contacts":[{"input":"573229619350","wa_id":"573229619350"}],"messages":[{"id":"wamid.HBgMNTczMjI5NjE5MzUwFQIAERgSNjI3ODVBREZCNDRBMzBDRjBCAA==","message_status":"accepted"}]}
+ERROR CURL: 
+RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+========================================
