@@ -31,9 +31,9 @@ if (isset($_GET['buscar'])) {
 
 }
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
@@ -280,8 +280,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 
     <?php
-require_once __DIR__ . '/../includes/footer.php';
-require_once __DIR__ . '/../includes/scripts.php';
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
 
 
 ?>
