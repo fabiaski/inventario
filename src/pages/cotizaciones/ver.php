@@ -81,9 +81,9 @@ $productosCotizacion = $stmtProductos->get_result();
 
 
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
@@ -524,5 +524,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 
 
-                    <?php include __DIR__ . '/../includes/footer.php'; ?>
-                    <?php include __DIR__ . '/../includes/scripts.php'; ?>
+
+                    <?php include __DIR__ . '/../../includes/footer.php'; ?>
+                    <?php include __DIR__ . '/../../includes/scripts.php'; ?>

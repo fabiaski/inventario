@@ -48,9 +48,9 @@
                 </a>
                 <div class="collapse" id="form-elements">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"><a class="nav-link" href="../cotizaciones/index.php">Ver
+                        <li class="nav-item"><a class="nav-link" href="../cotizaciones/cotizacion.php">Ver
                                 cotizaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../cotizaciones/agregar.php">Nueva
+                        <li class="nav-item"><a class="nav-link" href="../cotizaciones/agregar-coti.php">Nueva
                                 cotización</a></li>
                     </ul>
                 </div>

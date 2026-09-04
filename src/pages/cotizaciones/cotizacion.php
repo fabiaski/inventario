@@ -39,11 +39,14 @@ if (!$resultado) {
 
 }
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+
+
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
+
 
 <div class="main-panel">
 
@@ -51,14 +54,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card " >
+                <div class="card">
 
 
-
+                    <div class="card-body">
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
-                            <div  class="card ">
-
+                            <div>
 
                                 <h2 class=" mb-1 section-title">
                                     <i class="bi bi-receipt"></i>
@@ -71,13 +73,15 @@ require_once __DIR__ . '/../includes/sidebar.php';
                             </div>
 
 
-                            <a href="agregar.php" class="btn btn-secondary">
+
+                            <a href="agregar-coti.php" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Nueva Cotización
                             </a>
 
-
                         </div>
+
+
 
 
 
@@ -347,14 +351,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </div>
             </div>
-        </div>
     </div>
+
 
 
     <?php
 
-include __DIR__ . '/../includes/footer.php';
+include __DIR__ . '/../../includes/footer.php';
 
-include __DIR__ . '/../includes/scripts.php';
+include __DIR__ . '/../../includes/scripts.php';
 
 ?>

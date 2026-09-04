@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/../../config/conexion.php';
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
@@ -108,7 +108,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                 <div class="row g-3 align-items-end">
 
-                                    <div class="col-md-4 position-relative">
+                                    <div class="col-md-12 position-relative">
 
                                         <label class="form-label">
 
@@ -128,7 +128,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                     </div>
 
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
 
                                         <label class="form-label">
 
@@ -140,7 +140,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                     </div>
 
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
 
                                         <label class="form-label">
 
@@ -152,7 +152,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                     </div>
 
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
 
                                         <label class="form-label">
 
@@ -165,7 +165,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                     </div>
 
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
 
                                         <button type="button" id="btnAgregar" class="btn btn-primary w-100">
 
@@ -429,7 +429,9 @@ $sql = $conexion->query("
         id,
         producto,
         unidad_medida,
-        precio
+        precio,
+        proveedor,
+        fecha_cotizacion
     FROM productos
     ORDER BY producto
 ");
@@ -445,7 +447,7 @@ while($fila = $sql->fetch_assoc()){
                         <script>
                         const productos = <?= json_encode($productos) ?>;
                         </script>
-                        <?php include __DIR__ . '/../includes/footer.php'; ?>
-                        <?php include __DIR__ . '/../includes/scripts.php'; ?>
+                        <?php include __DIR__ . '/../../includes/footer.php'; ?>
+                        <?php include __DIR__ . '/../../includes/scripts.php'; ?>
 
-                        <script src="<?= BASE_URL ?>assets/js/cotizaciones.js"></script>
+                        <script src="../../../assets/js/cotizaciones.js"></script>

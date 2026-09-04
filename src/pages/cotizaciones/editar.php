@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
 
 
 //========================================
@@ -103,7 +103,9 @@ $sql = $conexion->query("
         id,
         producto,
         unidad_medida,
-        precio
+        precio,
+        proveedor,
+        fecha_cotizacion
     FROM productos
     ORDER BY producto
 ");
@@ -115,44 +117,29 @@ while ($fila = $sql->fetch_assoc()) {
 }
 
 
-//========================================
-// INCLUIR ESTRUCTURA
-//========================================
 
-include __DIR__ . '/../includes/header.php';
-
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
 
+<div class="main-panel">
 
-<div class="admin-main">
+    <div class="content-wrapper">
+        <div class="row">
 
-
-    <?php include __DIR__ . '/../includes/navbar.php'; ?>
- <div class="container-fluid px-3 px-lg-4 py-4">
-        <div class="page-heading">
-            <div class="page-heading-copy">
-                <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
-                <div>
-                    <p class="eyebrow mb-1">Data</p>
-                    <h1 class="h3 mb-1">Tables</h1>
-                    <p class="text-muted mb-0">Use responsive, searchable tables for operational records.
-                    </p>
-                </div>
-            </div>
-
-        </div>
-
-    <section class="panel">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-        <div class="panel-header">
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
+                            <div>
 
-            <div>
-
+                        
                 <h2 class="h5 mb-1 section-title">
 
                     <i class="bi bi-file-earmark-text"></i>
@@ -265,7 +252,7 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="row g-3 align-items-end">
 
 
-            <div class="col-md-4 position-relative">
+            <div class="col-md-12 position-relative">
 
 
                 <label class="form-label">
@@ -290,7 +277,7 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
 
 
-            <div class="col-md-1">
+            <div class="col-md-2">
 
 
                 <label class="form-label">
@@ -306,7 +293,7 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
 
 
                 <label class="form-label">
@@ -322,7 +309,7 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
 
 
                 <label class="form-label">
@@ -338,7 +325,7 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
 
 
                 <button type="button" id="btnAgregar" class="btn btn-primary w-100">
@@ -902,9 +889,7 @@ const productosEditar = <?= json_encode(
 </script>
 
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/scripts.php'; ?>
 
-<?php include __DIR__ . '/../includes/scripts.php'; ?>
-
-
-<script src="<?= BASE_URL ?>assets/js/cotizaciones.js"></script>
+    <script src="../../../assets/js/cotizaciones.js"></script>
