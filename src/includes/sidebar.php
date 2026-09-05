@@ -95,7 +95,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="../../smmlv/index.php">
+                <a class="nav-link" href="../smmlv/index.php">
                     <i class="menu-icon mdi mdi-file-document"></i>
                     <span class="menu-title">SMMLV</span>
                 </a>

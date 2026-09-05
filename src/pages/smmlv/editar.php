@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
@@ -279,271 +279,262 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // INCLUDES
 //==================================================
 
-include __DIR__ . '/../includes/header.php';
-
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
 
-<div class="admin-main">
+<div class="main-panel">
+
+    <div class="content-wrapper">
+        <div class="row">
+
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-    <?php
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
-    include __DIR__ . '/../includes/navbar.php';
-
-    ?>
-
-    <div class="container-fluid px-3 px-lg-4 py-4">
-
-    <section class="panel">
+                            <div>
 
 
-        <!--==================================================
-        ENCABEZADO
-        ==================================================-->
+                                <h2 class="h5 mb-1 section-title">
 
-        <div class="panel-header">
+                                    <i class="bi bi-pencil-square"></i>
 
+                                    Editar contrato SMMLV
 
-            <div>
-
-                <h2 class="h5 mb-1 section-title">
-
-                    <i class="bi bi-pencil-square"></i>
-
-                    Editar contrato SMMLV
-
-                </h2>
+                                </h2>
 
 
-                <p class="text-muted mb-0">
+                                <p class="text-muted mb-0">
 
-                    Modifica la información del contrato.
+                                    Modifica la información del contrato.
 
-                </p>
+                                </p>
 
-            </div>
-
-
-            <div>
-
-                <a href="index.php" class="btn btn-secondary">
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Volver
-
-                </a>
-
-            </div>
+                            </div>
 
 
-        </div>
+                            <div>
+
+                                <a href="index.php" class="btn btn-secondary">
+
+                                    <i class="bi bi-arrow-left"></i>
+
+                                    Volver
+
+                                </a>
+
+                            </div>
 
 
-        <hr>
+                        </div>
 
 
-        <!--==================================================
+                        <hr>
+
+
+                        <!--==================================================
         ERRORES
         ==================================================-->
 
-        <?php if (!empty($errores)): ?>
+                        <?php if (!empty($errores)): ?>
 
-        <div class="alert alert-danger">
+                        <div class="alert alert-danger">
 
-            <strong>
-                No se pudo actualizar:
-            </strong>
+                            <strong>
+                                No se pudo actualizar:
+                            </strong>
 
-            <ul class="mb-0 mt-2">
+                            <ul class="mb-0 mt-2">
 
-                <?php foreach ($errores as $error): ?>
+                                <?php foreach ($errores as $error): ?>
 
-                <li>
+                                <li>
 
-                    <?= htmlspecialchars($error) ?>
+                                    <?= htmlspecialchars($error) ?>
 
-                </li>
+                                </li>
 
-                <?php endforeach; ?>
+                                <?php endforeach; ?>
 
-            </ul>
+                            </ul>
 
-        </div>
+                        </div>
 
-        <?php endif; ?>
+                        <?php endif; ?>
 
 
-        <!--==================================================
+                        <!--==================================================
         FORMULARIO
         ==================================================-->
 
-        <form method="POST" action="">
+                        <form method="POST" action="">
 
 
-            <div class="row g-3">
+                            <div class="row g-3">
 
 
-                <!--==================================================
+                                <!--==================================================
                 NÚMERO CONTRATO
                 ==================================================-->
 
-                <div class="col-md-6">
+                                <div class="col-md-6">
 
-                    <label for="numero_contrato" class="form-label">
+                                    <label for="numero_contrato" class="form-label">
 
-                        No. Contrato
+                                        No. Contrato
 
-                    </label>
+                                    </label>
 
 
-                    <input type="text" class="form-control" id="numero_contrato" name="numero_contrato" value="<?= htmlspecialchars(
+                                    <input type="text" class="form-control" id="numero_contrato" name="numero_contrato"
+                                        value="<?= htmlspecialchars(
                             $contrato['numero_contrato']
                         ) ?>" required>
 
-                </div>
+                                </div>
 
 
-                <!--==================================================
+                                <!--==================================================
                 ENTIDAD
                 ==================================================-->
 
-                <div class="col-md-6">
+                                <div class="col-md-6">
 
-                    <label for="entidad" class="form-label">
+                                    <label for="entidad" class="form-label">
 
-                        Entidad
+                                        Entidad
 
-                    </label>
+                                    </label>
 
 
-                    <input type="text" class="form-control" id="entidad" name="entidad" value="<?= htmlspecialchars(
+                                    <input type="text" class="form-control" id="entidad" name="entidad" value="<?= htmlspecialchars(
                             $contrato['entidad']
                         ) ?>" required>
 
-                </div>
+                                </div>
 
 
-                <!--==================================================
+                                <!--==================================================
                 OBJETO
                 ==================================================-->
 
-                <div class="col-12">
+                                <div class="col-12">
 
-                    <label for="objeto" class="form-label">
+                                    <label for="objeto" class="form-label">
 
-                        Objeto del contrato
+                                        Objeto del contrato
 
-                    </label>
+                                    </label>
 
 
-                    <textarea class="form-control" id="objeto" name="objeto" rows="4" required><?= htmlspecialchars(
+                                    <textarea class="form-control" id="objeto" name="objeto" rows="4" required><?= htmlspecialchars(
                         $contrato['objeto']
                     ) ?></textarea>
 
-                </div>
+                                </div>
 
 
-                <!--==================================================
+                                <!--==================================================
                 VALOR
                 ==================================================-->
 
-                <div class="col-md-6">
+                                <div class="col-md-6">
 
-                    <label for="valor" class="form-label">
+                                    <label for="valor" class="form-label">
 
-                        Valor del contrato
+                                        Valor del contrato
 
-                    </label>
-
-
-                    <div class="input-group">
-
-                        <span class="input-group-text">
-
-                            $
-
-                        </span>
+                                    </label>
 
 
-                        <input type="number" class="form-control" id="valor" name="valor" value="<?= htmlspecialchars(
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+
+                                            $
+
+                                        </span>
+
+
+                                        <input type="number" class="form-control" id="valor" name="valor" value="<?= htmlspecialchars(
                                 $contrato['valor']
                             ) ?>" min="0" step="0.01" required>
 
-                    </div>
+                                    </div>
 
-                </div>
+                                </div>
 
 
-                <!--==================================================
+                                <!--==================================================
                 AÑO
                 ==================================================-->
 
-                <div class="col-md-6">
+                                <div class="col-md-6">
 
-                    <label for="anio" class="form-label">
+                                    <label for="anio" class="form-label">
 
-                        Año
+                                        Año
 
-                    </label>
+                                    </label>
 
 
-                    <input type="number" class="form-control" id="anio" name="anio" value="<?= htmlspecialchars(
+                                    <input type="number" class="form-control" id="anio" name="anio" value="<?= htmlspecialchars(
                             $contrato['anio']
                         ) ?>" min="2000" max="2100" required>
 
-                </div>
+                                </div>
 
 
-            </div>
+                            </div>
 
 
-            <hr class="my-4">
+                            <hr class="my-4">
 
 
-            <!--==================================================
+                            <!--==================================================
             BOTONES
             ==================================================-->
 
-            <div class="d-flex justify-content-end gap-2">
+                            <div class="d-flex justify-content-end gap-2">
 
 
-                <a href="index.php" class="btn btn-secondary">
+                                <a href="index.php" class="btn btn-secondary">
 
-                    <i class="bi bi-x-circle"></i>
+                                    <i class="bi bi-x-circle"></i>
 
-                    Cancelar
+                                    Cancelar
 
-                </a>
-
-
-                <button type="submit" class="btn btn-primary"
-                    onclick="return confirm('¿Estás seguro de que quieres actualizar este contrato?');">
-                    <i class="bi bi-check-circle"></i>
-
-                    Guardar cambios
-                </button>
+                                </a>
 
 
+                                <button type="submit" class="btn btn-primary"
+                                    onclick="return confirm('¿Estás seguro de que quieres actualizar este contrato?');">
+                                    <i class="bi bi-check-circle"></i>
+
+                                    Guardar cambios
+                                </button>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
             </div>
+        </div>
 
 
-        </form>
 
+        <?php
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
 
-    </section>
-
-
-</div>
-
-
-<?php
-
-include __DIR__ . '/../includes/footer.php';
-
-include __DIR__ . '/../includes/scripts.php';
 
 ?>

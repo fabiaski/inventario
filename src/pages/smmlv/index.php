@@ -2,7 +2,7 @@
 
 $paginaActual = 'SMMLV';
 
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
@@ -293,374 +293,365 @@ foreach (
 // INCLUDES
 //==================================================
 
-include __DIR__ . '/../includes/header.php';
 
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
 
-<div class="admin-main">
+<div class="main-panel">
+
+    <div class="content-wrapper">
+        <div class="row">
+
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-    <?php
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
-    include __DIR__ . '/../includes/navbar.php';
-
-    ?>
-
-    <div class="container-fluid px-3 px-lg-4 py-4">
-
-        <section class="panel">
+                            <div>
 
 
-            <!--==================================================
-        ENCABEZADO
-        ==================================================-->
+                                <h2 class="h5 mb-1 section-title">
 
-            <div class="panel-header">
+                                    <i class="bi bi-calculator"></i>
 
+                                    Contratos SMMLV
 
-                <div>
-
-                    <h2 class="h5 mb-1 section-title">
-
-                        <i class="bi bi-calculator"></i>
-
-                        Contratos SMMLV
-
-                    </h2>
+                                </h2>
 
 
-                    <p class="text-muted mb-0">
+                                <p class="text-muted mb-0">
 
-                        Conversión de contratos a salarios mínimos
-                        según el año correspondiente.
+                                    Conversión de contratos a salarios mínimos
+                                    según el año correspondiente.
 
-                    </p>
+                                </p>
 
-                    <small class="text-muted">
-                        <i class="bi bi-file-earmark-text text-primary"></i>
+                                <small class="text-muted">
+                                    <i class="bi bi-file-earmark-text text-primary"></i>
 
-                        Total contratos = <strong> <?= $totalContratos ?></strong>
+                                    Total contratos = <strong> <?= $totalContratos ?></strong>
 
-                    </small>
+                                </small>
 
-                    <h4 class="mb-0">
-
-
-                    </h4>
-                    <small class="text-muted">
-                        <i class="bi bi-currency-dollar text-warning"></i>
-
-                        Salario mínimo <?= $anioActual ?> = <strong> <?= dinero($salarioActualValor) ?></strong>
-                    </small>
-
-                    <h5 class="mb-0">
+                                <h4 class="mb-0">
 
 
-                    </h5>
-                </div>
+                                </h4>
+                                <small class="text-muted">
+                                    <i class="bi bi-currency-dollar text-warning"></i>
+
+                                    Salario mínimo <?= $anioActual ?> = <strong>
+                                        <?= dinero($salarioActualValor) ?></strong>
+                                </small>
+
+                                <h5 class="mb-0">
 
 
-                <div>
-
-                    <a href="<?= BASE_URL ?>smmlv/agregar.php" class="btn btn-primary">
-
-                        <i class="bi bi-plus-circle"></i>
-
-                        Nuevo contrato
-
-                    </a>
-
-                </div>
+                                </h5>
+                            </div>
 
 
-            </div>
+                            <div>
 
+                                <a href="<?= BASE_URL ?>smmlv/agregar.php" class="btn btn-primary">
 
-            <hr>
+                                    <i class="bi bi-plus-circle"></i>
 
+                                    Nuevo contrato
 
-            <!--==================================================
-BUSCADOR POR OBJETO
-==================================================-->
+                                </a>
 
-            <form method="GET" class="mb-4">
+                            </div>
 
-                <div class="row g-2">
-
-                    <div class="col-md-8">
-
-                        <div class="input-group">
-
-
-
-                            <input type="text" name="buscar" class="form-control"
-                                placeholder="Buscar por objeto del contrato..."
-                                value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
                         </div>
 
-                    </div>
 
+                        <hr>
 
-                    <div class="col-md-auto">
 
-                        <button type="submit" class="btn btn-primary">
+                        <!--==================================================
+BUSCADOR POR OBJETO
+==================================================-->
 
-                            <i class="bi bi-search"></i>
+                        <form method="GET" class="mb-4">
 
-                            Buscar
+                            <div class="row g-2">
 
-                        </button>
+                                <div class="col-md-8">
 
-                    </div>
+                                    <div class="input-group">
 
 
-                    <?php if (!empty($_GET['buscar'])): ?>
 
-                    <div class="col-md-auto">
+                                        <input type="text" name="buscar" class="form-control"
+                                            placeholder="Buscar por objeto del contrato..."
+                                            value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
-                        <a href="<?= BASE_URL ?>smmlv/index.php" class="btn btn-secondary">
+                                    </div>
 
-                            <i class="bi bi-x-circle"></i>
+                                </div>
 
-                            Limpiar
 
-                        </a>
+                                <div class="col-md-auto">
 
-                    </div>
+                                    <button type="submit" class="btn btn-primary">
 
-                    <?php endif; ?>
+                                        <i class="bi bi-search"></i>
 
+                                        Buscar
 
-                </div>
+                                    </button>
 
-            </form>
+                                </div>
 
-            <!--==================================================
-        TABLA
-        ==================================================-->
 
-            <div class="table-responsive">
+                                <?php if (!empty($_GET['buscar'])): ?>
 
+                                <div class="col-md-auto">
 
-                <table class="table align-middle mb-0">
+                                    <a href="<?= BASE_URL ?>smmlv/index.php" class="btn btn-secondary">
 
+                                        <i class="bi bi-x-circle"></i>
 
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                No. CONTRATO
-                            </th>
-
-                            <th>
-                                ENTIDAD
-                            </th>
-
-                            <th>
-                                OBJETO
-                            </th>
-
-                            <th>
-                                VALOR
-                            </th>
-
-                            <th>
-                                AÑO
-                            </th>
-
-                            <th>
-                                SMMLV %
-                            </th>
-
-                            <th>
-                                SMMLV
-                            </th>
-
-                            <th>
-                                ACCIONES
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                        <?php if ($totalContratos > 0): ?>
-
-
-                        <?php foreach ($contratos as $contrato): ?>
-
-
-                        <tr>
-
-
-                            <!-- CONTRATO -->
-
-                            <td>
-
-                                <strong>
-
-                                    <?= htmlspecialchars(
-                                            $contrato['numero_contrato']
-                                        ) ?>
-
-                                </strong>
-
-                            </td>
-
-
-                            <!-- ENTIDAD -->
-
-                            <td>
-
-                                <?= htmlspecialchars(
-                                        $contrato['entidad']
-                                    ) ?>
-
-                            </td>
-
-
-                            <!-- OBJETO -->
-
-                            <td>
-
-                                <?= htmlspecialchars(
-                                        $contrato['objeto']
-                                    ) ?>
-
-                            </td>
-
-
-                            <!-- VALOR -->
-
-                            <td class="text-end">
-
-                                <?= dinero(
-                                        $contrato['valor']
-                                    ) ?>
-
-                            </td>
-
-
-                            <!-- AÑO -->
-
-                            <td class="text-center">
-
-                                <?= (int) $contrato['anio'] ?>
-
-                            </td>
-
-
-                            <!-- SMMLV % -->
-
-                            <td class="text-end">
-
-                                <?=
-                                        numero(
-                                            $contrato['smmlv_porcentaje']
-                                        )
-                                    ?>
-
-                            </td>
-
-
-                            <!-- SMMLV -->
-
-                            <td class="text-end">
-
-                                <strong>
-
-                                    <?= dinero(
-                                            $contrato['smmlv_actual']
-                                        ) ?>
-
-                                </strong>
-
-                            </td>
-
-
-                            <!-- ACCIONES -->
-
-                            <td>
-
-                                <div class="d-flex gap-1">
-
-                                    <a href="<?= BASE_URL ?>smmlv/editar.php?id=<?= $contrato['id'] ?>"
-                                        class="btn btn-warning btn-sm" title="Editar">
-
-                                        <i class="bi bi-pencil"></i>
-
-                                    </a>
-
-
-                                    <a href="<?= BASE_URL ?>smmlv/eliminar.php?id=<?= $contrato['id'] ?>"
-                                        class="btn btn-danger btn-sm" title="Eliminar"
-                                        onclick="return confirm('¿Está seguro de eliminar este contrato?');">
-
-                                        <i class="bi bi-trash"></i>
+                                        Limpiar
 
                                     </a>
 
                                 </div>
 
-                            </td>
+                                <?php endif; ?>
 
 
-                        </tr>
+                            </div>
+
+                        </form>
+
+                        <!--==================================================
+        TABLA
+        ==================================================-->
+
+                        <div class="table-responsive">
 
 
-                        <?php endforeach; ?>
+                            <table class="table align-middle mb-0">
 
 
-                        <?php else: ?>
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            No. CONTRATO
+                                        </th>
+
+                                        <th>
+                                            ENTIDAD
+                                        </th>
+
+                                        <th>
+                                            OBJETO
+                                        </th>
+
+                                        <th>
+                                            VALOR
+                                        </th>
+
+                                        <th>
+                                            AÑO
+                                        </th>
+
+                                        <th>
+                                            SMMLV %
+                                        </th>
+
+                                        <th>
+                                            SMMLV
+                                        </th>
+
+                                        <th>
+                                            ACCIONES
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
 
 
-                        <tr>
-
-                            <td colspan="8" class="text-center text-muted py-4">
-
-                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-
-                                No hay contratos registrados.
-
-                            </td>
-
-                        </tr>
+                                <tbody>
 
 
-                        <?php endif; ?>
+                                    <?php if ($totalContratos > 0): ?>
 
 
-                    </tbody>
+                                    <?php foreach ($contratos as $contrato): ?>
+
+
+                                    <tr>
+
+
+                                        <!-- CONTRATO -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                <?= htmlspecialchars(
+                                            $contrato['numero_contrato']
+                                        ) ?>
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- ENTIDAD -->
+
+                                        <td>
+
+                                            <?= htmlspecialchars(
+                                        $contrato['entidad']
+                                    ) ?>
+
+                                        </td>
+
+
+                                        <!-- OBJETO -->
+
+                                        <td>
+
+                                            <?= htmlspecialchars(
+                                        $contrato['objeto']
+                                    ) ?>
+
+                                        </td>
+
+
+                                        <!-- VALOR -->
+
+                                        <td class="text-end">
+
+                                            <?= dinero(
+                                        $contrato['valor']
+                                    ) ?>
+
+                                        </td>
+
+
+                                        <!-- AÑO -->
+
+                                        <td class="text-center">
+
+                                            <?= (int) $contrato['anio'] ?>
+
+                                        </td>
+
+
+                                        <!-- SMMLV % -->
+
+                                        <td class="text-end">
+
+                                            <?=
+                                        numero(
+                                            $contrato['smmlv_porcentaje']
+                                        )
+                                    ?>
+
+                                        </td>
+
+
+                                        <!-- SMMLV -->
+
+                                        <td class="text-end">
+
+                                            <strong>
+
+                                                <?= dinero(
+                                            $contrato['smmlv_actual']
+                                        ) ?>
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- ACCIONES -->
+
+                                        <td>
+
+                                            <div class="d-flex gap-1">
+
+                                                <a href="<?= BASE_URL ?>smmlv/editar.php?id=<?= $contrato['id'] ?>"
+                                                    class="btn btn-warning btn-sm" title="Editar">
+
+                                                    <i class="bi bi-pencil"></i>
+
+                                                </a>
+
+
+                                                <a href="<?= BASE_URL ?>smmlv/eliminar.php?id=<?= $contrato['id'] ?>"
+                                                    class="btn btn-danger btn-sm" title="Eliminar"
+                                                    onclick="return confirm('¿Está seguro de eliminar este contrato?');">
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </a>
+
+                                            </div>
+
+                                        </td>
+
+
+                                    </tr>
+
+
+                                    <?php endforeach; ?>
+
+
+                                    <?php else: ?>
+
+
+                                    <tr>
+
+                                        <td colspan="8" class="text-center text-muted py-4">
+
+                                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+
+                                            No hay contratos registrados.
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <?php endif; ?>
+
+
+                                </tbody>
 
 
 
 
 
-                </table>
+                            </table>
 
 
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
-        </section>
 
+            <?php
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
 
-    </div>
-
-
-    <?php
-
-include __DIR__ . '/../includes/footer.php';
-
-include __DIR__ . '/../includes/scripts.php';
 
 ?>
