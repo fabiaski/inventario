@@ -1,9 +1,10 @@
+@ -1,184 +0,0 @@
 <?php 
 require_once __DIR__ . '/../../config/conexion.php';
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?> 
 
@@ -60,6 +61,38 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                         <hr>
 
+                       
+
+<?php if (isset($_GET['mensaje'])): ?>
+
+    <?php if ($_GET['mensaje'] === 'guardado'): ?>
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+
+            <i class="bi bi-check-circle"></i>
+
+            Producto guardado correctamente.
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        </div>
+
+    <?php elseif ($_GET['mensaje'] === 'error'): ?>
+
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+            <i class="bi bi-exclamation-triangle"></i>
+
+            No se pudo guardar el producto. Verifique los datos.
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        </div>
+
+    <?php endif; ?>
+
+<?php endif; ?>
+
                         <form action="guardar.php" method="POST">
 
                             <div class="row g-3">
@@ -92,7 +125,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         Unidad
                                     </label>
 
-                                    <select name="unidad_medida" class="form-select" required>
+                                    <select name="unidad_medida" style="color: #212529;" class="form-select" required>
 
                                         <option value="">Seleccione...</option>
 
@@ -122,6 +155,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         <option>L</option>
                                         <option>ml</option>
                                         <option>Galón</option>
+                                        <option>Pimpina</option>
 
                                     </select>
                                 </div>
@@ -177,8 +211,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 
 <?php
-require_once __DIR__ . '/../includes/footer.php';
-require_once __DIR__ . '/../includes/scripts.php';
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
 
 
 ?>

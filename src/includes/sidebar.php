@@ -21,10 +21,10 @@
                 </a>
                 <div class="collapse" id="ui-productos">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="../productos/index.php">Ver
+                        <li class="nav-item"> <a class="nav-link" href="../productos/productos.php">Ver
                                 Productos</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="../productos/agregar.php">Agregar
+                        <li class="nav-item"> <a class="nav-link" href="../productos/agregar-produ.php">Agregar
                                 Producto</a>
                         </li>
                     </ul>

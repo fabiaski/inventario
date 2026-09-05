@@ -123,7 +123,7 @@ try {
     // VOLVER AL LISTADO
     //========================================
 
-    header("Location: index.php");
+    header("Location: cotizacion.php");
 
     exit;
 

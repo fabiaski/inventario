@@ -505,7 +505,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
 
             <a
-                href="index.php"
+                href="productos.php"
                 class="btn btn-secondary"
             >
 

@@ -139,7 +139,7 @@ if ($stmt->execute()) {
 
     $conexion->close();
 
-    header("Location: index.php?mensaje=guardado");
+    header("Location: agregar-produ.php?mensaje=guardado");
     exit;
 
 }
@@ -302,7 +302,7 @@ if ($stmt->execute()) {
 
     $conexion->close();
 
-    header("Location: index.php?mensaje=guardado");
+    header("Location: agregar-produ-.php?mensaje=guardado");
     exit;
 
 }

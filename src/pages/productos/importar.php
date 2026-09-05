@@ -824,7 +824,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </button>
 
 
-                            <a href="index.php" class="btn btn-secondary">
+
+                            <a href="productos.php" class="btn btn-secondary">
 
                                 Cancelar
 

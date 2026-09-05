@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../config/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header("Location: index.php");
+    header("Location: productos.php");
     exit;
 }
 
@@ -38,7 +38,7 @@ $stmt->bind_param(
 
 if ($stmt->execute()) {
 
-    header("Location: index.php?mensaje=actualizado");
+    header("Location: productos.php?mensaje=actualizado");
     exit;
 
 } else {

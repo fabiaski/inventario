@@ -25,9 +25,10 @@ if ($resultado->num_rows == 0) {
 $producto = $resultado->fetch_assoc();
 
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
         <div class="col-md-10 p-4">
@@ -79,12 +80,12 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     Unidad
                                 </label>
 
-                                <select name="unidad_medida" class="form-select" required>
+                                <select name="unidad_medida" style="color: #212529;" class="form-select" required>
 
                                     <?php
                                     $unidades = [
                                         "Unidad","kg","g","lb","m","cm","mm",
-                                        "m²","m³","L","ml","Galón","Caja","Bulto","Rollo"
+                                        "m²","m³","L","ml","Galón","Caja","Bulto","Rollo","Pimpina"
                                     ];
 
                                     foreach($unidades as $unidad){
@@ -129,7 +130,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                         </button>
 
-                        <a href="index.php" class="btn btn-secondary">
+                        <a href="productos.php" class="btn btn-secondary">
 
                             Cancelar
 
