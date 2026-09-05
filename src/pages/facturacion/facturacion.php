@@ -31,9 +31,10 @@ if (!$resultado) {
 
 
 
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
@@ -63,7 +64,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                             </div>
 
-                            <a href="agregar.php" class="btn btn-secondary">
+                            <a href="agregar-fact.php" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Nuevo Contrato
                             </a>
@@ -185,7 +186,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                                                 <!-- EDITAR -->
 
-                                                <a href="editar-fac.php?id=<?= $contrato['id'] ?>"
+                                                <a href="editar.php?id=<?= $contrato['id'] ?>"
                                                     class="btn btn-warning btn-sm" title="Editar contrato">
 
                                                     <i class="bi bi-pencil"></i>
@@ -247,15 +248,12 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-
+      
 
 
     <?php
-require_once __DIR__ . '/../includes/footer.php';
-require_once __DIR__ . '/../includes/scripts.php';
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
 
 
 ?>

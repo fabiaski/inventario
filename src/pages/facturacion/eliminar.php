@@ -198,7 +198,7 @@ $stmtEliminar->close();
 //==================================================
 
 header(
-    'Location: index-fac.php'
+    'Location: facturacion.php'
 );
 
 exit;

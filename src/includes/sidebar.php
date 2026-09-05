@@ -67,9 +67,9 @@
                 </a>
                 <div class="collapse" id="form-Factura">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"><a class="nav-link" href="../facturacion/index.php">
+                        <li class="nav-item"><a class="nav-link" href="../facturacion/facturacion.php">
                                 Ver cotizaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../facturacion/agregar.php">
+                        <li class="nav-item"><a class="nav-link" href="../facturacion/agregar-fact.php">
                                 Nueva cotización</a></li>
                     </ul>
                 </div>
