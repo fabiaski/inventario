@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
@@ -400,660 +400,647 @@ $ganancias =
     - $totalValorFacturas;
 
 
-//==================================================
-// INCLUDES
-//==================================================
 
-include __DIR__ . '/../includes/header.php';
-
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
 
-<div class="admin-main">
+<div class="main-panel">
 
-    <?php
-    include __DIR__ . '/../includes/navbar.php';
-    ?>
+    <div class="content-wrapper">
+        <div class="row">
 
-    <div class="container-fluid px-3 px-lg-4 py-4">
-
-        <section class="panel">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-            <!--==================================================
-        ENCABEZADO
-        ==================================================-->
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
-            <div class="panel-header">
+                            <div>
 
+                                <h2 class="h5 mb-1 section-title">
 
-                <div>
+                                    <i class="bi bi-calendar3"></i>
 
-                    <h2 class="h5 mb-1 section-title">
+                                    Contratos del cuatrimestre
 
-                        <i class="bi bi-calendar3"></i>
-
-                        Contratos del cuatrimestre
-
-                    </h2>
+                                </h2>
 
 
-                    <p class="text-muted mb-0">
+                                <p class="text-muted mb-0">
 
-                        <?= htmlspecialchars(
+                                    <?= htmlspecialchars(
                         $periodo['nombre']
                     ) ?>
 
-                        -
+                                    -
 
-                        <?= $anio ?>
+                                    <?= $anio ?>
 
-                    </p>
+                                </p>
 
-                </div>
-
-
-                <div class="d-flex gap-2">
-
-                    <!-- VOLVER -->
-
-                    <a href="cuatrimestres.php?anio=<?= $anio ?>" class="btn btn-secondary">
-
-                        <i class="bi bi-arrow-left"></i>
-
-                        Volver
-
-                    </a>
+                            </div>
 
 
-                    <!-- EXPORTAR PDF -->
+                            <div class="d-flex gap-2">
 
-                    <a href="exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
-                        class="btn btn-danger" target="_blank">
+                                <!-- VOLVER -->
 
-                        <i class="bi bi-file-earmark-pdf"></i>
+                                <a href="cuatrimestres.php?anio=<?= $anio ?>" class="btn btn-secondary">
 
-                        Exportar PDF
+                                    <i class="bi bi-arrow-left"></i>
 
-                    </a>
+                                    Volver
 
-                </div>
-
-            </div>
+                                </a>
 
 
-            <hr>
+                                <!-- EXPORTAR PDF -->
+
+                                <a href="exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
+                                    class="btn btn-danger" target="_blank">
+
+                                    <i class="bi bi-file-earmark-pdf"></i>
+
+                                    Exportar PDF
+
+                                </a>
+
+                            </div>
+
+                        </div>
 
 
-            <!--==================================================
+                        <hr>
+
+
+                        <!--==================================================
 RESUMEN
 ==================================================-->
 
-            <div class="row g-3 mb-4">
+                        <div class="row g-3 mb-4">
 
 
-                <!--==================================================
+                            <!--==================================================
     TOTAL CONTRATOS
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Total contratos
+                                            Total contratos
 
-                            </small>
+                                        </small>
 
-                            <h4 class="mb-0">
+                                        <h4 class="mb-0">
 
-                                <?= $totalContratos ?>
+                                            <?= $totalContratos ?>
 
-                            </h4>
+                                        </h4>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     VALOR CONTRATOS
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Valor de contratos
+                                            Valor de contratos
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalValorContratos
                     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     IVA CONTRATOS
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                IVA de contratos
+                                            IVA de contratos
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalIvaContratos
                     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     VALOR FACTURAS
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Valor Facturas
+                                            Valor Facturas
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalValorFacturas
                     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     TOTAL IVA FACTURADO
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Total IVA Facturado
+                                            Total IVA Facturado
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalIvaFacturado
                     ) ?>
 
-                            </h5>
+                                        </h5>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
 
                         </div>
 
-                    </div>
 
-                </div>
-
-
-            </div>
-
-
-            <!--==================================================
+                        <!--==================================================
 INDICADORES
 ==================================================-->
 
-            <div class="row g-3 mb-4">
+                        <div class="row g-3 mb-4">
 
 
-                <!--==================================================
+                            <!--==================================================
     IVA IDEAL
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
-                            <i class="bi bi-percent text-primary"></i>
+                                    <div class="card-body">
+                                        <i class="bi bi-percent text-primary"></i>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                IVA Ideal
+                                            IVA Ideal
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $ivaIdeal
                     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                IVA del contrato × 2%
+                                            IVA del contrato × 2%
 
-                            </small>
+                                        </small>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     DIFERENCIA DE IVA
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <i class="bi bi-arrow-down-up text-warning"></i>
+                                        <i class="bi bi-arrow-down-up text-warning"></i>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Diferencia de IVA
+                                            Diferencia de IVA
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0 <?= $colorDiferenciaIva ?>">
+                                        <h5 class="mb-0 <?= $colorDiferenciaIva ?>">
 
-                                <?= dinero(
+                                            <?= dinero(
         $diferenciaIva
     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                IVA del contrato − Total IVA Facturado
+                                            IVA del contrato − Total IVA Facturado
 
-                            </small>
+                                        </small>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
-                </div>
+                            </div>
 
 
-                <!--==================================================
+                            <!--==================================================
     GANANCIAS
     ==================================================-->
 
-                <div class="col-md">
+                            <div class="col-md">
 
-                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <i class="bi bi-graph-up-arrow text-success"></i>
+                                        <i class="bi bi-graph-up-arrow text-success"></i>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Ganancias
+                                            Ganancias
 
-                            </small>
+                                        </small>
 
-                            <h5 class="mb-0">
+                                        <h5 class="mb-0">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $ganancias
                     ) ?>
 
-                            </h5>
+                                        </h5>
 
-                            <small class="text-muted">
+                                        <small class="text-muted">
 
-                                Valor del contrato − Valor Facturas
+                                            Valor del contrato − Valor Facturas
 
-                            </small>
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
 
                         </div>
 
-                    </div>
-
-                </div>
 
 
-            </div>
-
-
-
-            <!--==================================================
+                        <!--==================================================
         TABLA
         ==================================================-->
 
-            <div class="table-responsive">
+                        <div class="table-responsive">
 
 
-                <table class="table table-bordered table-hover align-middle">
+                            <table class="table table-bordered table-hover align-middle">
 
 
-                    <thead class="table-light">
+                                <thead class="table-light">
 
 
-                        <th>
-                            N° Contrato
-                        </th>
+                                    <th>
+                                        N° Contrato
+                                    </th>
 
-                        <th>
-                            Valor del Contrato
-                        </th>
+                                    <th>
+                                        Valor del Contrato
+                                    </th>
 
-                        <th>
-                            IVA del Contrato
-                        </th>
+                                    <th>
+                                        IVA del Contrato
+                                    </th>
 
-                        <th>
-                            Valor Facturas
-                        </th>
+                                    <th>
+                                        Valor Facturas
+                                    </th>
 
-                        <th>
-                            Total IVA Facturado
-                        </th>
+                                    <th>
+                                        Total IVA Facturado
+                                    </th>
 
-                        <th>
-                            Acciones
-                        </th>
+                                    <th>
+                                        Acciones
+                                    </th>
 
-                        </tr>
-
-
-                    </thead>
+                                    </tr>
 
 
-                    <tbody>
+                                </thead>
 
 
-                        <?php if (
+                                <tbody>
+
+
+                                    <?php if (
                 count($contratos) > 0
             ): ?>
 
 
-                        <?php foreach (
+                                    <?php foreach (
                     $contratos
                     as $contrato
                 ): ?>
 
 
-                        <tr>
+                                    <tr>
 
 
-                            <!--========================================
+                                        <!--========================================
                 NÚMERO CONTRATO
                 ========================================-->
 
-                            <td>
+                                        <td>
 
-                                <?= htmlspecialchars(
+                                            <?= htmlspecialchars(
                         $contrato[
                             'numero_contrato'
                         ]
                     ) ?>
 
-                            </td>
+                                        </td>
 
 
-                            <!--========================================
+                                        <!--========================================
                 VALOR CONTRATO
                 ========================================-->
 
-                            <td class="text-end">
+                                        <td class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $contrato[
                             'valor_contrato'
                         ]
                     ) ?>
 
-                            </td>
+                                        </td>
 
 
-                            <!--========================================
+                                        <!--========================================
                 IVA CONTRATO
                 ========================================-->
 
-                            <td class="text-end">
+                                        <td class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $contrato[
                             'iva_contrato'
                         ]
                     ) ?>
 
-                            </td>
+                                        </td>
 
 
-                            <!--========================================
+                                        <!--========================================
                 VALOR FACTURAS
                 ========================================-->
 
-                            <td class="text-end">
+                                        <td class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $contrato[
                             'valor_facturas'
                         ]
                     ) ?>
 
-                            </td>
+                                        </td>
 
 
-                            <!--========================================
+                                        <!--========================================
                 TOTAL IVA FACTURADO
                 ========================================-->
 
-                            <td class="text-end">
+                                        <td class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $contrato[
                             'iva_facturado'
                         ]
                     ) ?>
 
-                            </td>
+                                        </td>
 
 
-                            <!--========================================
+                                        <!--========================================
                 ACCIONES
                 ========================================-->
 
-                            <td>
+                                        <td>
 
-                                <a href="<?= BASE_URL ?>facturacion/ver.php?id=<?= $contrato['id'] ?>"
-                                    class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
-                                    title="Ver facturas del contrato">
+                                            <a href="<?= BASE_URL ?>facturacion/ver.php?id=<?= $contrato['id'] ?>"
+                                                class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
+                                                title="Ver facturas del contrato">
 
-                                    <i class="bi bi-eye"></i>
+                                                <i class="bi bi-eye"></i>
 
-                                    <span>Ver facturas</span>
+                                                <span>Ver facturas</span>
 
-                                </a>
+                                            </a>
 
-                            </td>
-
-
-                        </tr>
+                                        </td>
 
 
-                        <?php endforeach; ?>
+                                    </tr>
 
 
-                        <?php else: ?>
+                                    <?php endforeach; ?>
 
 
-                        <tr>
-
-                            <td colspan="6" class="text-center text-muted py-4">
-
-                                No hay contratos registrados
-                                en este cuatrimestre.
-
-                            </td>
-
-                        </tr>
+                                    <?php else: ?>
 
 
-                        <?php endif; ?>
+                                    <tr>
+
+                                        <td colspan="6" class="text-center text-muted py-4">
+
+                                            No hay contratos registrados
+                                            en este cuatrimestre.
+
+                                        </td>
+
+                                    </tr>
 
 
-                    </tbody>
+                                    <?php endif; ?>
 
 
-                    <!--==================================================
+                                </tbody>
+
+
+                                <!--==================================================
         TOTALES
         ==================================================-->
 
-                    <?php if (
+                                <?php if (
             count($contratos) > 0
         ): ?>
 
 
-                    <tfoot class="table-light">
+                                <tfoot class="table-light">
 
 
-                        <tr>
+                                    <tr>
 
 
-                            <th>
+                                        <th>
 
-                                TOTAL
+                                            TOTAL
 
-                            </th>
+                                        </th>
 
 
-                            <!-- TOTAL VALOR CONTRATOS -->
+                                        <!-- TOTAL VALOR CONTRATOS -->
 
-                            <th class="text-end">
+                                        <th class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalValorContratos
                     ) ?>
 
-                            </th>
+                                        </th>
 
 
-                            <!-- TOTAL IVA CONTRATOS -->
+                                        <!-- TOTAL IVA CONTRATOS -->
 
-                            <th class="text-end">
+                                        <th class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalIvaContratos
                     ) ?>
 
-                            </th>
+                                        </th>
 
 
-                            <!-- TOTAL VALOR FACTURAS -->
+                                        <!-- TOTAL VALOR FACTURAS -->
 
-                            <th class="text-end">
+                                        <th class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalValorFacturas
                     ) ?>
 
-                            </th>
+                                        </th>
 
 
-                            <!-- TOTAL IVA FACTURADO -->
+                                        <!-- TOTAL IVA FACTURADO -->
 
-                            <th class="text-end">
+                                        <th class="text-end">
 
-                                <?= dinero(
+                                            <?= dinero(
                         $totalIvaFacturado
                     ) ?>
 
-                            </th>
+                                        </th>
 
 
-                            <!-- ACCIONES -->
+                                        <!-- ACCIONES -->
 
-                            <th></th>
-
-
-                        </tr>
+                                        <th></th>
 
 
-                    </tfoot>
+                                    </tr>
 
 
-                    <?php endif; ?>
+                                </tfoot>
 
 
-                </table>
+                                <?php endif; ?>
 
 
-            </div>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
 
 
-        </section>
 
+                <?php
 
-    </div>
+include __DIR__ . '/../../includes/footer.php';
 
-
-    <?php
-
-include __DIR__ . '/../includes/footer.php';
-
-include __DIR__ . '/../includes/scripts.php';
+include __DIR__ . '/../../includes/scripts.php';
 
 ?>

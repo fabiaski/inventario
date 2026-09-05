@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
@@ -337,251 +337,67 @@ $totalSaldoDianAnual =
     - $totalIvaFacturadoAnual;
 
 
-//==================================================
-// INCLUDES
-//==================================================
 
-include __DIR__ . '/../includes/header.php';
 
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
 
-<div class="admin-main">
+<div class="main-panel">
 
-    <?php
-    include __DIR__ . '/../includes/navbar.php';
-    ?>
-     <div class="container-fluid px-3 px-lg-4 py-4">
-        
+    <div class="content-wrapper">
+        <div class="row">
 
-
-    <section class="panel">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-        <!--==================================================
-        ENCABEZADO
-        ==================================================-->
-
-        <div class="panel-header">
-
-
-            <div>
-
-                <h2 class="h5 mb-1 section-title">
-
-                    <i class="bi bi-bar-chart"></i>
-
-                    Resumen de Cuatrimestres
-
-                </h2>
-
-
-                <p class="text-muted mb-0">
-
-                    Resumen de contratos y facturación
-                    del año <?= $anio ?>.
-
-                </p>
-
-            </div>
-
-
-            <!-- CAMBIAR AÑO -->
-
-            <form method="GET" class="d-flex gap-2">
-
-                <input type="number" name="anio" value="<?= $anio ?>" min="2000" max="2100" class="form-control"
-                    style="width: 110px;">
-
-
-                <button type="submit" class="btn btn-primary">
-
-                    <i class="bi bi-search"></i>
-
-                    Ver año
-
-                </button>
-
-            </form>
-
-
-        </div>
-
-
-        <hr>
-
-
-
-
-        <!--==================================================
-        CUATRIMESTRES
-        ==================================================-->
-
-        <h5 class="mb-3">
-
-            <i class="bi bi-calendar-range"></i>
-
-            Cuatrimestres
-
-        </h5>
-
-
-        <div class="row g-4">
-
-
-            <?php foreach (
-                $datosCuatrimestres
-                as $numero => $datos
-            ): ?>
-
-
-            <div class="col-xl-4 col-lg-6">
-
-
-                <div class="card h-100 shadow-sm">
-
-
-                    <!-- CABECERA -->
-
-                    <div class="card-header bg-light">
-
-                        <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
                             <div>
 
-                                <strong>
 
-                                    <?= htmlspecialchars(
-                                            $datos['nombre']
-                                        ) ?>
+                                <h2 class="h5 mb-1 section-title">
 
-                                </strong>
+                                    <i class="bi bi-bar-chart"></i>
+
+                                    Resumen de Cuatrimestres
+
+                                </h2>
 
 
-                                <div class="text-muted small">
+                                <p class="text-muted mb-0">
 
-                                    <?= $anio ?>
+                                    Resumen de contratos y facturación
+                                    del año <?= $anio ?>.
 
-                                </div>
+                                </p>
 
                             </div>
 
 
-                            <span class="badge bg-primary">
+                            <!-- CAMBIAR AÑO -->
 
-                                <?= $datos[
-                                        'cantidad_contratos'
-                                    ] ?>
+                            <form method="GET" class="d-flex gap-2">
 
-                                contratos
-
-                            </span>
-
-                        </div>
-
-                    </div>
+                                <input type="number" name="anio" value="<?= $anio ?>" min="2000" max="2100"
+                                    class="form-control" style="width: 110px;">
 
 
-                    <!-- CONTENIDO -->
+                                <button type="submit" class="btn btn-primary">
 
-                    <div class="card-body">
+                                    <i class="bi bi-search"></i>
 
+                                    Ver año
 
-                        <!-- VALOR CONTRATOS -->
+                                </button>
 
-                        <div class="d-flex justify-content-between mb-3">
+                            </form>
 
-                            <span class="text-muted">
-
-                                Valor contratos
-
-                            </span>
-
-
-                            <strong>
-
-                                <?= dinero(
-                                        $datos[
-                                            'valor_contratos'
-                                        ]
-                                    ) ?>
-
-                            </strong>
-
-                        </div>
-
-
-                        <!-- IVA CONTRATOS -->
-
-                        <div class="d-flex justify-content-between mb-3">
-
-                            <span class="text-muted">
-
-                                IVA contratos
-
-                            </span>
-
-
-                            <strong>
-
-                                <?= dinero(
-                                        $datos[
-                                            'iva_contratos'
-                                        ]
-                                    ) ?>
-
-                            </strong>
-
-                        </div>
-
-
-                        <!-- VALOR FACTURAS -->
-
-                        <div class="d-flex justify-content-between mb-3">
-
-                            <span class="text-muted">
-
-                                Valor facturas
-
-                            </span>
-
-
-                            <strong>
-
-                                <?= dinero(
-                                        $datos[
-                                            'valor_facturas'
-                                        ]
-                                    ) ?>
-
-                            </strong>
-
-                        </div>
-
-
-                        <!-- IVA FACTURAS -->
-
-                        <div class="d-flex justify-content-between mb-3">
-
-                            <span class="text-muted">
-
-                                Total de IVA facturado
-
-                            </span>
-
-
-                            <strong>
-
-                                <?= dinero(
-                                        $datos[
-                                            'iva_facturado'
-
-                                        ]
-                                    ) ?>
-
-                            </strong>
 
                         </div>
 
@@ -589,69 +405,247 @@ include __DIR__ . '/../includes/sidebar.php';
                         <hr>
 
 
-                        <!-- SALDO DIAN -->
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-
-                            <span>
-
-                                <strong>
-                                    Saldo DIAN
-                                </strong>
-
-                            </span>
 
 
-                            <strong>
+                        <!--==================================================
+        CUATRIMESTRES
+        ==================================================-->
 
-                                <?= dinero(
+                        <h5 class="mb-3">
+
+                            <i class="bi bi-calendar-range"></i>
+
+                            Cuatrimestres
+
+                        </h5>
+
+
+                        <div class="row g-4">
+
+
+                            <?php foreach (
+                $datosCuatrimestres
+                as $numero => $datos
+            ): ?>
+
+
+                            <div class="col-xl-4 col-lg-6">
+
+
+                                <div class="card h-100 shadow-sm">
+
+
+                                    <!-- CABECERA -->
+
+                                    <div class="card-header bg-light">
+
+                                        <div class="d-flex justify-content-between align-items-center">
+
+                                            <div>
+
+                                                <strong>
+
+                                                    <?= htmlspecialchars(
+                                            $datos['nombre']
+                                        ) ?>
+
+                                                </strong>
+
+
+                                                <div class="text-muted small">
+
+                                                    <?= $anio ?>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <span class="badge bg-primary">
+
+                                                <?= $datos[
+                                        'cantidad_contratos'
+                                    ] ?>
+
+                                                contratos
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- CONTENIDO -->
+
+                                    <div class="card-body">
+
+
+                                        <!-- VALOR CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+
+                                                Valor contratos
+
+                                            </span>
+
+
+                                            <strong>
+
+                                                <?= dinero(
+                                        $datos[
+                                            'valor_contratos'
+                                        ]
+                                    ) ?>
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IVA CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+
+                                                IVA contratos
+
+                                            </span>
+
+
+                                            <strong>
+
+                                                <?= dinero(
+                                        $datos[
+                                            'iva_contratos'
+                                        ]
+                                    ) ?>
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- VALOR FACTURAS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+
+                                                Valor facturas
+
+                                            </span>
+
+
+                                            <strong>
+
+                                                <?= dinero(
+                                        $datos[
+                                            'valor_facturas'
+                                        ]
+                                    ) ?>
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IVA FACTURAS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+
+                                                Total de IVA facturado
+
+                                            </span>
+
+
+                                            <strong>
+
+                                                <?= dinero(
+                                        $datos[
+                                            'iva_facturado'
+
+                                        ]
+                                    ) ?>
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <hr>
+
+
+                                        <!-- SALDO DIAN -->
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                            <span>
+
+                                                <strong>
+                                                    Saldo DIAN
+                                                </strong>
+
+                                            </span>
+
+
+                                            <strong>
+
+                                                <?= dinero(
                                         $datos[
                                             'saldo_dian'
                                         ]
                                     ) ?>
 
-                            </strong>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- BOTÓN -->
+
+                                        <a href="ver_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $numero ?>"
+                                            class="btn btn-primary w-100">
+
+                                            <i class="bi bi-eye"></i>
+
+                                            Ver cuatrimestre
+
+                                        </a>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <?php endforeach; ?>
+
 
                         </div>
 
 
-                        <!-- BOTÓN -->
 
-                        <a href="ver_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $numero ?>"
-                            class="btn btn-primary w-100">
-
-                            <i class="bi bi-eye"></i>
-
-                            Ver cuatrimestre
-
-                        </a>
-
-
+                        </table>
                     </div>
-
-
                 </div>
-
-
             </div>
 
 
-            <?php endforeach; ?>
 
+    <?php
 
-        </div>
+include __DIR__ . '/../../includes/footer.php';
 
-
-    </section>
-
-
-</div>
-
-
-<?php
-
-include __DIR__ . '/../includes/footer.php';
-
-include __DIR__ . '/../includes/scripts.php';
+include __DIR__ . '/../../includes/scripts.php';
 
 ?>

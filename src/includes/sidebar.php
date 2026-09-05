@@ -88,7 +88,7 @@
                 </a>
                 <div class="collapse" id="charts">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="../../reportes/cuatrimestres.php">Cuatrimestres</a>
+                        <li class="nav-item"> <a class="nav-link" href="../reportes/cuatrimestres.php">Cuatrimestres</a>
                         </li>
                     </ul>
                 </div>
