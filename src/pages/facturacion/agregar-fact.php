@@ -33,7 +33,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
-                            <a href="index.php" class="btn btn-secondary">
+                            <a href="factura.php" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Volver
                             </a>
@@ -130,7 +130,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div class="d-flex justify-content-end gap-2">
 
-                                <a href="index.php" class="btn btn-secondary">
+                                <a href="factura.php" class="btn btn-secondary">
 
                                     <i class="bi bi-x-circle"></i>
 
