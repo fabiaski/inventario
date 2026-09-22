@@ -101,6 +101,13 @@
                 </a>
             </li>
 
+<li class="nav-item">
+    <a class="nav-link" href="../favores/favores.php">
+        <i class="menu-icon mdi mdi-handshake"></i>
+        <span class="menu-title">Favores</span>
+    </a>
+</li>
+
         </ul>
     </nav>
 

@@ -132,6 +132,8 @@ https://dashboard.ngrok.com/get-started/setup/windows
 
 
 
+
+
 1. Crear la tarea
 
 Abre CMD como administrador y ejecuta:
@@ -165,3 +167,28 @@ RESPUESTA META:
 {"messaging_product":"whatsapp"...}
 
 RESULTADO: ALERTA ENVIADA CORRECTAMENTE
+
+
+
+
+
+CREATE TABLE favores_personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    tipo ENUM('me_debe', 'le_debo') NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE favores_movimientos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    valor INT NOT NULL,
+    fecha DATE NOT NULL DEFAULT (CURRENT_DATE),
+    estado ENUM('pendiente', 'pagado') NOT NULL DEFAULT 'pendiente',
+
+    FOREIGN KEY (persona_id)
+        REFERENCES favores_personas(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
