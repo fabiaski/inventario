@@ -141,7 +141,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <!-- CLIENTE -->
 
-                                        <td>
+                                        <td style="
+                                                white-space: normal;
+                                                overflow-wrap: break-word;
+                                                word-break: normal;
+                                                line-height: 1.4; ">
+
 
                                             <div>
                                                 <?= htmlspecialchars($cotizacion['cliente']) ?>
@@ -151,10 +156,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                             <div class="text-muted small mt-1">
                                                 <?= nl2br(
-                htmlspecialchars(
-                    $cotizacion['observaciones']
-                )
-            ) ?>
+                                    htmlspecialchars(
+                                        $cotizacion['observaciones']
+                                    )
+                                ) ?>
                                             </div>
 
                                             <?php endif; ?>
@@ -351,11 +356,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
 
 
-    <?php
+        <?php
 
 include __DIR__ . '/../../includes/footer.php';
 

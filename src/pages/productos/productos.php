@@ -210,20 +210,20 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             </strong>
                                         </td>
 
-<td style="
+                                        <td style="
                             white-space: normal;
                             overflow-wrap: break-word;
                             word-break: normal;
                             line-height: 1.4; ">
 
-                                <?php if (!empty(trim($fila['proveedor']))): ?>
-                                <?= htmlspecialchars($fila['proveedor']) ?>
-                                <?php else: ?>
-                                <span class="text-secondary fst-italic">
-                                    Sin proveedor
-                                </span>
-                                <?php endif; ?>
-                            </td>
+                                            <?php if (!empty(trim($fila['proveedor']))): ?>
+                                            <?= htmlspecialchars($fila['proveedor']) ?>
+                                            <?php else: ?>
+                                            <span class="text-secondary fst-italic">
+                                                Sin proveedor
+                                            </span>
+                                            <?php endif; ?>
+                                        </td>
 
 
                                         <!-- UNIDAD -->

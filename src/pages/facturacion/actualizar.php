@@ -1,4 +1,3 @@
-```php
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
@@ -33,7 +32,37 @@ $objetoContrato = trim(
     $_POST['objeto_contrato'] ?? ''
 );
 
-$valorContrato = $_POST['valor_contrato'] ?? 0;
+$valorContrato = trim(
+    $_POST['valor_contrato'] ?? ''
+);
+
+
+//==================================================
+// RECIBIR INFORMACIÓN TRIBUTARIA
+//==================================================
+
+$tieneIva =
+    isset($_POST['tiene_iva'])
+    ? 1
+    : 0;
+
+$valorIva = null;
+
+
+$tieneImpoconsumo =
+    isset($_POST['tiene_impoconsumo'])
+    ? 1
+    : 0;
+
+$valorImpoconsumo = null;
+
+
+$tieneRetencion =
+    isset($_POST['tiene_retencion'])
+    ? 1
+    : 0;
+
+$valorRetencion = null;
 
 
 //==================================================
@@ -72,19 +101,178 @@ if ($objetoContrato === '') {
 }
 
 
-if (!is_numeric($valorContrato)) {
+//==================================================
+// LIMPIAR VALOR DEL CONTRATO
+//==================================================
+
+$valorContrato =
+    str_replace(
+        ['.', ','],
+        '',
+        $valorContrato
+    );
+
+
+if (
+    $valorContrato === ''
+    || !is_numeric($valorContrato)
+) {
 
     exit('El valor del contrato no es válido.');
 
 }
 
 
-$valorContrato = (float) $valorContrato;
+$valorContrato =
+    (float) $valorContrato;
 
 
 if ($valorContrato < 0) {
 
-    exit('El valor del contrato no puede ser negativo.');
+    exit(
+        'El valor del contrato no puede ser negativo.'
+    );
+
+}
+
+
+//==================================================
+// VALIDAR IVA
+//==================================================
+
+if ($tieneIva) {
+
+    $valorIva =
+        trim(
+            $_POST['valor_iva'] ?? ''
+        );
+
+
+    $valorIva =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorIva
+        );
+
+
+    if (
+        $valorIva === ''
+        || !is_numeric($valorIva)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para el IVA.'
+        );
+
+    }
+
+
+    $valorIva =
+        (float) $valorIva;
+
+
+    if ($valorIva < 0) {
+
+        exit(
+            'El valor del IVA no puede ser negativo.'
+        );
+
+    }
+
+}
+
+
+//==================================================
+// VALIDAR IMPOCONSUMO
+//==================================================
+
+if ($tieneImpoconsumo) {
+
+    $valorImpoconsumo =
+        trim(
+            $_POST['valor_impoconsumo'] ?? ''
+        );
+
+
+    $valorImpoconsumo =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorImpoconsumo
+        );
+
+
+    if (
+        $valorImpoconsumo === ''
+        || !is_numeric($valorImpoconsumo)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para el Impoconsumo.'
+        );
+
+    }
+
+
+    $valorImpoconsumo =
+        (float) $valorImpoconsumo;
+
+
+    if ($valorImpoconsumo < 0) {
+
+        exit(
+            'El valor del Impoconsumo no puede ser negativo.'
+        );
+
+    }
+
+}
+
+
+//==================================================
+// VALIDAR RETENCIÓN
+//==================================================
+
+if ($tieneRetencion) {
+
+    $valorRetencion =
+        trim(
+            $_POST['valor_retencion'] ?? ''
+        );
+
+
+    $valorRetencion =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorRetencion
+        );
+
+
+    if (
+        $valorRetencion === ''
+        || !is_numeric($valorRetencion)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para la Retención.'
+        );
+
+    }
+
+
+    $valorRetencion =
+        (float) $valorRetencion;
+
+
+    if ($valorRetencion < 0) {
+
+        exit(
+            'El valor de la Retención no puede ser negativo.'
+        );
+
+    }
 
 }
 
@@ -100,7 +288,8 @@ $sqlExiste = "
 ";
 
 
-$stmtExiste = $conexion->prepare($sqlExiste);
+$stmtExiste =
+    $conexion->prepare($sqlExiste);
 
 
 if (!$stmtExiste) {
@@ -122,14 +311,17 @@ $stmtExiste->bind_param(
 $stmtExiste->execute();
 
 
-$resultado = $stmtExiste->get_result();
+$resultado =
+    $stmtExiste->get_result();
 
 
 if (!$resultado->fetch_assoc()) {
 
     $stmtExiste->close();
 
-    exit('El contrato no existe.');
+    exit(
+        'El contrato no existe.'
+    );
 
 }
 
@@ -147,14 +339,21 @@ $sqlActualizar = "
         numero_contrato = ?,
         fecha = ?,
         objeto_contrato = ?,
-        valor_contrato = ?
+        valor_contrato = ?,
+        tiene_iva = ?,
+        valor_iva = ?,
+        tiene_impoconsumo = ?,
+        valor_impoconsumo = ?,
+        tiene_retencion = ?,
+        valor_retencion = ?
     WHERE id = ?
 ";
 
 
-$stmtActualizar = $conexion->prepare(
-    $sqlActualizar
-);
+$stmtActualizar =
+    $conexion->prepare(
+        $sqlActualizar
+    );
 
 
 if (!$stmtActualizar) {
@@ -167,12 +366,22 @@ if (!$stmtActualizar) {
 }
 
 
+//==================================================
+// ASIGNAR VALORES
+//==================================================
+
 $stmtActualizar->bind_param(
-    "sssdi",
+    "sssdidididi",
     $numeroContrato,
     $fecha,
     $objetoContrato,
     $valorContrato,
+    $tieneIva,
+    $valorIva,
+    $tieneImpoconsumo,
+    $valorImpoconsumo,
+    $tieneRetencion,
+    $valorRetencion,
     $contratoId
 );
 
@@ -183,7 +392,8 @@ $stmtActualizar->bind_param(
 
 if (!$stmtActualizar->execute()) {
 
-    $error = $stmtActualizar->error;
+    $error =
+        $stmtActualizar->error;
 
     $stmtActualizar->close();
 

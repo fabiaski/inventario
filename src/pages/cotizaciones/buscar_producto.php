@@ -9,7 +9,9 @@ SELECT
     id,
     producto,
     unidad_medida,
-    precio
+    precio,
+        proveedor,
+        fecha_cotizacion
 FROM productos
 WHERE producto LIKE ?
 ORDER BY producto

@@ -24,11 +24,16 @@ $sqlContrato = "
         numero_contrato,
         objeto_contrato,
         valor_contrato,
+        tiene_iva,
+        valor_iva,
+        tiene_impoconsumo,
+        valor_impoconsumo,
+        tiene_retencion,
+        valor_retencion,
         fecha
     FROM contratos
     WHERE id = ?
 ";
-
 
 $stmtContrato = $conexion->prepare($sqlContrato);
 
@@ -39,26 +44,20 @@ if (!$stmtContrato) {
     );
 }
 
-
 $stmtContrato->bind_param(
     "i",
     $contratoId
 );
 
-
 $stmtContrato->execute();
-
 
 $resultadoContrato =
     $stmtContrato->get_result();
 
-
 $contrato =
     $resultadoContrato->fetch_assoc();
 
-
 $stmtContrato->close();
-
 
 if (!$contrato) {
     exit('El contrato no existe.');
@@ -75,19 +74,20 @@ $sqlFacturas = "
         proveedor,
         numero_factura,
         valor,
-        valor_sin_iva,
-        porcentaje_iva,
+        tiene_iva,
         valor_iva,
+        tiene_impoconsumo,
+        valor_impoconsumo,
+        tiene_retencion,
+        valor_retencion,
         observacion
     FROM facturas
     WHERE contrato_id = ?
     ORDER BY id ASC
 ";
 
-
 $stmtFacturas =
     $conexion->prepare($sqlFacturas);
-
 
 if (!$stmtFacturas) {
     exit(
@@ -96,22 +96,17 @@ if (!$stmtFacturas) {
     );
 }
 
-
 $stmtFacturas->bind_param(
     "i",
     $contratoId
 );
 
-
 $stmtFacturas->execute();
-
 
 $resultadoFacturas =
     $stmtFacturas->get_result();
 
-
 $facturas = [];
-
 
 while (
     $factura =
@@ -119,9 +114,7 @@ while (
 ) {
 
     $facturas[] = $factura;
-
 }
-
 
 $stmtFacturas->close();
 
@@ -132,19 +125,15 @@ $stmtFacturas->close();
 
 $soportesPorFactura = [];
 
-
 if (!empty($facturas)) {
 
     $idsFacturas = [];
-
 
     foreach ($facturas as $factura) {
 
         $idsFacturas[] =
             (int) $factura['id'];
-
     }
-
 
     $placeholders =
         implode(
@@ -156,13 +145,11 @@ if (!empty($facturas)) {
             )
         );
 
-
     $tipos =
         str_repeat(
             'i',
             count($idsFacturas)
         );
-
 
     $sqlSoportes = "
         SELECT
@@ -175,12 +162,10 @@ if (!empty($facturas)) {
         ORDER BY id ASC
     ";
 
-
     $stmtSoportes =
         $conexion->prepare(
             $sqlSoportes
         );
-
 
     if ($stmtSoportes) {
 
@@ -189,13 +174,10 @@ if (!empty($facturas)) {
             ...$idsFacturas
         );
 
-
         $stmtSoportes->execute();
-
 
         $resultadoSoportes =
             $stmtSoportes->get_result();
-
 
         while (
             $soporte =
@@ -204,7 +186,6 @@ if (!empty($facturas)) {
 
             $facturaSoporteId =
                 (int) $soporte['factura_id'];
-
 
             if (
                 !isset(
@@ -217,21 +198,15 @@ if (!empty($facturas)) {
                 $soportesPorFactura[
                     $facturaSoporteId
                 ] = [];
-
             }
-
 
             $soportesPorFactura[
                 $facturaSoporteId
             ][] = $soporte;
-
         }
 
-
         $stmtSoportes->close();
-
     }
-
 }
 
 
@@ -250,30 +225,6 @@ function dinero($valor)
 }
 
 
-function porcentaje($valor)
-{
-    $valor = (float) $valor;
-
-    if ($valor == floor($valor)) {
-
-        return number_format(
-            $valor,
-            0,
-            ',',
-            '.'
-        ) . '%';
-
-    }
-
-    return number_format(
-        $valor,
-        2,
-        ',',
-        '.'
-    ) . '%';
-}
-
-
 //==================================================
 // CÁLCULOS
 //==================================================
@@ -282,95 +233,84 @@ $valorContrato =
     (float) $contrato['valor_contrato'];
 
 
-// Valor del contrato con IVA 19%
-// Según lo definido:
-// valor contrato / 1.19
+//==================================================
+// VALORES TRIBUTARIOS DEL CONTRATO
+//==================================================
 
-$valorContratoSinIva =
-    $valorContrato / 1.19;
+$ivaContrato = 0;
+$impoconsumoContrato = 0;
+$retencionContrato = 0;
 
+if ((int) $contrato['tiene_iva'] === 1) {
 
-// IVA incluido en el contrato
+    $ivaContrato =
+        (float) ($contrato['valor_iva'] ?? 0);
+}
 
-$ivaContrato =
-    $valorContrato
-    - $valorContratoSinIva;
+if ((int) $contrato['tiene_impoconsumo'] === 1) {
 
+    $impoconsumoContrato =
+        (float) ($contrato['valor_impoconsumo'] ?? 0);
+}
 
-// Total de facturas
+if ((int) $contrato['tiene_retencion'] === 1) {
 
-$totalFacturas = 0;
-
-
-// IVA agrupado por porcentaje
-
-$ivaPorcentaje = [];
-
-
-foreach ($facturas as $factura) {
-
-    $valorFactura =
-        (float) $factura['valor'];
-
-    $ivaFactura =
-        (float) $factura['valor_iva'];
-
-    $porcentajeIva =
-        (int) $factura['porcentaje_iva'];
-
-
-    $totalFacturas +=
-        $valorFactura;
-
-
-    if (
-        !isset(
-            $ivaPorcentaje[
-                $porcentajeIva
-            ]
-        )
-    ) {
-
-        $ivaPorcentaje[
-            $porcentajeIva
-        ] = 0;
-
-    }
-
-
-    $ivaPorcentaje[
-        $porcentajeIva
-    ] += $ivaFactura;
-
+    $retencionContrato =
+        (float) ($contrato['valor_retencion'] ?? 0);
 }
 
 
-// IVA TOTAL DE TODAS LAS FACTURAS
+//==================================================
+// TOTALES DE FACTURAS
+//==================================================
 
-$totalIvaFacturado = array_sum(
-    $ivaPorcentaje
-);
+$totalFacturas = 0;
+$totalIvaFacturado = 0;
+$totalImpoconsumoFacturado = 0;
+$totalRetencionFacturada = 0;
+
+foreach ($facturas as $factura) {
+
+    $totalFacturas +=
+        (float) $factura['valor'];
+
+    if ((int) $factura['tiene_iva'] === 1) {
+
+        $totalIvaFacturado +=
+            (float) ($factura['valor_iva'] ?? 0);
+    }
+
+    if ((int) $factura['tiene_impoconsumo'] === 1) {
+
+        $totalImpoconsumoFacturado +=
+            (float) ($factura['valor_impoconsumo'] ?? 0);
+    }
+
+    if ((int) $factura['tiene_retencion'] === 1) {
+
+        $totalRetencionFacturada +=
+            (float) ($factura['valor_retencion'] ?? 0);
+    }
+}
 
 
-// IVA 19%
+//==================================================
+// SALDOS
+//==================================================
 
-$ivaFacturas19 =
-    $ivaPorcentaje[19] ?? 0;
+$saldoIva =
+    $ivaContrato - $totalIvaFacturado;
 
+$saldoImpoconsumo =
+    $impoconsumoContrato - $totalImpoconsumoFacturado;
 
-// SALDO DIAN
-// Se mantiene únicamente con el IVA del 19%
-
-$saldoDian =
-    $ivaContrato
-    - $totalIvaFacturado;
-// Ordenar porcentajes
-
-ksort($ivaPorcentaje);
+$saldoRetencion =
+    $retencionContrato - $totalRetencionFacturada;
 
 
-
-
+//==================================================
+// INCLUDES
+//==================================================
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -382,33 +322,45 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 <div class="main-panel">
 
     <div class="content-wrapper">
+
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
+
                 <div class="card">
 
-
                     <div class="card-body">
+
+
+                        <!--==================================================
+                        ENCABEZADO
+                        ==================================================-->
+
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
                             <div>
 
-                                <h2 class=" mb-1 section-title">
+                                <h2 class="mb-1 section-title">
+
                                     <i class="bi bi-receipt"></i>
+
                                     Facturación
+
                                 </h2>
 
                                 <p class="text-muted mb-0">
-                                    Información y facturas del contrato.
-                                </p>
 
+                                    Información y facturas del contrato.
+
+                                </p>
 
                             </div>
 
 
                             <div class="d-flex gap-2">
 
-                                <a href="facturacion.php" class="btn btn-secondary">
+                                <a href="facturacion.php"
+                                    class="btn btn-secondary">
 
                                     <i class="bi bi-arrow-left"></i>
 
@@ -417,7 +369,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </a>
 
 
-                                <a href="agregar_factura.php?id=<?= $contratoId ?>" class="btn btn-success">
+                                <a href="agregar_factura.php?id=<?= $contratoId ?>"
+                                    class="btn btn-success">
 
                                     <i class="bi bi-plus-circle"></i>
 
@@ -433,17 +386,23 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         <hr>
 
 
+                        <!--==================================================
+                        INFORMACIÓN DEL CONTRATO
+                        ==================================================-->
+
                         <div class="card shadow-sm mb-4">
 
                             <div class="card-body">
 
-
                                 <div class="row g-4">
 
+
+                                    <!-- NÚMERO DE CONTRATO -->
 
                                     <div class="col-md-4">
 
                                         <div class="border rounded p-3">
+
                                             <small class="text-muted">
 
                                                 Número de Contrato
@@ -453,8 +412,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             <div class="fw-bold">
 
                                                 <?= htmlspecialchars(
-                                $contrato['numero_contrato']
-                            ) ?>
+                                                    $contrato['numero_contrato']
+                                                ) ?>
 
                                             </div>
 
@@ -462,52 +421,57 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     </div>
 
+
                                     <!-- FECHA -->
 
                                     <div class="col-md-4">
+
                                         <div class="border rounded p-3">
 
-                                        <small class="text-muted">
+                                            <small class="text-muted">
 
-                                            Fecha
+                                                Fecha
 
-                                        </small>
+                                            </small>
 
-                                        <div class="fw-bold">
+                                            <div class="fw-bold">
 
-                                            <?= date(
-                                'd/m/Y',
-                                strtotime(
-                                    $contrato['fecha']
-                                )
-                            ) ?>
+                                                <?= date(
+                                                    'd/m/Y',
+                                                    strtotime(
+                                                        $contrato['fecha']
+                                                    )
+                                                ) ?>
+
+                                            </div>
 
                                         </div>
 
-                                    </div>
                                     </div>
 
 
                                     <!-- VALOR -->
 
                                     <div class="col-md-4">
+
                                         <div class="border rounded p-3">
 
-                                        <small class="text-muted">
+                                            <small class="text-muted">
 
-                                            Valor del Contrato
+                                                Valor del Contrato
 
-                                        </small>
+                                            </small>
 
-                                        <div class="fw-bold">
+                                            <div class="fw-bold">
 
-                                            <?= dinero(
-                                $valorContrato
-                            ) ?>
+                                                <?= dinero(
+                                                    $valorContrato
+                                                ) ?>
+
+                                            </div>
 
                                         </div>
 
-                                    </div>
                                     </div>
 
 
@@ -515,30 +479,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="col-12">
 
-                                                                            <div class="border rounded p-3">
+                                        <div class="border rounded p-3">
 
-                                        <small class="text-muted">
+                                            <small class="text-muted">
 
-                                            Objeto del Contrato
+                                                Objeto del Contrato
 
-                                        </small>
+                                            </small>
 
-                                        <div>
+                                            <div>
 
-                                            <?= nl2br(
-                                htmlspecialchars(
-                                    $contrato['objeto_contrato']
-                                )
-                            ) ?>
+                                                <?= nl2br(
+                                                    htmlspecialchars(
+                                                        $contrato['objeto_contrato']
+                                                    )
+                                                ) ?>
+
+                                            </div>
 
                                         </div>
 
                                     </div>
 
 
-                                    </div>
                                 </div>
-
 
                             </div>
 
@@ -546,8 +510,114 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                         <!--==================================================
-        RESUMEN
-        ==================================================-->
+                        INFORMACIÓN TRIBUTARIA DEL CONTRATO
+                        ==================================================-->
+
+                        <div class="card shadow-sm mb-4">
+
+                            <div class="card-header">
+
+                                <strong>
+
+                                    <i class="bi bi-percent"></i>
+
+                                    Información tributaria del contrato
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="card-body">
+
+                                <div class="row g-3">
+
+
+                                    <!-- IVA -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                IVA
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_iva'] === 1
+                                                    ? dinero($ivaContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- IMPOCONSUMO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Impoconsumo
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_impoconsumo'] === 1
+                                                    ? dinero($impoconsumoContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- RETENCIÓN -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Retención
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_retencion'] === 1
+                                                    ? dinero($retencionContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!--==================================================
+                        RESUMEN
+                        ==================================================-->
 
                         <div class="card shadow-sm mb-4">
 
@@ -565,7 +635,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                             <div class="card-body">
-
 
                                 <div class="row g-3">
 
@@ -585,58 +654,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             <h5 class="mb-0">
 
                                                 <?= dinero(
-                                    $valorContrato
-                                ) ?>
-
-                                            </h5>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    <!-- CONTRATO SIN IVA -->
-
-                                    <div class="col-md-4">
-
-                                        <div class="border rounded p-3">
-
-                                            <small class="text-muted">
-
-                                                Valor del Contrato sin IVA 19%
-
-                                            </small>
-
-                                            <h5 class="mb-0">
-
-                                                <?= dinero(
-                                    $valorContratoSinIva
-                                ) ?>
-
-                                            </h5>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    <!-- IVA CONTRATO -->
-
-                                    <div class="col-md-4">
-
-                                        <div class="border rounded p-3">
-
-                                            <small class="text-muted">
-
-                                                IVA del Contrato
-
-                                            </small>
-
-                                            <h5 class="mb-0">
-
-                                                <?= dinero(
-                                    $ivaContrato
-                                ) ?>
+                                                    $valorContrato
+                                                ) ?>
 
                                             </h5>
 
@@ -660,8 +679,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             <h5 class="mb-0">
 
                                                 <?= dinero(
-                                    $totalFacturas
-                                ) ?>
+                                                    $totalFacturas
+                                                ) ?>
 
                                             </h5>
 
@@ -669,7 +688,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     </div>
 
-                                    <!-- TOTAL IVA FACTURADO -->
+
+                                    <!-- SALDO CONTRATO -->
 
                                     <div class="col-md-4">
 
@@ -677,15 +697,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                             <small class="text-muted">
 
-                                                Total de IVA Facturado
+                                                Saldo del Contrato
 
                                             </small>
 
                                             <h5 class="mb-0">
 
                                                 <?= dinero(
-                $totalIvaFacturado
-            ) ?>
+                                                    $valorContrato - $totalFacturas
+                                                ) ?>
 
                                             </h5>
 
@@ -693,7 +713,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     </div>
 
-                                    <!-- SALDO DIAN -->
+
+                                    <!-- IVA CONTRATO -->
 
                                     <div class="col-md-4">
 
@@ -701,15 +722,215 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                             <small class="text-muted">
 
-                                                Saldo DIAN
+                                                IVA del Contrato
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_iva'] === 1
+                                                    ? dinero($ivaContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- IVA FACTURADO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                IVA Facturado
 
                                             </small>
 
                                             <h5 class="mb-0">
 
                                                 <?= dinero(
-                                    $saldoDian
-                                ) ?>
+                                                    $totalIvaFacturado
+                                                ) ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- SALDO IVA -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Saldo IVA
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= dinero(
+                                                    $saldoIva
+                                                ) ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- IMPOCONSUMO CONTRATO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Impoconsumo del Contrato
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_impoconsumo'] === 1
+                                                    ? dinero($impoconsumoContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- IMPOCONSUMO FACTURADO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Impoconsumo Facturado
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= dinero(
+                                                    $totalImpoconsumoFacturado
+                                                ) ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- SALDO IMPOCONSUMO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Saldo Impoconsumo
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= dinero(
+                                                    $saldoImpoconsumo
+                                                ) ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- RETENCIÓN CONTRATO -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Retención del Contrato
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= (int) $contrato['tiene_retencion'] === 1
+                                                    ? dinero($retencionContrato)
+                                                    : 'No aplica' ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- RETENCIÓN FACTURADA -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Retención Facturada
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= dinero(
+                                                    $totalRetencionFacturada
+                                                ) ?>
+
+                                            </h5>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- SALDO RETENCIÓN -->
+
+                                    <div class="col-md-4">
+
+                                        <div class="border rounded p-3">
+
+                                            <small class="text-muted">
+
+                                                Saldo Retención
+
+                                            </small>
+
+                                            <h5 class="mb-0">
+
+                                                <?= dinero(
+                                                    $saldoRetencion
+                                                ) ?>
 
                                             </h5>
 
@@ -719,73 +940,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                 </div>
-
-
-                                <!--==================================================
-                IVA POR PORCENTAJE
-                ==================================================-->
-
-                                <?php if (!empty($ivaPorcentaje)): ?>
-
-                                <hr>
-
-                                <h6>
-
-                                    IVA de Facturas
-
-                                </h6>
-
-
-                                <div class="row g-3">
-
-
-                                    <?php
-
-                        ksort(
-                            $ivaPorcentaje,
-                            SORT_NUMERIC
-                        );
-
-                        ?>
-
-
-                                    <?php foreach (
-                            $ivaPorcentaje
-                            as $porcentaje => $valor
-                        ): ?>
-
-
-                                    <div class="col-md-4">
-
-                                        <div class="border rounded p-3">
-
-                                            <small class="text-muted">
-
-                                                IVA de Facturas
-                                                <?= $porcentaje ?>%
-
-                                            </small>
-
-                                            <h5 class="mb-0">
-
-                                                <?= dinero(
-                                            $valor
-                                        ) ?>
-
-                                            </h5>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    <?php endforeach; ?>
-
-
-                                </div>
-
-                                <?php endif; ?>
-
 
                             </div>
 
@@ -793,8 +947,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                         <!--==================================================
-        FACTURAS
-        ==================================================-->
+                        FACTURAS
+                        ==================================================-->
 
                         <div class="card">
 
@@ -843,15 +997,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 </th>
 
                                                 <th>
-                                                    Valor sin IVA
-                                                </th>
-
-                                                <th>
-                                                    % IVA
-                                                </th>
-
-                                                <th>
                                                     IVA
+                                                </th>
+
+                                                <th>
+                                                    Impoconsumo
+                                                </th>
+
+                                                <th>
+                                                    Retención
                                                 </th>
 
                                                 <th>
@@ -875,9 +1029,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                             <?php foreach (
-                                    $facturas
-                                    as $indice => $factura
-                                ): ?>
+                                                $facturas
+                                                as $indice => $factura
+                                            ): ?>
 
 
                                             <tr>
@@ -897,10 +1051,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <td>
 
                                                     <?= htmlspecialchars(
-                                                $factura[
-                                                    'proveedor'
-                                                ]
-                                            ) ?>
+                                                        $factura['proveedor']
+                                                    ) ?>
 
                                                 </td>
 
@@ -910,10 +1062,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <td>
 
                                                     <?= htmlspecialchars(
-                                                $factura[
-                                                    'numero_factura'
-                                                ]
-                                            ) ?>
+                                                        $factura['numero_factura']
+                                                    ) ?>
 
                                                 </td>
 
@@ -923,49 +1073,41 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <td class="text-end">
 
                                                     <?= dinero(
-                                                $factura[
-                                                    'valor'
-                                                ]
-                                            ) ?>
-
-                                                </td>
-
-
-                                                <!-- SIN IVA -->
-
-                                                <td class="text-end">
-
-                                                    <?= dinero(
-                                                $factura[
-                                                    'valor_sin_iva'
-                                                ]
-                                            ) ?>
+                                                        $factura['valor']
+                                                    ) ?>
 
                                                 </td>
 
 
                                                 <!-- IVA -->
 
-                                                <td class="text-center">
+                                                <td class="text-end">
 
-                                                    <?= porcentaje(
-                                                $factura[
-                                                    'porcentaje_iva'
-                                                ]
-                                            ) ?>
+                                                    <?= (int) $factura['tiene_iva'] === 1
+                                                        ? dinero($factura['valor_iva'])
+                                                        : 'No aplica' ?>
 
                                                 </td>
 
 
-                                                <!-- VALOR IVA -->
+                                                <!-- IMPOCONSUMO -->
 
                                                 <td class="text-end">
 
-                                                    <?= dinero(
-                                                $factura[
-                                                    'valor_iva'
-                                                ]
-                                            ) ?>
+                                                    <?= (int) $factura['tiene_impoconsumo'] === 1
+                                                        ? dinero($factura['valor_impoconsumo'])
+                                                        : 'No aplica' ?>
+
+                                                </td>
+
+
+                                                <!-- RETENCIÓN -->
+
+                                                <td class="text-end">
+
+                                                    <?= (int) $factura['tiene_retencion'] === 1
+                                                        ? dinero($factura['valor_retencion'])
+                                                        : 'No aplica' ?>
 
                                                 </td>
 
@@ -975,17 +1117,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <td>
 
                                                     <?= !empty(
-                                                $factura[
-                                                    'observacion'
-                                                ]
-                                            )
-                                                ? htmlspecialchars(
-                                                    $factura[
-                                                        'observacion'
-                                                    ]
-                                                )
-                                                : '<span class="text-muted">—</span>'
-                                            ?>
+                                                        $factura['observacion']
+                                                    )
+                                                        ? htmlspecialchars(
+                                                            $factura['observacion']
+                                                        )
+                                                        : '<span class="text-muted">—</span>'
+                                                    ?>
 
                                                 </td>
 
@@ -996,52 +1134,49 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                     <?php
 
-                                            $idFactura =
-                                                (int) $factura['id'];
+                                                    $idFactura =
+                                                        (int) $factura['id'];
 
-                                            $soportes =
-                                                $soportesPorFactura[
-                                                    $idFactura
-                                                ] ?? [];
+                                                    $soportes =
+                                                        $soportesPorFactura[
+                                                            $idFactura
+                                                        ] ?? [];
 
-                                            ?>
+                                                    ?>
 
 
                                                     <?php if (
-                                                !empty(
-                                                    $soportes
-                                                )
-                                            ): ?>
+                                                        !empty($soportes)
+                                                    ): ?>
 
 
                                                     <div class="d-flex flex-column gap-1">
 
                                                         <?php foreach (
-                                                        $soportes
-                                                        as $soporte
-                                                    ): ?>
+                                                            $soportes
+                                                            as $soporte
+                                                        ): ?>
+
+
+                                                        <?php
+
+                                                        $extension =
+                                                            strtolower(
+                                                                pathinfo(
+                                                                    $soporte['archivo'],
+                                                                    PATHINFO_EXTENSION
+                                                                )
+                                                            );
+
+                                                        ?>
 
 
                                                         <a href="../uploads/soportes_facturas/<?= rawurlencode(
-                                                                $soporte[
-                                                                    'archivo'
-                                                                ]
-                                                            ) ?>" target="_blank" class="text-decoration-none"
+                                                                $soporte['archivo']
+                                                            ) ?>"
+                                                            target="_blank"
+                                                            class="text-decoration-none"
                                                             title="Abrir soporte">
-
-                                                            <?php
-
-                                                            $extension =
-                                                                strtolower(
-                                                                    pathinfo(
-                                                                        $soporte[
-                                                                            'archivo'
-                                                                        ],
-                                                                        PATHINFO_EXTENSION
-                                                                    )
-                                                                );
-
-                                                            ?>
 
 
                                                             <?php if (
@@ -1058,9 +1193,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                                             <?= htmlspecialchars(
-                                                                $soporte[
-                                                                    'archivo'
-                                                                ]
+                                                                $soporte['archivo']
                                                             ) ?>
 
                                                         </a>
@@ -1083,7 +1216,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                     <?php endif; ?>
 
-
                                                 </td>
 
 
@@ -1097,7 +1229,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                         <!-- EDITAR -->
 
                                                         <a href="editar_factura.php?id=<?= $factura['id'] ?>"
-                                                            class="btn btn-warning btn-sm" title="Editar factura">
+                                                            class="btn btn-warning btn-sm"
+                                                            title="Editar factura">
 
                                                             <i class="bi bi-pencil"></i>
 
@@ -1107,12 +1240,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                         <!-- ELIMINAR -->
 
                                                         <a href="eliminar_factura.php?id=<?= $factura['id'] ?>"
-                                                            class="btn btn-danger btn-sm" title="Eliminar factura"
-                                                            onclick="
-                                                        return confirm(
-                                                            '¿Está seguro de eliminar esta factura?'
-                                                        );
-                                                    ">
+                                                            class="btn btn-danger btn-sm"
+                                                            title="Eliminar factura"
+                                                            onclick="return confirm('¿Está seguro de eliminar esta factura?');">
 
                                                             <i class="bi bi-trash"></i>
 
@@ -1163,15 +1293,23 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         </div>
 
 
-                        </section>
-
                     </div>
 
+                </div>
 
-                    <?php
+            </div>
 
-include __DIR__ . '/../../includes/footer.php';
+        </div>
 
-include __DIR__ . '/../../includes/scripts.php';
+    </div>
 
-?>
+
+    <?php
+
+    include __DIR__ . '/../../includes/footer.php';
+
+    include __DIR__ . '/../../includes/scripts.php';
+
+    ?>
+
+</div>

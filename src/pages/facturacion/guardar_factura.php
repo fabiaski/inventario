@@ -18,545 +18,367 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $contratoId = (int) ($_POST['contrato_id'] ?? 0);
 
-$proveedor = trim(
-    $_POST['proveedor'] ?? ''
-);
+$proveedor = trim($_POST['proveedor'] ?? '');
 
-$numeroFactura = trim(
-    $_POST['numero_factura'] ?? ''
-);
+$numeroFactura = trim($_POST['numero_factura'] ?? '');
 
-$valor = $_POST['valor'] ?? 0;
+$valor = trim($_POST['valor'] ?? '');
 
-$porcentajeIva = $_POST['porcentaje_iva'] ?? 19;
-
-$observacion = trim(
-    $_POST['observacion'] ?? ''
-);
+$observacion = trim($_POST['observacion'] ?? '');
 
 
 //==================================================
-// VALIDACIONES
+// VALIDAR CONTRATO
 //==================================================
 
 if ($contratoId <= 0) {
     exit('Contrato no válido.');
 }
 
+
+//==================================================
+// VALIDAR PROVEEDOR
+//==================================================
+
 if ($proveedor === '') {
     exit('El proveedor es obligatorio.');
 }
+
+
+//==================================================
+// VALIDAR NÚMERO DE FACTURA
+//==================================================
 
 if ($numeroFactura === '') {
     exit('El número de factura es obligatorio.');
 }
 
-if (!is_numeric($valor)) {
+
+//==================================================
+// LIMPIAR VALOR DE FACTURA
+//==================================================
+
+$valor = str_replace(['.', ','], '', $valor);
+
+if ($valor === '' || !is_numeric($valor)) {
     exit('El valor de la factura no es válido.');
 }
 
-if (!is_numeric($porcentajeIva)) {
-    exit('El porcentaje de IVA no es válido.');
-}
-
-
 $valor = (float) $valor;
-
-$porcentajeIva = (int) $porcentajeIva;
-
 
 if ($valor < 0) {
     exit('El valor de la factura no puede ser negativo.');
 }
 
 
-if (
-    $porcentajeIva < 0 ||
-    $porcentajeIva > 100
-) {
-    exit(
-        'El porcentaje de IVA debe estar entre 0 y 100.'
-    );
+//==================================================
+// INFORMACIÓN TRIBUTARIA
+//==================================================
+
+$tieneIva = isset($_POST['tiene_iva']) ? 1 : 0;
+
+$valorIva = null;
+
+
+$tieneImpoconsumo =
+    isset($_POST['tiene_impoconsumo']) ? 1 : 0;
+
+$valorImpoconsumo = null;
+
+
+$tieneRetencion =
+    isset($_POST['tiene_retencion']) ? 1 : 0;
+
+$valorRetencion = null;
+
+
+//==================================================
+// VALIDAR IVA
+//==================================================
+
+if ($tieneIva) {
+
+    $valorIva = trim($_POST['valor_iva'] ?? '');
+
+    $valorIva = str_replace(['.', ','], '', $valorIva);
+
+    if ($valorIva === '' || !is_numeric($valorIva)) {
+        exit('Debe ingresar un valor válido para el IVA.');
+    }
+
+    $valorIva = (float) $valorIva;
+
+    if ($valorIva < 0) {
+        exit('El valor del IVA no puede ser negativo.');
+    }
 }
 
 
 //==================================================
-// BUSCAR CONTRATO
+// VALIDAR IMPOCONSUMO
+//==================================================
+
+if ($tieneImpoconsumo) {
+
+    $valorImpoconsumo =
+        trim($_POST['valor_impoconsumo'] ?? '');
+
+    $valorImpoconsumo =
+        str_replace(['.', ','], '', $valorImpoconsumo);
+
+    if (
+        $valorImpoconsumo === '' ||
+        !is_numeric($valorImpoconsumo)
+    ) {
+        exit(
+            'Debe ingresar un valor válido para el Impoconsumo.'
+        );
+    }
+
+    $valorImpoconsumo = (float) $valorImpoconsumo;
+
+    if ($valorImpoconsumo < 0) {
+        exit(
+            'El valor del Impoconsumo no puede ser negativo.'
+        );
+    }
+}
+
+
+//==================================================
+// VALIDAR RETENCIÓN
+//==================================================
+
+if ($tieneRetencion) {
+
+    $valorRetencion =
+        trim($_POST['valor_retencion'] ?? '');
+
+    $valorRetencion =
+        str_replace(['.', ','], '', $valorRetencion);
+
+    if (
+        $valorRetencion === '' ||
+        !is_numeric($valorRetencion)
+    ) {
+        exit(
+            'Debe ingresar un valor válido para la Retención.'
+        );
+    }
+
+    $valorRetencion = (float) $valorRetencion;
+
+    if ($valorRetencion < 0) {
+        exit(
+            'El valor de la Retención no puede ser negativo.'
+        );
+    }
+}
+
+
+//==================================================
+// VERIFICAR QUE EL CONTRATO EXISTA
 //==================================================
 
 $sqlContrato = "
-    SELECT
-        id,
-        numero_contrato
+    SELECT id
     FROM contratos
     WHERE id = ?
 ";
 
-
-$stmtContrato =
-    $conexion->prepare($sqlContrato);
-
+$stmtContrato = $conexion->prepare($sqlContrato);
 
 if (!$stmtContrato) {
     exit(
-        'Error preparando consulta del contrato: '
-        . $conexion->error
+        'Error preparando consulta: ' .
+        $conexion->error
     );
 }
-
 
 $stmtContrato->bind_param(
     "i",
     $contratoId
 );
 
-
 $stmtContrato->execute();
-
 
 $resultadoContrato =
     $stmtContrato->get_result();
 
+if (!$resultadoContrato->fetch_assoc()) {
 
-$contrato =
-    $resultadoContrato->fetch_assoc();
+    $stmtContrato->close();
 
+    exit('El contrato no existe.');
+}
 
 $stmtContrato->close();
 
 
-if (!$contrato) {
-    exit('El contrato no existe.');
-}
-
-
 //==================================================
-// CALCULAR IVA
+// GUARDAR FACTURA
 //==================================================
 
-if ($porcentajeIva > 0) {
-
-    $valorSinIva =
-        $valor /
-        (
-            1 +
-            ($porcentajeIva / 100)
-        );
-
-} else {
-
-    $valorSinIva = $valor;
-
-}
-
-
-$valorIva =
-    $valor - $valorSinIva;
+$sql = "
+    INSERT INTO facturas (
+        contrato_id,
+        proveedor,
+        numero_factura,
+        valor,
+        tiene_iva,
+        valor_iva,
+        tiene_impoconsumo,
+        valor_impoconsumo,
+        tiene_retencion,
+        valor_retencion,
+        observacion
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+";
 
 
-//==================================================
-// INICIAR TRANSACCIÓN
-//==================================================
+$stmt = $conexion->prepare($sql);
 
-$conexion->begin_transaction();
-
-
-$archivoGuardado = null;
-
-$rutaArchivo = null;
-
-
-try {
-
-
-    //==================================================
-    // GUARDAR FACTURA
-    //==================================================
-
-    $sqlFactura = "
-        INSERT INTO facturas (
-            contrato_id,
-            proveedor,
-            numero_factura,
-            valor,
-            valor_sin_iva,
-            porcentaje_iva,
-            valor_iva,
-            observacion
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ";
-
-
-    $stmtFactura =
-        $conexion->prepare($sqlFactura);
-
-
-    if (!$stmtFactura) {
-
-        throw new Exception(
-            'Error preparando factura: '
-            . $conexion->error
-        );
-
-    }
-
-
-    $stmtFactura->bind_param(
-        "issddids",
-        $contratoId,
-        $proveedor,
-        $numeroFactura,
-        $valor,
-        $valorSinIva,
-        $porcentajeIva,
-        $valorIva,
-        $observacion
+if (!$stmt) {
+    exit(
+        'Error preparando el registro: ' .
+        $conexion->error
     );
+}
 
 
-    if (!$stmtFactura->execute()) {
+//==================================================
+// ASIGNAR VALORES
+//==================================================
 
-        throw new Exception(
-            'Error guardando factura: '
-            . $stmtFactura->error
+$stmt->bind_param(
+    "issdididids",
+    $contratoId,
+    $proveedor,
+    $numeroFactura,
+    $valor,
+    $tieneIva,
+    $valorIva,
+    $tieneImpoconsumo,
+    $valorImpoconsumo,
+    $tieneRetencion,
+    $valorRetencion,
+    $observacion
+);
+
+
+//==================================================
+// EJECUTAR
+//==================================================
+
+if (!$stmt->execute()) {
+
+    $error = $stmt->error;
+
+    $stmt->close();
+
+    exit(
+        'Error al guardar la factura: ' .
+        $error
+    );
+}
+
+
+$facturaId = $conexion->insert_id;
+
+$stmt->close();
+
+
+//==================================================
+// GUARDAR SOPORTE
+//==================================================
+
+if (
+    isset($_FILES['soporte']) &&
+    $_FILES['soporte']['error'] === UPLOAD_ERR_OK
+) {
+
+    $archivo = $_FILES['soporte'];
+
+    $nombreOriginal =
+        basename($archivo['name']);
+
+    $tipoArchivo =
+        $archivo['type'];
+
+    $extension =
+        strtolower(
+            pathinfo(
+                $nombreOriginal,
+                PATHINFO_EXTENSION
+            )
         );
 
+
+    $extensionesPermitidas = [
+        'pdf',
+        'jpg',
+        'jpeg',
+        'png'
+    ];
+
+
+    if (
+        !in_array(
+            $extension,
+            $extensionesPermitidas,
+            true
+        )
+    ) {
+        exit(
+            'Tipo de archivo no permitido.'
+        );
     }
 
 
-    // ID de la factura recién creada
+    //==================================================
+    // CARPETA DE SOPORTES
+    //==================================================
 
-    $facturaId =
-        $conexion->insert_id;
+    $carpeta =
+        __DIR__ . '/../uploads/soportes_facturas/';
 
 
-    $stmtFactura->close();
+    if (!is_dir($carpeta)) {
+
+        mkdir(
+            $carpeta,
+            0777,
+            true
+        );
+    }
 
 
     //==================================================
-    // PROCESAR SOPORTE
+    // NOMBRE ÚNICO
+    //==================================================
+
+    $nombreArchivo =
+        uniqid(
+            'factura_',
+            true
+        ) . '.' . $extension;
+
+
+    $rutaArchivo =
+        $carpeta . $nombreArchivo;
+
+
+    //==================================================
+    // MOVER ARCHIVO
     //==================================================
 
     if (
-        isset($_FILES['soporte']) &&
-        $_FILES['soporte']['error']
-        !== UPLOAD_ERR_NO_FILE
+        move_uploaded_file(
+            $archivo['tmp_name'],
+            $rutaArchivo
+        )
     ) {
-
-
-        if (
-            $_FILES['soporte']['error']
-            !== UPLOAD_ERR_OK
-        ) {
-
-            throw new Exception(
-                'Ocurrió un error al subir el soporte.'
-            );
-
-        }
-
-
-        //==================================================
-        // TAMAÑO MÁXIMO: 10 MB
-        //==================================================
-
-        $tamanoMaximo =
-            10 * 1024 * 1024;
-
-
-        if (
-            $_FILES['soporte']['size']
-            > $tamanoMaximo
-        ) {
-
-            throw new Exception(
-                'El soporte no puede superar los 10 MB.'
-            );
-
-        }
-
-
-        //==================================================
-        // OBTENER EXTENSIÓN
-        //==================================================
-
-        $nombreOriginal =
-            $_FILES['soporte']['name'];
-
-
-        $extension =
-            strtolower(
-                pathinfo(
-                    $nombreOriginal,
-                    PATHINFO_EXTENSION
-                )
-            );
-
-
-        $extensionesPermitidas = [
-            'pdf',
-            'jpg',
-            'jpeg',
-            'png'
-        ];
-
-
-        if (
-            !in_array(
-                $extension,
-                $extensionesPermitidas,
-                true
-            )
-        ) {
-
-            throw new Exception(
-                'Tipo de archivo no permitido. '
-                . 'Solo se permiten PDF, JPG, JPEG y PNG.'
-            );
-
-        }
-
-
-        //==================================================
-        // VALIDAR MIME
-        //==================================================
-
-        $finfo =
-            finfo_open(FILEINFO_MIME_TYPE);
-
-
-        $mime =
-            finfo_file(
-                $finfo,
-                $_FILES['soporte']['tmp_name']
-            );
-
-
-        finfo_close($finfo);
-
-
-        $mimesPermitidos = [
-
-            'pdf' => 'application/pdf',
-
-            'jpg' => 'image/jpeg',
-
-            'jpeg' => 'image/jpeg',
-
-            'png' => 'image/png'
-
-        ];
-
-
-        if (
-            !isset(
-                $mimesPermitidos[$extension]
-            )
-            ||
-            $mime !==
-            $mimesPermitidos[$extension]
-        ) {
-
-            throw new Exception(
-                'El tipo real del archivo '
-                . 'no coincide con su extensión.'
-            );
-
-        }
-
-
-        //==================================================
-        // CARPETA DE SOPORTES
-        //==================================================
-
-        $carpetaSoportes =
-            __DIR__
-            . '/../uploads/soportes_facturas/';
-
-
-        if (
-            !is_dir($carpetaSoportes)
-        ) {
-
-            if (
-                !mkdir(
-                    $carpetaSoportes,
-                    0755,
-                    true
-                )
-            ) {
-
-                throw new Exception(
-                    'No fue posible crear '
-                    . 'la carpeta de soportes.'
-                );
-
-            }
-
-        }
-
-
-        //==================================================
-        // OBTENER NÚMERO DE FACTURA
-        //==================================================
-
-        /*
-         * Contamos las facturas que ya existen
-         * para este contrato.
-         *
-         * Ejemplo:
-         *
-         * Contrato ABC-001
-         *
-         * factura_1
-         * factura_2
-         * factura_3
-         */
-
-
-        $sqlNumero = "
-            SELECT COUNT(*) AS total
-            FROM facturas
-            WHERE contrato_id = ?
-        ";
-
-
-        $stmtNumero =
-            $conexion->prepare($sqlNumero);
-
-
-        if (!$stmtNumero) {
-
-            throw new Exception(
-                'Error calculando número de factura: '
-                . $conexion->error
-            );
-
-        }
-
-
-        $stmtNumero->bind_param(
-            "i",
-            $contratoId
-        );
-
-
-        $stmtNumero->execute();
-
-
-        $resultadoNumero =
-            $stmtNumero->get_result();
-
-
-        $filaNumero =
-            $resultadoNumero->fetch_assoc();
-
-
-        $stmtNumero->close();
-
-
-        $numeroFacturaInterno =
-            (int) $filaNumero['total'];
-
-
-        //==================================================
-        // LIMPIAR NOMBRE DEL CONTRATO
-        //==================================================
-
-        $numeroContrato =
-            trim(
-                $contrato['numero_contrato']
-            );
-
-
-        /*
-         * Quitamos caracteres que no son
-         * apropiados para un nombre de archivo.
-         */
-
-
-        $numeroContrato =
-            preg_replace(
-                '/[^A-Za-z0-9_\-]/',
-                '_',
-                $numeroContrato
-            );
-
-
-        //==================================================
-        // CREAR NOMBRE DEL ARCHIVO
-        //==================================================
-
-        $archivoGuardado =
-            $numeroContrato
-            . '_factura_'
-            . $numeroFacturaInterno
-            . '.'
-            . $extension;
-
-
-        $rutaArchivo =
-            $carpetaSoportes
-            . $archivoGuardado;
-
-
-        //==================================================
-        // EVITAR SOBRESCRIBIR ARCHIVOS
-        //==================================================
-
-        $contador = 1;
-
-
-        $nombreBase =
-            $numeroContrato
-            . '_factura_'
-            . $numeroFacturaInterno;
-
-
-        while (
-            file_exists($rutaArchivo)
-        ) {
-
-            $archivoGuardado =
-                $nombreBase
-                . '_'
-                . $contador
-                . '.'
-                . $extension;
-
-
-            $rutaArchivo =
-                $carpetaSoportes
-                . $archivoGuardado;
-
-
-            $contador++;
-
-        }
-
-
-        //==================================================
-        // MOVER ARCHIVO
-        //==================================================
-
-        if (
-            !move_uploaded_file(
-                $_FILES['soporte']['tmp_name'],
-                $rutaArchivo
-            )
-        ) {
-
-            throw new Exception(
-                'No fue posible guardar el archivo.'
-            );
-
-        }
-
-
-        //==================================================
-        // GUARDAR SOPORTE EN BD
-        //==================================================
 
         $sqlSoporte = "
             INSERT INTO soportes_factura (
@@ -569,117 +391,37 @@ try {
 
 
         $stmtSoporte =
-            $conexion->prepare($sqlSoporte);
-
-
-        if (!$stmtSoporte) {
-
-            throw new Exception(
-                'Error preparando soporte: '
-                . $conexion->error
+            $conexion->prepare(
+                $sqlSoporte
             );
 
-        }
 
+        if ($stmtSoporte) {
 
-        $stmtSoporte->bind_param(
-            "iss",
-            $facturaId,
-            $archivoGuardado,
-            $mime
-        );
-
-
-        if (
-            !$stmtSoporte->execute()
-        ) {
-
-            throw new Exception(
-                'Error guardando soporte: '
-                . $stmtSoporte->error
+            $stmtSoporte->bind_param(
+                "iss",
+                $facturaId,
+                $nombreArchivo,
+                $tipoArchivo
             );
 
+            $stmtSoporte->execute();
+
+            $stmtSoporte->close();
         }
-
-
-        $stmtSoporte->close();
-
     }
-
-
-    //==================================================
-    // CONFIRMAR TRANSACCIÓN
-    //==================================================
-
-    $conexion->commit();
-
-
-    //==================================================
-    // REDIRECCIONAR
-    //==================================================
-
-    header(
-        "Location: ver.php?id="
-        . $contratoId
-    );
-
-
-    exit;
-
-
-} catch (Exception $e) {
-
-
-    //==================================================
-    // DESHACER CAMBIOS
-    //==================================================
-
-    $conexion->rollback();
-
-
-    //==================================================
-    // ELIMINAR ARCHIVO SI YA SE HABÍA GUARDADO
-    //==================================================
-
-    if (
-        $rutaArchivo !== null &&
-        file_exists($rutaArchivo)
-    ) {
-
-        unlink($rutaArchivo);
-
-    }
-
-
-    echo "
-        <div style='
-            font-family: Arial;
-            padding: 30px;
-        '>
-
-            <h3>
-                Error al guardar la factura
-            </h3>
-
-            <p>
-                "
-                . htmlspecialchars(
-                    $e->getMessage()
-                )
-                . "
-            </p>
-
-            <a
-                href='agregar_factura.php?id="
-                . $contratoId
-                . "'
-            >
-                Volver
-            </a>
-
-        </div>
-    ";
-
-    exit;
-
 }
+
+
+//==================================================
+// VOLVER AL CONTRATO
+//==================================================
+
+header(
+    "Location: ver.php?id=" .
+    $contratoId
+);
+
+exit;
+
+?>

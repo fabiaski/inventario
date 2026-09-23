@@ -45,13 +45,22 @@ txtBuscar.addEventListener("keyup", function () {
     item.className = "list-group-item list-group-item-action";
 
     item.innerHTML = `
-            <strong>${p.producto}</strong><br>
-            <small>
-                ${p.unidad_medida}
-                |
-                $${Number(p.precio).toLocaleString("es-CO")}
-            </small>
-        `;
+    <strong>${p.producto}</strong><br>
+
+    <small>
+        ${p.unidad_medida}
+        |
+        $${Number(p.precio).toLocaleString("es-CO")}
+    </small>
+
+    <br>
+
+    <small>
+        Proveedor: ${p.proveedor ?? "Sin proveedor"}
+        |
+        Fecha: ${p.fecha_cotizacion ?? "Sin fecha"}
+    </small>
+`;
 
     item.onclick = function (e) {
       e.preventDefault();
@@ -75,6 +84,9 @@ function seleccionarProducto(producto) {
   txtBuscar.value = producto.producto;
 
   valorUnidad.value = Number(producto.precio).toLocaleString("es-CO");
+
+  console.log("Proveedor:", producto.proveedor);
+  console.log("Fecha cotización:", producto.fecha_cotizacion);
 
   lista.style.display = "none";
 }
@@ -202,7 +214,13 @@ function agregarProducto() {
 
         <td>${numeroFila++}</td>
 
-        <td>${producto.producto}</td>
+        <td style="
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: normal;
+            line-height: 1.4; ">
+            ${producto.producto}
+        </td>
 
         <td>${cant}</td>
 
@@ -714,6 +732,9 @@ function obtenerProductosCotizacion() {
       valor_total_unidad: valorTotalUnidad,
 
       total_venta: totalVenta,
+
+      proveedor: producto.proveedor ?? "",
+      fecha_cotizacion: producto.fecha_cotizacion ?? "",
     });
   });
 

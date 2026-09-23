@@ -498,7 +498,12 @@ BUSCADOR POR OBJETO
 
                                         <!-- CONTRATO -->
 
-                                        <td>
+                                        <td style="
+                            white-space: normal;
+                            overflow-wrap: break-word;
+                            word-break: normal;
+                            line-height: 1.4; ">
+
 
                                             <strong>
 
@@ -513,7 +518,12 @@ BUSCADOR POR OBJETO
 
                                         <!-- ENTIDAD -->
 
-                                        <td>
+                                        <td style="
+                            white-space: normal;
+                            overflow-wrap: break-word;
+                            word-break: normal;
+                            line-height: 1.4; ">
+
 
                                             <?= htmlspecialchars(
                                         $contrato['entidad']
@@ -524,7 +534,11 @@ BUSCADOR POR OBJETO
 
                                         <!-- OBJETO -->
 
-                                        <td>
+                                        <td style="
+                                            white-space: normal;
+                                            overflow-wrap: break-word;
+                                            word-break: normal;
+                                            line-height: 1.4; ">
 
                                             <?= htmlspecialchars(
                                         $contrato['objeto']

@@ -10,9 +10,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 $anio = (int) ($_GET['anio'] ?? date('Y'));
 
 if ($anio < 2000 || $anio > 2100) {
-
     exit('Año no válido.');
-
 }
 
 
@@ -20,20 +18,10 @@ if ($anio < 2000 || $anio > 2100) {
 // VALIDAR CUATRIMESTRE
 //==================================================
 
-$cuatrimestre =
-    (int) ($_GET['cuatrimestre'] ?? 0);
+$cuatrimestre = (int) ($_GET['cuatrimestre'] ?? 0);
 
-
-if (
-    !in_array(
-        $cuatrimestre,
-        [1, 2, 3],
-        true
-    )
-) {
-
+if (!in_array($cuatrimestre, [1, 2, 3], true)) {
     exit('Cuatrimestre no válido.');
-
 }
 
 
@@ -63,9 +51,7 @@ $cuatrimestres = [
 
 ];
 
-
-$periodo =
-    $cuatrimestres[$cuatrimestre];
+$periodo = $cuatrimestres[$cuatrimestre];
 
 
 //==================================================
@@ -77,7 +63,6 @@ $fechaInicio = sprintf(
     $anio,
     $periodo['mes_inicio']
 );
-
 
 $fechaFin = date(
     'Y-m-t',
@@ -101,25 +86,26 @@ $sql = "
         numero_contrato,
         fecha,
         objeto_contrato,
-        valor_contrato
+        valor_contrato,
+        tiene_iva,
+        valor_iva,
+        tiene_impoconsumo,
+        valor_impoconsumo,
+        tiene_retencion,
+        valor_retencion
     FROM contratos
     WHERE fecha BETWEEN ? AND ?
     ORDER BY fecha ASC, id ASC
 ";
 
-
 $stmt = $conexion->prepare($sql);
 
-
 if (!$stmt) {
-
     die(
         'Error preparando la consulta de contratos: '
         . $conexion->error
     );
-
 }
-
 
 $stmt->bind_param(
     "ss",
@@ -127,13 +113,9 @@ $stmt->bind_param(
     $fechaFin
 );
 
-
 $stmt->execute();
 
-
-$resultado =
-    $stmt->get_result();
-
+$resultado = $stmt->get_result();
 
 $contratos = [];
 
@@ -142,11 +124,7 @@ $contratos = [];
 // RECORRER CONTRATOS
 //==================================================
 
-while (
-    $contrato =
-    $resultado->fetch_assoc()
-) {
-
+while ($contrato = $resultado->fetch_assoc()) {
 
     //==================================================
     // VALOR DEL CONTRATO
@@ -157,19 +135,49 @@ while (
 
 
     //==================================================
-    // VALOR DEL CONTRATO SIN IVA
-    //==================================================
-
-    $valorSinIva =
-        $valorContrato / 1.19;
-
-
-    //==================================================
     // IVA DEL CONTRATO
     //==================================================
 
-    $ivaContrato =
-        $valorContrato - $valorSinIva;
+    $ivaContrato = 0;
+
+    if ((int) $contrato['tiene_iva'] === 1) {
+
+        $ivaContrato =
+            (float) ($contrato['valor_iva'] ?? 0);
+
+    }
+
+
+    //==================================================
+    // IMPOCONSUMO DEL CONTRATO
+    //==================================================
+
+    $impoconsumoContrato = 0;
+
+    if (
+        (int) $contrato['tiene_impoconsumo'] === 1
+    ) {
+
+        $impoconsumoContrato =
+            (float) ($contrato['valor_impoconsumo'] ?? 0);
+
+    }
+
+
+    //==================================================
+    // RETENCIÓN DEL CONTRATO
+    //==================================================
+
+    $retencionContrato = 0;
+
+    if (
+        (int) $contrato['tiene_retencion'] === 1
+    ) {
+
+        $retencionContrato =
+            (float) ($contrato['valor_retencion'] ?? 0);
+
+    }
 
 
     //==================================================
@@ -178,7 +186,11 @@ while (
 
     $valorFacturas = 0;
 
-$ivaFacturado = 0;
+    $ivaFacturado = 0;
+
+    $impoconsumoFacturado = 0;
+
+    $retencionFacturada = 0;
 
 
     //==================================================
@@ -187,40 +199,33 @@ $ivaFacturado = 0;
 
     $sqlFacturas = "
         SELECT
-            porcentaje_iva,
             valor,
-            valor_sin_iva,
-            valor_iva
+            tiene_iva,
+            valor_iva,
+            tiene_impoconsumo,
+            valor_impoconsumo,
+            tiene_retencion,
+            valor_retencion
         FROM facturas
         WHERE contrato_id = ?
         ORDER BY id ASC
     ";
 
-
-    $stmtFacturas =
-        $conexion->prepare(
-            $sqlFacturas
-        );
-
+    $stmtFacturas = $conexion->prepare($sqlFacturas);
 
     if (!$stmtFacturas) {
-
         die(
             'Error preparando la consulta de facturas: '
             . $conexion->error
         );
-
     }
-
 
     $stmtFacturas->bind_param(
         "i",
         $contrato['id']
     );
 
-
     $stmtFacturas->execute();
-
 
     $resultadoFacturas =
         $stmtFacturas->get_result();
@@ -230,11 +235,7 @@ $ivaFacturado = 0;
     // RECORRER FACTURAS
     //==================================================
 
-    while (
-        $factura =
-        $resultadoFacturas->fetch_assoc()
-    ) {
-
+    while ($factura = $resultadoFacturas->fetch_assoc()) {
 
         //==============================================
         // VALOR TOTAL DE LA FACTURA
@@ -244,15 +245,50 @@ $ivaFacturado = 0;
             (float) $factura['valor'];
 
 
-       //==============================================
-// TOTAL IVA FACTURADO
-//==============================================
+        //==============================================
+        // IVA FACTURADO
+        //==============================================
 
-$ivaFacturado +=
-    (float) $factura['valor_iva'];
+        if ((int) $factura['tiene_iva'] === 1) {
+
+            $ivaFacturado +=
+                (float) ($factura['valor_iva'] ?? 0);
+
+        }
+
+
+        //==============================================
+        // IMPOCONSUMO FACTURADO
+        //==============================================
+
+        if (
+            (int) $factura['tiene_impoconsumo'] === 1
+        ) {
+
+            $impoconsumoFacturado +=
+                (float) (
+                    $factura['valor_impoconsumo'] ?? 0
+                );
+
+        }
+
+
+        //==============================================
+        // RETENCIÓN FACTURADA
+        //==============================================
+
+        if (
+            (int) $factura['tiene_retencion'] === 1
+        ) {
+
+            $retencionFacturada +=
+                (float) (
+                    $factura['valor_retencion'] ?? 0
+                );
+
+        }
 
     }
-
 
     $stmtFacturas->close();
 
@@ -261,27 +297,45 @@ $ivaFacturado +=
     // GUARDAR DATOS CALCULADOS
     //==================================================
 
-    $contrato['valor_sin_iva'] =
-        $valorSinIva;
-
-
     $contrato['iva_contrato'] =
         $ivaContrato;
 
+    $contrato['impoconsumo_contrato'] =
+        $impoconsumoContrato;
+
+    $contrato['retencion_contrato'] =
+        $retencionContrato;
 
     $contrato['valor_facturas'] =
         $valorFacturas;
 
-
     $contrato['iva_facturado'] =
-    $ivaFacturado;
+        $ivaFacturado;
+
+    $contrato['impoconsumo_facturado'] =
+        $impoconsumoFacturado;
+
+    $contrato['retencion_facturada'] =
+        $retencionFacturada;
 
 
-    $contratos[] =
-        $contrato;
+    //==================================================
+    // SALDOS POR CONTRATO
+    //==================================================
+
+    $contrato['saldo_iva'] =
+        $ivaContrato - $ivaFacturado;
+
+    $contrato['saldo_impoconsumo'] =
+        $impoconsumoContrato - $impoconsumoFacturado;
+
+    $contrato['saldo_retencion'] =
+        $retencionContrato - $retencionFacturada;
+
+
+    $contratos[] = $contrato;
 
 }
-
 
 $stmt->close();
 
@@ -292,14 +346,12 @@ $stmt->close();
 
 function dinero($valor)
 {
-
     return '$' . number_format(
         (float) $valor,
         0,
         ',',
         '.'
     );
-
 }
 
 
@@ -310,45 +362,52 @@ function dinero($valor)
 $totalContratos =
     count($contratos);
 
-
 $totalValorContratos = 0;
 
 $totalIvaContratos = 0;
+
+$totalImpoconsumoContratos = 0;
+
+$totalRetencionContratos = 0;
 
 $totalValorFacturas = 0;
 
 $totalIvaFacturado = 0;
 
-foreach (
-    $contratos
-    as $contrato
-) {
+$totalImpoconsumoFacturado = 0;
+
+$totalRetencionFacturada = 0;
+
+
+foreach ($contratos as $contrato) {
 
     $totalValorContratos +=
-        (float) $contrato[
-            'valor_contrato'
-        ];
-
+        (float) $contrato['valor_contrato'];
 
     $totalIvaContratos +=
-        (float) $contrato[
-            'iva_contrato'
-        ];
+        (float) $contrato['iva_contrato'];
 
+    $totalImpoconsumoContratos +=
+        (float) $contrato['impoconsumo_contrato'];
+
+    $totalRetencionContratos +=
+        (float) $contrato['retencion_contrato'];
 
     $totalValorFacturas +=
-        (float) $contrato[
-            'valor_facturas'
-        ];
-
+        (float) $contrato['valor_facturas'];
 
     $totalIvaFacturado +=
-    (float) $contrato[
-        'iva_facturado'
-    ];
+        (float) $contrato['iva_facturado'];
 
-    
+    $totalImpoconsumoFacturado +=
+        (float) $contrato['impoconsumo_facturado'];
+
+    $totalRetencionFacturada +=
+        (float) $contrato['retencion_facturada'];
+
 }
+
+
 //==================================================
 // IVA IDEAL
 //==================================================
@@ -362,7 +421,8 @@ $ivaIdeal =
 //==================================================
 
 $diferenciaIva =
-    $totalIvaContratos - $totalIvaFacturado;
+    $totalIvaContratos -
+    $totalIvaFacturado;
 
 
 //==================================================
@@ -391,6 +451,34 @@ if (
 
 }
 
+
+//==================================================
+// SALDOS DE IMPUESTOS
+//==================================================
+
+$saldoIva =
+    $totalIvaContratos -
+    $totalIvaFacturado;
+
+$saldoImpoconsumo =
+    $totalImpoconsumoContratos -
+    $totalImpoconsumoFacturado;
+
+$saldoRetencion =
+    $totalRetencionContratos -
+    $totalRetencionFacturada;
+
+
+//==================================================
+// SALDO TOTAL
+//==================================================
+
+$saldoTotalImpuestos =
+    $saldoIva +
+    $saldoImpoconsumo +
+    $saldoRetencion;
+
+
 //==================================================
 // GANANCIAS
 //==================================================
@@ -398,7 +486,6 @@ if (
 $ganancias =
     $totalValorContratos
     - $totalValorFacturas;
-
 
 
 require_once __DIR__ . '/../../includes/header.php';
@@ -411,13 +498,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 <div class="main-panel">
 
     <div class="content-wrapper">
+
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
+
                 <div class="card">
 
-
                     <div class="card-body">
+
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
                             <div>
@@ -430,12 +519,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </h2>
 
-
                                 <p class="text-muted mb-0">
 
-                                    <?= htmlspecialchars(
-                        $periodo['nombre']
-                    ) ?>
+                                    <?= htmlspecialchars($periodo['nombre']) ?>
 
                                     -
 
@@ -448,9 +534,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div class="d-flex gap-2">
 
-                                <!-- VOLVER -->
-
-                                <a href="cuatrimestres.php?anio=<?= $anio ?>" class="btn btn-secondary">
+                                <a
+                                    href="cuatrimestres.php?anio=<?= $anio ?>"
+                                    class="btn btn-secondary"
+                                >
 
                                     <i class="bi bi-arrow-left"></i>
 
@@ -459,10 +546,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </a>
 
 
-                                <!-- EXPORTAR PDF -->
-
-                                <a href="exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
-                                    class="btn btn-danger" target="_blank">
+                                <a
+                                    href="exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
+                                    class="btn btn-danger"
+                                    target="_blank"
+                                >
 
                                     <i class="bi bi-file-earmark-pdf"></i>
 
@@ -479,15 +567,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                         <!--==================================================
-RESUMEN
-==================================================-->
+                        RESUMEN
+                        ==================================================-->
 
                         <div class="row g-3 mb-4">
 
 
-                            <!--==================================================
-    TOTAL CONTRATOS
-    ==================================================-->
+                            <!-- TOTAL CONTRATOS -->
 
                             <div class="col-md">
 
@@ -496,15 +582,11 @@ RESUMEN
                                     <div class="card-body">
 
                                         <small class="text-muted">
-
                                             Total contratos
-
                                         </small>
 
                                         <h4 class="mb-0">
-
                                             <?= $totalContratos ?>
-
                                         </h4>
 
                                     </div>
@@ -514,9 +596,7 @@ RESUMEN
                             </div>
 
 
-                            <!--==================================================
-    VALOR CONTRATOS
-    ==================================================-->
+                            <!-- VALOR CONTRATOS -->
 
                             <div class="col-md">
 
@@ -525,17 +605,11 @@ RESUMEN
                                     <div class="card-body">
 
                                         <small class="text-muted">
-
                                             Valor de contratos
-
                                         </small>
 
                                         <h5 class="mb-0">
-
-                                            <?= dinero(
-                        $totalValorContratos
-                    ) ?>
-
+                                            <?= dinero($totalValorContratos) ?>
                                         </h5>
 
                                     </div>
@@ -545,9 +619,7 @@ RESUMEN
                             </div>
 
 
-                            <!--==================================================
-    IVA CONTRATOS
-    ==================================================-->
+                            <!-- IVA CONTRATOS -->
 
                             <div class="col-md">
 
@@ -556,17 +628,11 @@ RESUMEN
                                     <div class="card-body">
 
                                         <small class="text-muted">
-
                                             IVA de contratos
-
                                         </small>
 
                                         <h5 class="mb-0">
-
-                                            <?= dinero(
-                        $totalIvaContratos
-                    ) ?>
-
+                                            <?= dinero($totalIvaContratos) ?>
                                         </h5>
 
                                     </div>
@@ -576,9 +642,7 @@ RESUMEN
                             </div>
 
 
-                            <!--==================================================
-    VALOR FACTURAS
-    ==================================================-->
+                            <!-- IMPOCONSUMO CONTRATOS -->
 
                             <div class="col-md">
 
@@ -587,17 +651,11 @@ RESUMEN
                                     <div class="card-body">
 
                                         <small class="text-muted">
-
-                                            Valor Facturas
-
+                                            Impoconsumo contratos
                                         </small>
 
                                         <h5 class="mb-0">
-
-                                            <?= dinero(
-                        $totalValorFacturas
-                    ) ?>
-
+                                            <?= dinero($totalImpoconsumoContratos) ?>
                                         </h5>
 
                                     </div>
@@ -607,9 +665,7 @@ RESUMEN
                             </div>
 
 
-                            <!--==================================================
-    TOTAL IVA FACTURADO
-    ==================================================-->
+                            <!-- RETENCIÓN CONTRATOS -->
 
                             <div class="col-md">
 
@@ -618,17 +674,11 @@ RESUMEN
                                     <div class="card-body">
 
                                         <small class="text-muted">
-
-                                            Total IVA Facturado
-
+                                            Retención contratos
                                         </small>
 
                                         <h5 class="mb-0">
-
-                                            <?= dinero(
-                        $totalIvaFacturado
-                    ) ?>
-
+                                            <?= dinero($totalRetencionContratos) ?>
                                         </h5>
 
                                     </div>
@@ -642,41 +692,134 @@ RESUMEN
 
 
                         <!--==================================================
-INDICADORES
-==================================================-->
+                        RESUMEN FACTURACIÓN
+                        ==================================================-->
 
                         <div class="row g-3 mb-4">
 
 
-                            <!--==================================================
-    IVA IDEAL
-    ==================================================-->
+                            <!-- VALOR FACTURAS -->
 
                             <div class="col-md">
 
                                 <div class="card h-100 shadow-sm">
 
                                     <div class="card-body">
-                                        <i class="bi bi-percent text-primary"></i>
 
                                         <small class="text-muted">
-
-                                            IVA Ideal
-
+                                            Valor Facturas
                                         </small>
 
                                         <h5 class="mb-0">
+                                            <?= dinero($totalValorFacturas) ?>
+                                        </h5>
 
-                                            <?= dinero(
-                        $ivaIdeal
-                    ) ?>
+                                    </div>
 
+                                </div>
+
+                            </div>
+
+
+                            <!-- IVA FACTURADO -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            IVA Facturado
+                                        </small>
+
+                                        <h5 class="mb-0">
+                                            <?= dinero($totalIvaFacturado) ?>
+                                        </h5>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- IMPOCONSUMO FACTURADO -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            Impoconsumo Facturado
+                                        </small>
+
+                                        <h5 class="mb-0">
+                                            <?= dinero($totalImpoconsumoFacturado) ?>
+                                        </h5>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- RETENCIÓN FACTURADA -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            Retención Facturada
+                                        </small>
+
+                                        <h5 class="mb-0">
+                                            <?= dinero($totalRetencionFacturada) ?>
+                                        </h5>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!--==================================================
+                        INDICADORES
+                        ==================================================-->
+
+                        <div class="row g-3 mb-4">
+
+
+                            <!-- IVA IDEAL -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <i class="bi bi-percent text-primary"></i>
+
+                                        <small class="text-muted">
+                                            IVA Ideal
+                                        </small>
+
+                                        <h5 class="mb-0">
+                                            <?= dinero($ivaIdeal) ?>
                                         </h5>
 
                                         <small class="text-muted">
-
                                             IVA del contrato × 2%
-
                                         </small>
 
                                     </div>
@@ -686,9 +829,7 @@ INDICADORES
                             </div>
 
 
-                            <!--==================================================
-    DIFERENCIA DE IVA
-    ==================================================-->
+                            <!-- DIFERENCIA IVA -->
 
                             <div class="col-md">
 
@@ -699,23 +840,17 @@ INDICADORES
                                         <i class="bi bi-arrow-down-up text-warning"></i>
 
                                         <small class="text-muted">
-
                                             Diferencia de IVA
-
                                         </small>
 
                                         <h5 class="mb-0 <?= $colorDiferenciaIva ?>">
 
-                                            <?= dinero(
-        $diferenciaIva
-    ) ?>
+                                            <?= dinero($diferenciaIva) ?>
 
                                         </h5>
 
                                         <small class="text-muted">
-
-                                            IVA del contrato − Total IVA Facturado
-
+                                            IVA del contrato − IVA Facturado
                                         </small>
 
                                     </div>
@@ -725,9 +860,65 @@ INDICADORES
                             </div>
 
 
-                            <!--==================================================
-    GANANCIAS
-    ==================================================-->
+                            <!-- SALDO IMPOCONSUMO -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            Saldo Impoconsumo
+                                        </small>
+
+                                        <h5 class="mb-0">
+
+                                            <?= dinero($saldoImpoconsumo) ?>
+
+                                        </h5>
+
+                                        <small class="text-muted">
+                                            Impoconsumo contrato − facturado
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- SALDO RETENCIÓN -->
+
+                            <div class="col-md">
+
+                                <div class="card h-100 shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            Saldo Retención
+                                        </small>
+
+                                        <h5 class="mb-0">
+
+                                            <?= dinero($saldoRetencion) ?>
+
+                                        </h5>
+
+                                        <small class="text-muted">
+                                            Retención contrato − facturada
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- GANANCIAS -->
 
                             <div class="col-md">
 
@@ -738,23 +929,17 @@ INDICADORES
                                         <i class="bi bi-graph-up-arrow text-success"></i>
 
                                         <small class="text-muted">
-
                                             Ganancias
-
                                         </small>
 
                                         <h5 class="mb-0">
 
-                                            <?= dinero(
-                        $ganancias
-                    ) ?>
+                                            <?= dinero($ganancias) ?>
 
                                         </h5>
 
                                         <small class="text-muted">
-
                                             Valor del contrato − Valor Facturas
-
                                         </small>
 
                                     </div>
@@ -767,277 +952,361 @@ INDICADORES
                         </div>
 
 
+                        <!--==================================================
+                        SALDO TOTAL IMPUESTOS
+                        ==================================================-->
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-4">
+
+                                <div class="card shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <small class="text-muted">
+                                            Saldo total impuestos
+                                        </small>
+
+                                        <h5 class="mb-0">
+                                            <?= dinero($saldoTotalImpuestos) ?>
+                                        </h5>
+
+                                        <small class="text-muted">
+                                            IVA + Impoconsumo + Retención
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
 
                         <!--==================================================
-        TABLA
-        ==================================================-->
+                        TABLA
+                        ==================================================-->
 
                         <div class="table-responsive">
 
-
                             <table class="table table-bordered table-hover align-middle">
-
 
                                 <thead class="table-light">
 
+                                    <tr>
 
-                                    <th>
-                                        N° Contrato
-                                    </th>
+                                        <th>
+                                            N° Contrato
+                                        </th>
 
-                                    <th>
-                                        Valor del Contrato
-                                    </th>
+                                        <th>
+                                            Valor del Contrato
+                                        </th>
 
-                                    <th>
-                                        IVA del Contrato
-                                    </th>
+                                        <th>
+                                            IVA Contrato
+                                        </th>
 
-                                    <th>
-                                        Valor Facturas
-                                    </th>
+                                        <th>
+                                            Impoconsumo Contrato
+                                        </th>
 
-                                    <th>
-                                        Total IVA Facturado
-                                    </th>
+                                        <th>
+                                            Retención Contrato
+                                        </th>
 
-                                    <th>
-                                        Acciones
-                                    </th>
+                                        <th>
+                                            Valor Facturas
+                                        </th>
+
+                                        <th>
+                                            IVA Facturado
+                                        </th>
+
+                                        <th>
+                                            Impoconsumo Facturado
+                                        </th>
+
+                                        <th>
+                                            Retención Facturada
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
 
                                     </tr>
-
 
                                 </thead>
 
 
                                 <tbody>
 
+                                    <?php if (count($contratos) > 0): ?>
 
-                                    <?php if (
-                count($contratos) > 0
-            ): ?>
+                                        <?php foreach ($contratos as $contrato): ?>
 
+                                            <tr>
 
-                                    <?php foreach (
-                    $contratos
-                    as $contrato
-                ): ?>
+                                                <!-- NÚMERO CONTRATO -->
 
+                                                <td>
 
-                                    <tr>
+                                                    <?= htmlspecialchars(
+                                                        $contrato['numero_contrato']
+                                                    ) ?>
 
-
-                                        <!--========================================
-                NÚMERO CONTRATO
-                ========================================-->
-
-                                        <td>
-
-                                            <?= htmlspecialchars(
-                        $contrato[
-                            'numero_contrato'
-                        ]
-                    ) ?>
-
-                                        </td>
+                                                </td>
 
 
-                                        <!--========================================
-                VALOR CONTRATO
-                ========================================-->
+                                                <!-- VALOR CONTRATO -->
 
-                                        <td class="text-end">
+                                                <td class="text-end">
 
-                                            <?= dinero(
-                        $contrato[
-                            'valor_contrato'
-                        ]
-                    ) ?>
+                                                    <?= dinero(
+                                                        $contrato['valor_contrato']
+                                                    ) ?>
 
-                                        </td>
+                                                </td>
 
 
-                                        <!--========================================
-                IVA CONTRATO
-                ========================================-->
+                                                <!-- IVA CONTRATO -->
 
-                                        <td class="text-end">
+                                                <td class="text-end">
 
-                                            <?= dinero(
-                        $contrato[
-                            'iva_contrato'
-                        ]
-                    ) ?>
+                                                    <?= dinero(
+                                                        $contrato['iva_contrato']
+                                                    ) ?>
 
-                                        </td>
+                                                </td>
 
 
-                                        <!--========================================
-                VALOR FACTURAS
-                ========================================-->
+                                                <!-- IMPOCONSUMO CONTRATO -->
 
-                                        <td class="text-end">
+                                                <td class="text-end">
 
-                                            <?= dinero(
-                        $contrato[
-                            'valor_facturas'
-                        ]
-                    ) ?>
+                                                    <?= dinero(
+                                                        $contrato['impoconsumo_contrato']
+                                                    ) ?>
 
-                                        </td>
+                                                </td>
 
 
-                                        <!--========================================
-                TOTAL IVA FACTURADO
-                ========================================-->
+                                                <!-- RETENCIÓN CONTRATO -->
 
-                                        <td class="text-end">
+                                                <td class="text-end">
 
-                                            <?= dinero(
-                        $contrato[
-                            'iva_facturado'
-                        ]
-                    ) ?>
+                                                    <?= dinero(
+                                                        $contrato['retencion_contrato']
+                                                    ) ?>
 
-                                        </td>
+                                                </td>
 
 
-                                        <!--========================================
-                ACCIONES
-                ========================================-->
+                                                <!-- VALOR FACTURAS -->
 
-                                        <td>
+                                                <td class="text-end">
 
-                                            <a href="<?= BASE_URL ?>facturacion/ver.php?id=<?= $contrato['id'] ?>"
-                                                class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
-                                                title="Ver facturas del contrato">
+                                                    <?= dinero(
+                                                        $contrato['valor_facturas']
+                                                    ) ?>
 
-                                                <i class="bi bi-eye"></i>
-
-                                                <span>Ver facturas</span>
-
-                                            </a>
-
-                                        </td>
+                                                </td>
 
 
-                                    </tr>
+                                                <!-- IVA FACTURADO -->
+
+                                                <td class="text-end">
+
+                                                    <?= dinero(
+                                                        $contrato['iva_facturado']
+                                                    ) ?>
+
+                                                </td>
 
 
-                                    <?php endforeach; ?>
+                                                <!-- IMPOCONSUMO FACTURADO -->
 
+                                                <td class="text-end">
+
+                                                    <?= dinero(
+                                                        $contrato['impoconsumo_facturado']
+                                                    ) ?>
+
+                                                </td>
+
+
+                                                <!-- RETENCIÓN FACTURADA -->
+
+                                                <td class="text-end">
+
+                                                    <?= dinero(
+                                                        $contrato['retencion_facturada']
+                                                    ) ?>
+
+                                                </td>
+
+
+                                                <!-- ACCIONES -->
+
+                                                <td>
+
+                                                    <a
+                                                        href="<?= BASE_URL ?>facturacion/ver.php?id=<?= $contrato['id'] ?>"
+                                                        class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
+                                                        title="Ver facturas del contrato"
+                                                    >
+
+                                                        <i class="bi bi-eye"></i>
+
+                                                        <span>
+                                                            Ver facturas
+                                                        </span>
+
+                                                    </a>
+
+                                                </td>
+
+                                            </tr>
+
+                                        <?php endforeach; ?>
 
                                     <?php else: ?>
 
+                                        <tr>
 
-                                    <tr>
+                                            <td
+                                                colspan="10"
+                                                class="text-center text-muted py-4"
+                                            >
 
-                                        <td colspan="6" class="text-center text-muted py-4">
+                                                No hay contratos registrados
+                                                en este cuatrimestre.
 
-                                            No hay contratos registrados
-                                            en este cuatrimestre.
+                                            </td>
 
-                                        </td>
-
-                                    </tr>
-
+                                        </tr>
 
                                     <?php endif; ?>
-
 
                                 </tbody>
 
 
                                 <!--==================================================
-        TOTALES
-        ==================================================-->
+                                TOTALES
+                                ==================================================-->
 
-                                <?php if (
-            count($contratos) > 0
-        ): ?>
+                                <?php if (count($contratos) > 0): ?>
 
+                                    <tfoot class="table-light">
 
-                                <tfoot class="table-light">
+                                        <tr>
 
-
-                                    <tr>
-
-
-                                        <th>
-
-                                            TOTAL
-
-                                        </th>
+                                            <th>
+                                                TOTAL
+                                            </th>
 
 
-                                        <!-- TOTAL VALOR CONTRATOS -->
+                                            <th class="text-end">
 
-                                        <th class="text-end">
+                                                <?= dinero(
+                                                    $totalValorContratos
+                                                ) ?>
 
-                                            <?= dinero(
-                        $totalValorContratos
-                    ) ?>
-
-                                        </th>
+                                            </th>
 
 
-                                        <!-- TOTAL IVA CONTRATOS -->
+                                            <th class="text-end">
 
-                                        <th class="text-end">
+                                                <?= dinero(
+                                                    $totalIvaContratos
+                                                ) ?>
 
-                                            <?= dinero(
-                        $totalIvaContratos
-                    ) ?>
-
-                                        </th>
+                                            </th>
 
 
-                                        <!-- TOTAL VALOR FACTURAS -->
+                                            <th class="text-end">
 
-                                        <th class="text-end">
+                                                <?= dinero(
+                                                    $totalImpoconsumoContratos
+                                                ) ?>
 
-                                            <?= dinero(
-                        $totalValorFacturas
-                    ) ?>
-
-                                        </th>
+                                            </th>
 
 
-                                        <!-- TOTAL IVA FACTURADO -->
+                                            <th class="text-end">
 
-                                        <th class="text-end">
+                                                <?= dinero(
+                                                    $totalRetencionContratos
+                                                ) ?>
 
-                                            <?= dinero(
-                        $totalIvaFacturado
-                    ) ?>
-
-                                        </th>
+                                            </th>
 
 
-                                        <!-- ACCIONES -->
+                                            <th class="text-end">
 
-                                        <th></th>
+                                                <?= dinero(
+                                                    $totalValorFacturas
+                                                ) ?>
+
+                                            </th>
 
 
-                                    </tr>
+                                            <th class="text-end">
+
+                                                <?= dinero(
+                                                    $totalIvaFacturado
+                                                ) ?>
+
+                                            </th>
 
 
-                                </tfoot>
+                                            <th class="text-end">
 
+                                                <?= dinero(
+                                                    $totalImpoconsumoFacturado
+                                                ) ?>
+
+                                            </th>
+
+
+                                            <th class="text-end">
+
+                                                <?= dinero(
+                                                    $totalRetencionFacturada
+                                                ) ?>
+
+                                            </th>
+
+
+                                            <th></th>
+
+                                        </tr>
+
+                                    </tfoot>
 
                                 <?php endif; ?>
-
 
                             </table>
 
                         </div>
+
                     </div>
+
                 </div>
 
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
-                <?php
+<?php
 
 include __DIR__ . '/../../includes/footer.php';
 

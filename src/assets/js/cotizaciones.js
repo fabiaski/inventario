@@ -44,14 +44,28 @@ txtBuscar.addEventListener("keyup", function () {
 
     item.className = "list-group-item list-group-item-action";
 
-    item.innerHTML = `
-            <strong>${p.producto}</strong><br>
-            <small>
-                ${p.unidad_medida}
-                |
-                $${Number(p.precio).toLocaleString("es-CO")}
-            </small>
-        `;
+    
+ item.innerHTML = `
+    <strong>${p.producto}</strong><br>
+
+    <small>
+        ${p.unidad_medida}
+        |
+        $${Number(p.precio).toLocaleString("es-CO")}
+    </small>
+
+    <br>
+
+    <small>
+            Proveedor: ${p.proveedor ? p.proveedor : "Sin proveedor"}
+        </small>
+
+        <br>
+
+        <small>
+            Fecha cotización: ${p.fecha_cotizacion ? p.fecha_cotizacion : "Sin fecha"}
+        </small>
+`;
 
     item.onclick = function (e) {
       e.preventDefault();
@@ -69,16 +83,21 @@ txtBuscar.addEventListener("keyup", function () {
 // SELECCIONAR
 //========================================
 
+
 function seleccionarProducto(producto) {
-  productoId.value = producto.id;
+  
+    productoId.value = producto.id;
 
-  txtBuscar.value = producto.producto;
+    txtBuscar.value = producto.producto;
 
-  valorUnidad.value = Number(producto.precio).toLocaleString("es-CO");
+    valorUnidad.value = Number(producto.precio).toLocaleString("es-CO");
 
-  lista.style.display = "none";
+    console.log("Proveedor:", producto.proveedor);
+    console.log("Fecha cotización:", producto.fecha_cotizacion);
+
+    lista.style.display = "none";
 }
-
+ 
 //========================================
 // CERRAR LISTA AL HACER CLIC FUERA
 //========================================
@@ -202,7 +221,13 @@ function agregarProducto() {
 
         <td>${numeroFila++}</td>
 
-        <td>${producto.producto}</td>
+        <td style="
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: normal;
+            line-height: 1.4; ">
+            ${producto.producto}
+        </td>
 
         <td>${cant}</td>
 
@@ -714,6 +739,9 @@ function obtenerProductosCotizacion() {
       valor_total_unidad: valorTotalUnidad,
 
       total_venta: totalVenta,
+
+      proveedor: producto.proveedor ?? "",
+fecha_cotizacion: producto.fecha_cotizacion ?? "",
     });
   });
 

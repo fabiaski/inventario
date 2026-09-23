@@ -8,7 +8,9 @@ require_once __DIR__ . '/../../config/conexion.php';
 //==================================================
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
     exit('Acceso no permitido.');
+
 }
 
 
@@ -26,10 +28,9 @@ $numeroFactura = trim(
     $_POST['numero_factura'] ?? ''
 );
 
-$valor = $_POST['valor'] ?? 0;
-
-$porcentajeIva =
-    $_POST['porcentaje_iva'] ?? 19;
+$valor = trim(
+    $_POST['valor'] ?? ''
+);
 
 $observacion = trim(
     $_POST['observacion'] ?? ''
@@ -37,45 +38,235 @@ $observacion = trim(
 
 
 //==================================================
-// VALIDAR
+// INFORMACIÓN TRIBUTARIA
+//==================================================
+
+$tieneIva =
+    isset($_POST['tiene_iva'])
+    ? 1
+    : 0;
+
+$valorIva = null;
+
+
+$tieneImpoconsumo =
+    isset($_POST['tiene_impoconsumo'])
+    ? 1
+    : 0;
+
+$valorImpoconsumo = null;
+
+
+$tieneRetencion =
+    isset($_POST['tiene_retencion'])
+    ? 1
+    : 0;
+
+$valorRetencion = null;
+
+
+//==================================================
+// VALIDAR FACTURA
 //==================================================
 
 if ($facturaId <= 0) {
+
     exit('Factura no válida.');
+
 }
+
 
 if ($proveedor === '') {
+
     exit('El proveedor es obligatorio.');
+
 }
+
 
 if ($numeroFactura === '') {
-    exit('El número de factura es obligatorio.');
-}
 
-if (!is_numeric($valor)) {
-    exit('El valor no es válido.');
-}
+    exit(
+        'El número de factura es obligatorio.'
+    );
 
-if (!is_numeric($porcentajeIva)) {
-    exit('El porcentaje de IVA no es válido.');
 }
 
 
-$valor = (float) $valor;
+//==================================================
+// LIMPIAR VALOR
+//==================================================
 
-$porcentajeIva = (int) $porcentajeIva;
-
-
-if ($valor < 0) {
-    exit('El valor no puede ser negativo.');
-}
+$valor =
+    str_replace(
+        ['.', ','],
+        '',
+        $valor
+    );
 
 
 if (
-    $porcentajeIva < 0 ||
-    $porcentajeIva > 100
+    $valor === ''
+    || !is_numeric($valor)
 ) {
-    exit('El porcentaje de IVA no es válido.');
+
+    exit(
+        'El valor no es válido.'
+    );
+
+}
+
+
+$valor =
+    (float) $valor;
+
+
+if ($valor < 0) {
+
+    exit(
+        'El valor no puede ser negativo.'
+    );
+
+}
+
+
+//==================================================
+// VALIDAR IVA
+//==================================================
+
+if ($tieneIva) {
+
+    $valorIva =
+        trim(
+            $_POST['valor_iva'] ?? ''
+        );
+
+
+    $valorIva =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorIva
+        );
+
+
+    if (
+        $valorIva === ''
+        || !is_numeric($valorIva)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para el IVA.'
+        );
+
+    }
+
+
+    $valorIva =
+        (float) $valorIva;
+
+
+    if ($valorIva < 0) {
+
+        exit(
+            'El valor del IVA no puede ser negativo.'
+        );
+
+    }
+
+}
+
+
+//==================================================
+// VALIDAR IMPOCONSUMO
+//==================================================
+
+if ($tieneImpoconsumo) {
+
+    $valorImpoconsumo =
+        trim(
+            $_POST['valor_impoconsumo'] ?? ''
+        );
+
+
+    $valorImpoconsumo =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorImpoconsumo
+        );
+
+
+    if (
+        $valorImpoconsumo === ''
+        || !is_numeric($valorImpoconsumo)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para el Impoconsumo.'
+        );
+
+    }
+
+
+    $valorImpoconsumo =
+        (float) $valorImpoconsumo;
+
+
+    if ($valorImpoconsumo < 0) {
+
+        exit(
+            'El valor del Impoconsumo no puede ser negativo.'
+        );
+
+    }
+
+}
+
+
+//==================================================
+// VALIDAR RETENCIÓN
+//==================================================
+
+if ($tieneRetencion) {
+
+    $valorRetencion =
+        trim(
+            $_POST['valor_retencion'] ?? ''
+        );
+
+
+    $valorRetencion =
+        str_replace(
+            ['.', ','],
+            '',
+            $valorRetencion
+        );
+
+
+    if (
+        $valorRetencion === ''
+        || !is_numeric($valorRetencion)
+    ) {
+
+        exit(
+            'Debe ingresar un valor válido para la Retención.'
+        );
+
+    }
+
+
+    $valorRetencion =
+        (float) $valorRetencion;
+
+
+    if ($valorRetencion < 0) {
+
+        exit(
+            'El valor de la Retención no puede ser negativo.'
+        );
+
+    }
+
 }
 
 
@@ -97,10 +288,12 @@ $stmtFactura =
 
 
 if (!$stmtFactura) {
+
     exit(
         'Error preparando consulta: '
         . $conexion->error
     );
+
 }
 
 
@@ -125,7 +318,11 @@ $stmtFactura->close();
 
 
 if (!$factura) {
-    exit('La factura no existe.');
+
+    exit(
+        'La factura no existe.'
+    );
+
 }
 
 
@@ -134,31 +331,7 @@ $contratoId =
 
 
 //==================================================
-// CALCULAR IVA
-//==================================================
-
-if ($porcentajeIva > 0) {
-
-    $valorSinIva =
-        $valor /
-        (
-            1 +
-            ($porcentajeIva / 100)
-        );
-
-} else {
-
-    $valorSinIva = $valor;
-
-}
-
-
-$valorIva =
-    $valor - $valorSinIva;
-
-
-//==================================================
-// ACTUALIZAR
+// ACTUALIZAR FACTURA
 //==================================================
 
 $sqlActualizar = "
@@ -167,38 +340,56 @@ $sqlActualizar = "
         proveedor = ?,
         numero_factura = ?,
         valor = ?,
-        valor_sin_iva = ?,
-        porcentaje_iva = ?,
+        tiene_iva = ?,
         valor_iva = ?,
+        tiene_impoconsumo = ?,
+        valor_impoconsumo = ?,
+        tiene_retencion = ?,
+        valor_retencion = ?,
         observacion = ?
     WHERE id = ?
 ";
 
 
 $stmtActualizar =
-    $conexion->prepare($sqlActualizar);
+    $conexion->prepare(
+        $sqlActualizar
+    );
 
 
 if (!$stmtActualizar) {
+
     exit(
         'Error preparando actualización: '
         . $conexion->error
     );
+
 }
 
 
+//==================================================
+// ASIGNAR VALORES
+//==================================================
+
 $stmtActualizar->bind_param(
-    "ssddidsi",
+    "ssdidididsi",
     $proveedor,
     $numeroFactura,
     $valor,
-    $valorSinIva,
-    $porcentajeIva,
+    $tieneIva,
     $valorIva,
+    $tieneImpoconsumo,
+    $valorImpoconsumo,
+    $tieneRetencion,
+    $valorRetencion,
     $observacion,
     $facturaId
 );
 
+
+//==================================================
+// EJECUTAR
+//==================================================
 
 if (!$stmtActualizar->execute()) {
 
@@ -228,3 +419,5 @@ header(
 );
 
 exit;
+
+?>

@@ -49,366 +49,297 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <div class="container-fluid px-3 px-lg-4 py-4">
 
-                            
-                                <!-- ========================= -->
-                                <!-- DATOS DE LA COTIZACIÓN -->
-                                <!-- ========================= -->
 
-                                <div class="row g-3 mb-4">
+                            <!-- ========================= -->
+                            <!-- DATOS DE LA COTIZACIÓN -->
+                            <!-- ========================= -->
 
-                                    <div class="col-md-5">
+                            <div class="row g-3 mb-4">
 
-                                        <label class="form-label">
+                                <div class="col-md-5">
 
-                                            Cliente
+                                    <label class="form-label">
 
-                                        </label>
+                                        Cliente
 
-                                        <input type="text" id="cliente" class="form-control">
+                                    </label>
 
-                                    </div>
+                                    <input type="text" id="cliente" class="form-control">
 
-                                    <div class="col-md-3">
+                                </div>
 
-                                        <label class="form-label">
+                                <div class="col-md-3">
 
-                                            Fecha
+                                    <label class="form-label">
 
-                                        </label>
+                                        Fecha
 
-                                        <input type="date" id="fecha" class="form-control" value="<?= date('Y-m-d') ?>">
+                                    </label>
 
-                                    </div>
+                                    <input type="date" id="fecha" class="form-control" value="<?= date('Y-m-d') ?>">
 
-                                    <div class="col-md-4">
+                                </div>
 
-                                        <label class="form-label">
+                                <div class="col-md-4">
 
-                                            Observaciones
+                                    <label class="form-label">
 
-                                        </label>
+                                        Observaciones
 
-                                        <input type="text" id="observaciones" class="form-control">
+                                    </label>
+
+                                    <input type="text" id="observaciones" class="form-control">
+
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- ========================= -->
+                            <!-- AGREGAR PRODUCTO -->
+                            <!-- ========================= -->
+
+                            <h5 class="mb-3">
+
+                                Agregar Producto
+
+                            </h5>
+
+                            <div class="row g-3 align-items-end">
+
+                                <div class="col-md-12 position-relative">
+
+                                    <label class="form-label">
+
+                                        Producto
+
+                                    </label>
+
+                                    <input type="text" id="buscarProducto" class="form-control" autocomplete="off"
+                                        placeholder="Buscar producto...">
+
+                                    <input type="hidden" id="producto_id">
+
+                                    <div id="listaProductos" class="list-group position-absolute w-100 shadow"
+                                        style="display:none; z-index:9999; max-height:250px; overflow:auto;">
 
                                     </div>
 
                                 </div>
 
-                                <hr>
+                                <div class="col-md-2">
 
-                                <!-- ========================= -->
-                                <!-- AGREGAR PRODUCTO -->
-                                <!-- ========================= -->
+                                    <label class="form-label">
 
-                                <h5 class="mb-3">
+                                        Cantidad
 
-                                    Agregar Producto
+                                    </label>
 
-                                </h5>
+                                    <input type="number" id="cantidad" class="form-control" value="1" min="1">
 
-                                <div class="row g-3 align-items-end">
+                                </div>
 
-                                    <div class="col-md-12 position-relative">
+                                <div class="col-md-3">
 
-                                        <label class="form-label">
+                                    <label class="form-label">
 
-                                            Producto
+                                        Valor UND
 
-                                        </label>
+                                    </label>
 
-                                        <input type="text" id="buscarProducto" class="form-control" autocomplete="off"
-                                            placeholder="Buscar producto...">
+                                    <input type="text" id="valorUnidad" class="form-control" readonly>
 
-                                        <input type="hidden" id="producto_id">
+                                </div>
 
-                                        <div id="listaProductos" class="list-group position-absolute w-100 shadow"
-                                            style="display:none; z-index:9999; max-height:250px; overflow:auto;">
+                                <div class="col-md-3">
+
+                                    <label class="form-label">
+
+                                        % Incremento
+
+                                    </label>
+
+                                    <input type="number" id="incremento" class="form-control" value="0" min="0"
+                                        step="0.01">
+
+                                </div>
+
+                                <div class="col-md-3">
+
+                                    <button type="button" id="btnAgregar" class="btn btn-primary w-100">
+
+                                        <i class="bi bi-plus-circle"></i>
+
+                                        Agregar
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- ========================= -->
+                            <!-- TABLA -->
+                            <!-- ========================= -->
+
+                            <div class="table-responsive">
+
+                                <table class="table table-bordered align-middle" id="tablaCotizacion">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+                                            <th style="width: 4%;">#</th>
+
+                                            <th style="width: 18%;">Producto</th>
+
+                                            <th style="width: 8%;">Cantidad</th>
+
+                                            <th style="width: 7%;">UND</th>
+
+                                            <th style="width: 11%;">Valor UND</th>
+
+                                            <th style="width: 11%;">Total UND</th>
+
+                                            <th style="width: 7%;">% Inc.</th>
+
+                                            <th style="width: 10%;">Valor Inc.</th>
+
+                                            <th style="width: 10%;">UND + Inc.</th>
+
+                                            <th style="width: 10%;">Total Venta</th>
+
+                                            <th style="width: 4%;"></th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr id="sinProductos">
+
+                                            <td colspan="11" class="text-center text-muted">
+
+                                                No hay productos agregados.
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            <!-- ========================= -->
+                            <!-- RESUMEN -->
+                            <!-- ========================= -->
+
+                            <div class="row mt-4">
+
+                                <div class="col-lg-6">
+
+                                    <div class="card shadow-sm">
+
+                                        <div class="card-header">
+
+                                            <strong>
+
+                                                Resumen
+
+                                            </strong>
 
                                         </div>
 
-                                    </div>
+                                        <div class="card-body">
 
-                                    <div class="col-md-2">
+                                            <table class="table     table-borderless">
 
-                                        <label class="form-label">
+                                                <tr>
 
-                                            Cantidad
+                                                    <th>Total Venta</th>
 
-                                        </label>
+                                                    <td class="text-end" id="totalVenta">$0</td>
 
-                                        <input type="number" id="cantidad" class="form-control" value="1" min="1">
+                                                </tr>
 
-                                    </div>
+                                                <tr>
 
-                                    <div class="col-md-3">
+                                                    <th>Retención (%)</th>
 
-                                        <label class="form-label">
+                                                    <td>
 
-                                            Valor UND
+                                                        <input type="number" id="retencion" class="form-control"
+                                                            value="19">
 
-                                        </label>
+                                                    </td>
 
-                                        <input type="text" id="valorUnidad" class="form-control" readonly>
+                                                </tr>
 
-                                    </div>
+                                                <tr>
 
-                                    <div class="col-md-3">
+                                                    <th>Valor Retención</th>
 
-                                        <label class="form-label">
+                                                    <td class="text-end" id="valorRetencion">
 
-                                            % Incremento
+                                                        $0
 
-                                        </label>
+                                                    </td>
 
-                                        <input type="number" id="incremento" class="form-control" value="0" min="0"
-                                            step="0.01">
+                                                </tr>
 
-                                    </div>
+                                                <tr>
 
-                                    <div class="col-md-3">
+                                                    <th>Pago 1 (10%)</th>
 
-                                        <button type="button" id="btnAgregar" class="btn btn-primary w-100">
+                                                    <td>
 
-                                            <i class="bi bi-plus-circle"></i>
+                                                        <div class="form-check form-switch">
 
-                                            Agregar
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="chkPago1" checked>
 
-                                        </button>
+                                                        </div>
 
-                                    </div>
+                                                    </td>
 
-                                </div>
+                                                </tr>
 
-                                <hr class="my-4">
+                                                <tr>
 
-                                <!-- ========================= -->
-                                <!-- TABLA -->
-                                <!-- ========================= -->
+                                                    <th>Pago 2 (10%)</th>
 
-                                <div class="table-responsive">
+                                                    <td>
 
-                                    <table class="table table-bordered align-middle" id="tablaCotizacion">
+                                                        <div class="form-check form-switch">
 
-                                        <thead class="table-light">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="chkPago2">
 
-                                            <tr>
+                                                        </div>
 
-                                                <th>#</th>
+                                                    </td>
 
-                                                <th>Producto</th>
+                                                </tr>
 
-                                                <th>Cantidad</th>
+                                                <tr>
 
-                                                <th>UND</th>
+                                                    <th>Valor Pagos</th>
 
-                                                <th>Valor UND</th>
+                                                    <td class="text-end" id="valorPagos">
 
-                                                <th>Total UND</th>
+                                                        $0
 
-                                                <th>% Inc.</th>
+                                                    </td>
 
-                                                <th>Valor Inc.</th>
+                                                </tr>
 
-                                                <th>UND + Inc.</th>
-
-                                                <th>Total Venta</th>
-
-                                                <th></th>
-
-                                            </tr>
-
-                                        </thead>
-
-                                        <tbody>
-
-                                            <tr id="sinProductos">
-
-                                                <td colspan="11" class="text-center text-muted">
-
-                                                    No hay productos agregados.
-
-                                                </td>
-
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-
-                                <!-- ========================= -->
-                                <!-- RESUMEN -->
-                                <!-- ========================= -->
-
-                                <div class="row mt-4">
-
-                                    <div class="col-lg-6">
-
-                                        <div class="card shadow-sm">
-
-                                            <div class="card-header">
-
-                                                <strong>
-
-                                                    Resumen
-
-                                                </strong>
-
-                                            </div>
-
-                                            <div class="card-body">
-
-                                                <table class="table     table-borderless">
-
-                                                    <tr>
-
-                                                        <th>Total Venta</th>
-
-                                                        <td class="text-end" id="totalVenta">$0</td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Retención (%)</th>
-
-                                                        <td>
-
-                                                            <input type="number" id="retencion" class="form-control"
-                                                                value="19">
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Valor Retención</th>
-
-                                                        <td class="text-end" id="valorRetencion">
-
-                                                            $0
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Pago 1 (10%)</th>
-
-                                                        <td>
-
-                                                            <div class="form-check form-switch">
-
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    id="chkPago1" checked>
-
-                                                            </div>
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Pago 2 (10%)</th>
-
-                                                        <td>
-
-                                                            <div class="form-check form-switch">
-
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    id="chkPago2">
-
-                                                            </div>
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Valor Pagos</th>
-
-                                                        <td class="text-end" id="valorPagos">
-
-                                                            $0
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                </table>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-lg-6">
-
-                                        <div class="card shadow-sm">
-
-                                            <div class="card-header">
-
-                                                <strong>
-
-                                                    Resultado Final
-
-                                                </strong>
-
-                                            </div>
-
-                                            <div class="card-body">
-
-                                                <table class="table table-borderless">
-
-                                                    <tr>
-                                                        <th>Valor total unidad</th>
-                                                        <td class="text-end" id="valorTotalUnidad">$0</td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <th>Llega</th>
-
-                                                        <td class="text-end" id="llega">$0</td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Ganancia</th>
-
-                                                        <td class="text-end" id="ganancia">$0</td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Ganancia Ideal (20%)</th>
-
-                                                        <td class="text-end" id="gananciaIdeal">
-
-                                                            $0
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <th>Diferencia</th>
-
-                                                        <td class="text-end" id="diferencia"> $0 </td>
-
-                                                    </tr>
-
-                                                </table>
-
-                                            </div>
+                                            </table>
 
                                         </div>
 
@@ -416,11 +347,71 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </div>
 
-                            </section>
+                                <div class="col-lg-6">
 
-                        </div>
+                                    <div class="card shadow-sm">
 
-                        <?php
+                                        <div class="card-header">
+
+                                            <strong>
+
+                                                Resultado Final
+
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="card-body">
+
+                                            <table class="table table-borderless">
+
+                                                <tr>
+                                                    <th>Valor total unidad</th>
+                                                    <td class="text-end" id="valorTotalUnidad">$0</td>
+                                                </tr>
+                                                <tr>
+
+                                                    <th>Llega</th>
+
+                                                    <td class="text-end" id="llega">$0</td>
+
+                                                </tr>
+
+                                                <tr>
+
+                                                    <th>Ganancia</th>
+
+                                                    <td class="text-end" id="ganancia">$0</td>
+
+                                                </tr>
+
+                                                <tr>
+
+                                                    <th>Ganancia Ideal (20%)</th>
+
+                                                    <td class="text-end" id="gananciaIdeal">
+
+                                                        $0
+
+                                                    </td>
+
+                                                </tr>
+
+                                                <tr>
+
+                                                    <th>Diferencia</th>
+
+                                                    <td class="text-end" id="diferencia"> $0 </td>
+
+                                                </tr>
+
+                                            </table>
+
+                                        </div>
+
+                               
+
+                      <?php
 
 $productos = [];
 
@@ -436,18 +427,28 @@ $sql = $conexion->query("
     ORDER BY producto
 ");
 
-while($fila = $sql->fetch_assoc()){
+while ($fila = $sql->fetch_assoc()) {
 
-    $productos[] = $fila;
+    $productos[] = [
+        'id' => $fila['id'],
+        'producto' => $fila['producto'],
+        'unidad_medida' => $fila['unidad_medida'],
+        'precio' => $fila['precio'],
+        'proveedor' => $fila['proveedor'],
+        'fecha_cotizacion' => $fila['fecha_cotizacion']
+    ];
 
 }
 
 ?>
 
-                        <script>
-                        const productos = <?= json_encode($productos) ?>;
-                        </script>
-                        <?php include __DIR__ . '/../../includes/footer.php'; ?>
-                        <?php include __DIR__ . '/../../includes/scripts.php'; ?>
+<script>
+const productos = <?= json_encode($productos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
-                        <script src="../../../assets/js/cotizaciones.js"></script>
+console.log("PRODUCTOS:", productos);
+</script>
+
+<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/scripts.php'; ?>
+
+<script src="../../../assets/js/cotizaciones.js"></script>
