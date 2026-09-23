@@ -174,276 +174,228 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $movimiento['estado'] = $estado;
 }
 
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../../includes/sidebar.php';
+
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
+<div class="main-panel">
 
-    <meta charset="UTF-8">
+    <div class="content-wrapper">
+        <div class="row">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Editar movimiento - <?= htmlspecialchars($movimiento['nombre']) ?>
-    </title>
-
-    <?php require_once __DIR__ . '/../../includes/header.php'; ?>
-
-</head>
-
-<body>
-
-<div class="container-fluid page-body-wrapper">
-
-    <?php require_once __DIR__ . '/../../includes/sidebar.php'; ?>
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
 
 
-    <div class="main-panel">
+                    <div class="card-body">
+                        <div class="panel-header d-flex justify-content-between align-items-center">
 
-        <div class="content-wrapper">
+                            <div>
+
+                                <h2 class=" mb-1 section-title">
+                                    <i class="bi bi-receipt"></i>
+                                    Editar movimiento
+                                </h2>
+
+                                
+    <br>
+                                <p class="text-muted mb-0">
+                                <h4 class="page-title">
+
+                                    <?= htmlspecialchars($movimiento['nombre']) ?>
+    
+                                    -
+
+                                    <?php if ($movimiento['tipo'] === 'me_debe'): ?>
+
+                                    <span class="badge badge-success">
+                                    Me debe
+                                </span>
+
+                                <?php else: ?>
+
+                                <span class="badge badge-warning">
+                                    Le debo
+                                </span>
+
+                                    <?php endif; ?>
+
+                                </p>
+
+                            </div>
+
+                        </div>
 
 
-            <!-- ==========================================
-                 ENCABEZADO
-            ========================================== -->
-
-            <div class="page-header">
-
-                <div>
-
-                    <h3 class="page-title">
-                        Editar movimiento
-                    </h3>
-
-                    <p class="text-muted mb-0">
-
-                        <?= htmlspecialchars($movimiento['nombre']) ?>
-
-                        -
-
-                        <?php if ($movimiento['tipo'] === 'me_debe'): ?>
-
-                            Me debe
-
-                        <?php else: ?>
-
-                            Le debo
-
-                        <?php endif; ?>
-
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- ==========================================
+                        <!-- ==========================================
                  ERROR
             ========================================== -->
 
-            <?php if ($error !== ''): ?>
+                        <?php if ($error !== ''): ?>
 
-                <div class="alert alert-danger">
+                        <div class="alert alert-danger">
 
-                    <?= htmlspecialchars($error) ?>
+                            <?= htmlspecialchars($error) ?>
 
-                </div>
+                        </div>
 
-            <?php endif; ?>
+                        <?php endif; ?>
 
 
-            <!-- ==========================================
+                        <!-- ==========================================
                  FORMULARIO
             ========================================== -->
 
-            <div class="row">
+                        <div class="row">
 
-                <div class="col-md-8 col-lg-6">
+                            <div class="col-md-8 col-lg-6">
 
-                    <div class="card">
+                                <div class="card">
 
-                        <div class="card-body">
+                                    <div class="card-body">
 
-                            <h4 class="card-title">
-                                Información del movimiento
-                            </h4>
-
-
-                            <form method="POST">
+                                        <h4 class="card-title">
+                                            Información del movimiento
+                                        </h4>
 
 
-                                <!-- DESCRIPCIÓN -->
+                                        <form method="POST">
 
-                                <div class="form-group">
 
-                                    <label for="descripcion">
-                                        Descripción
-                                    </label>
+                                            <!-- DESCRIPCIÓN -->
 
-                                    <input
-                                        type="text"
-                                        name="descripcion"
-                                        id="descripcion"
-                                        class="form-control"
-                                        maxlength="255"
-                                        required
-                                        value="<?= htmlspecialchars(
+                                            <div class="form-group">
+
+                                                <label for="descripcion">
+                                                    Descripción
+                                                </label>
+
+                                                <input type="text" name="descripcion" id="descripcion"
+                                                    class="form-control" maxlength="255" required value="<?= htmlspecialchars(
                                             $movimiento['descripcion']
-                                        ) ?>"
-                                    >
+                                        ) ?>">
 
-                                </div>
+                                            </div>
 
 
-                                <!-- VALOR -->
+                                            <!-- VALOR -->
 
-                                <div class="form-group">
+                                            <div class="form-group">
 
-                                    <label for="valor">
-                                        Valor
-                                    </label>
+                                                <label for="valor">
+                                                    Valor
+                                                </label>
 
-                                    <input
-                                        type="text"
-                                        name="valor"
-                                        id="valor"
-                                        class="form-control"
-                                        inputmode="numeric"
-                                        required
-                                        value="<?= number_format(
+                                                <input type="text" name="valor" id="valor" class="form-control"
+                                                    inputmode="numeric" required value="<?= number_format(
                                             (int) $movimiento['valor'],
                                             0,
                                             ',',
                                             '.'
-                                        ) ?>"
-                                    >
+                                        ) ?>">
 
-                                    <small class="text-muted">
-                                        Ingrese el valor sin decimales.
-                                    </small>
+                                                <small class="text-muted">
+                                                    Ingrese el valor sin decimales.
+                                                </small>
 
-                                </div>
+                                            </div>
 
 
-                                <!-- FECHA -->
+                                            <!-- FECHA -->
 
-                                <div class="form-group">
+                                            <div class="form-group">
 
-                                    <label for="fecha">
-                                        Fecha
-                                    </label>
+                                                <label for="fecha">
+                                                    Fecha
+                                                </label>
 
-                                    <input
-                                        type="date"
-                                        name="fecha"
-                                        id="fecha"
-                                        class="form-control"
-                                        required
-                                        value="<?= htmlspecialchars(
+                                                <input type="date" name="fecha" id="fecha" class="form-control" required
+                                                    value="<?= htmlspecialchars(
                                             $movimiento['fecha']
-                                        ) ?>"
-                                    >
+                                        ) ?>">
 
-                                </div>
+                                            </div>
 
 
-                                <!-- ESTADO -->
+                                            <!-- ESTADO -->
 
-                                <div class="form-group">
+                                            <div class="form-group">
 
-                                    <label for="estado">
-                                        Estado
-                                    </label>
+                                                <label for="estado">
+                                                    Estado
+                                                </label>
 
-                                    <select
-                                        name="estado"
-                                        id="estado"
-                                        class="form-control"
-                                        required
-                                    >
+                                                <select name="estado" id="estado" class="form-control" required>
 
-                                        <option
-                                            value="pendiente"
-                                            <?= $movimiento['estado'] === 'pendiente'
+                                                    <option value="pendiente" <?= $movimiento['estado'] === 'pendiente'
                                                 ? 'selected'
-                                                : '' ?>
-                                        >
-                                            Pendiente
-                                        </option>
+                                                : '' ?>>
+                                                        Pendiente
+                                                    </option>
 
-                                        <option
-                                            value="pagado"
-                                            <?= $movimiento['estado'] === 'pagado'
+                                                    <option value="pagado" <?= $movimiento['estado'] === 'pagado'
                                                 ? 'selected'
-                                                : '' ?>
-                                        >
-                                            Pagado
-                                        </option>
+                                                : '' ?>>
+                                                        Pagado
+                                                    </option>
 
-                                    </select>
+                                                </select>
+
+                                            </div>
+
+
+                                            <!-- BOTONES -->
+
+                                            <div class="mt-4">
+
+                                                <button type="submit" class="btn btn-primary">
+                                                    Guardar cambios
+                                                </button>
+
+                                                <a href="ver.php?id=<?= $personaId ?>" class="btn btn-secondary">
+                                                    Cancelar
+                                                </a>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
 
                                 </div>
 
-
-                                <!-- BOTONES -->
-
-                                <div class="mt-4">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary"
-                                    >
-                                        Guardar cambios
-                                    </button>
-
-                                    <a
-                                        href="ver.php?id=<?= $personaId ?>"
-                                        class="btn btn-secondary"
-                                    >
-                                        Cancelar
-                                    </a>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
+                            </div>
                 </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-      
 
 
-    <?php
+
+            <?php
 require_once __DIR__ . '/../../includes/footer.php';
 require_once __DIR__ . '/../../includes/scripts.php';
 
 
 ?>
 
-<script>
-document.getElementById('valor').addEventListener('input', function () {
+            <script>
+            document.getElementById('valor').addEventListener('input', function() {
 
-    let valor = this.value.replace(/\D/g, '');
+                let valor = this.value.replace(/\D/g, '');
 
-    if (valor !== '') {
-        this.value = Number(valor).toLocaleString('es-CO');
-    }
+                if (valor !== '') {
+                    this.value = Number(valor).toLocaleString('es-CO');
+                }
 
-});
-</script>
+            });
+            </script>
 
-</body>
+            </body>
 
-</html>
+            </html>
