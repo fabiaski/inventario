@@ -1154,7 +1154,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <td>
 
                                                     <a
-                                                        href="<?= BASE_URL ?>facturacion/ver.php?id=<?= $contrato['id'] ?>"
+                                                        href="<?= BASE_URL ?>src/pages/facturacion/ver.php?id=<?= $contrato['id'] ?>"
                                                         class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
                                                         title="Ver facturas del contrato"
                                                     >

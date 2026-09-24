@@ -141,10 +141,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <i class="mdi mdi-file-pdf"></i>
                                     Generar PDF
                                 </a>
-                                <a href="agregar_movimiento.php?id=<?= $personaId ?>" class="btn btn-primary">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalMovimiento">
                                     <i class="mdi mdi-plus"></i>
                                     Nuevo movimiento
-                                </a>
+                                </button>
 
                             </div>
 
@@ -198,7 +199,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 <h4 class="card-title ">
                                     Movimientos
                                 </h4>
-<hr>
+                                <hr>
                                 <?php if ($movimientos->num_rows > 0): ?>
 
                                 <div class="table-responsive">
@@ -287,11 +288,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <td>
 
-                                                    <a href="editar_movimiento.php?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
-                                                        class="btn btn-sm btn-secondary" title="Editar">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-secondary btn-editar-movimiento"
+                                                        title="Editar" data-id="<?= $movimiento['id'] ?>"
+                                                        data-descripcion="<?= htmlspecialchars($movimiento['descripcion'], ENT_QUOTES) ?>"
+                                                        data-valor="<?= $movimiento['valor'] ?>"
+                                                        data-fecha="<?= $movimiento['fecha'] ?>"
+                                                        data-estado="<?= $movimiento['estado'] ?>">
                                                         <i class="mdi mdi-pencil"></i>
-                                                    </a>
-
+                                                    </button>
 
                                                     <?php if ($movimiento['estado'] === 'pendiente'): ?>
 
@@ -340,8 +345,340 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     </div>
 
+                    <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const modalElemento = document.getElementById('modalMovimiento');
+
+    const modal = new bootstrap.Modal(modalElemento);
+
+    const form = document.getElementById('formMovimiento');
+
+    const idMovimiento = document.getElementById('idMovimiento');
+    const descripcion = document.getElementById('descripcionMovimiento');
+    const valor = document.getElementById('valorMovimiento');
+    const fecha = document.getElementById('fechaMovimiento');
+
+    const titulo = document.getElementById('tituloModalMovimiento');
+
+    const btnEliminar = document.getElementById('btnEliminarMovimiento');
+
+
+    // ==================================================
+    // FORMATO DEL VALOR
+    // ==================================================
+
+    valor.addEventListener('input', function () {
+
+        let numero = this.value.replace(/\D/g, '');
+
+        if (numero !== '') {
+            this.value = Number(numero).toLocaleString('es-CO');
+        }
+
+    });
+
+
+    // ==================================================
+    // NUEVO MOVIMIENTO
+    // ==================================================
+
+    document
+        .querySelector('[data-bs-target="#modalMovimiento"]')
+        .addEventListener('click', function () {
+
+            form.action = 'agregar_movimiento.php';
+
+            idMovimiento.value = '';
+
+            descripcion.value = '';
+
+            valor.value = '';
+
+            fecha.value = '<?= date('Y-m-d') ?>';
+
+            titulo.innerText = 'Nuevo movimiento';
+
+            btnEliminar.classList.add('d-none');
+
+        });
+
+
+    // ==================================================
+    // EDITAR MOVIMIENTO
+    // ==================================================
+
+    document
+        .querySelectorAll('.btn-editar-movimiento')
+        .forEach(function (boton) {
+
+            boton.addEventListener('click', function () {
+
+                const id = this.dataset.id;
+                const descripcionDato = this.dataset.descripcion;
+                const valorDato = this.dataset.valor;
+                const fechaDato = this.dataset.fecha;
+
+                form.action = 'editar_movimiento.php';
+
+                idMovimiento.value = id;
+
+                descripcion.value = descripcionDato;
+
+                valor.value = Number(valorDato).toLocaleString('es-CO');
+
+                fecha.value = fechaDato;
+
+                titulo.innerText = 'Editar movimiento';
+
+                btnEliminar.classList.remove('d-none');
+
+                modal.show();
+
+            });
+
+        });
+
+
+    // ==================================================
+    // ELIMINAR MOVIMIENTO
+    // ==================================================
+
+    btnEliminar.addEventListener('click', function () {
+
+        const id = idMovimiento.value;
+
+        if (!id) {
+            return;
+        }
+
+        if (confirm('¿Está seguro de eliminar este movimiento?')) {
+
+            window.location.href =
+                'eliminar_movimiento.php?id=' +
+                id +
+                '&persona_id=<?= $personaId ?>';
+
+        }
+
+    });
+
+});
+
+</script>
+                    <!-- MODAL MOVIMIENTO -->
+
+<div class="modal fade" id="modalMovimiento" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
+
+                <input type="hidden" name="persona_id" value="<?= $personaId ?>">
+                <input type="hidden" name="id" id="idMovimiento">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="tituloModalMovimiento">
+                        Nuevo movimiento
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Descripción
+                        </label>
+
+                        <input
+                            type="text"
+                            name="descripcion"
+                            id="descripcionMovimiento"
+                            class="form-control"
+                            maxlength="255"
+                            placeholder="Ej: Préstamo"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Valor
+                        </label>
+
+                        <input
+                            type="text"
+                            name="valor"
+                            id="valorMovimiento"
+                            class="form-control"
+                            placeholder="Ej: 50.000"
+                            inputmode="numeric"
+                            required
+                        >
+
+                        <small class="text-muted">
+                            Ingrese el valor sin decimales.
+                        </small>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Fecha
+                        </label>
+
+                        <input
+                            type="date"
+                            name="fecha"
+                            id="fechaMovimiento"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-danger d-none"
+                        id="btnEliminarMovimiento"
+                    >
+                        <i class="mdi mdi-delete"></i>
+                        Eliminar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-save"></i>
+                        Guardar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
                     <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
+
+                </div>
+
+                
+
+                <!-- MODAL NUEVO MOVIMIENTO -->
+
+                <div class="modal fade" id="modalMovimiento" tabindex="-1">
+
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+
+                            <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
+
+                                <input type="hidden" name="persona_id" value="<?= $personaId ?>">
+
+                                <div class="modal-header">
+
+                                    <h5 class="modal-title">
+                                        Nuevo movimiento
+                                    </h5>
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                    </button>
+
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <div class="mb-3">
+
+                                        <label for="descripcionMovimiento" class="form-label">
+                                            Descripción
+                                        </label>
+
+                                        <input type="text" name="descripcion" id="descripcionMovimiento"
+                                            class="form-control" maxlength="255" placeholder="Ej: Préstamo" required>
+
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="valorMovimiento" class="form-label">
+                                            Valor
+                                        </label>
+
+                                        <input type="text" name="valor" id="valorMovimiento" class="form-control"
+                                            placeholder="Ej: 50.000" inputmode="numeric" required>
+
+                                        <small class="text-muted">
+                                            Ingrese el valor sin decimales.
+                                        </small>
+
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="fechaMovimiento" class="form-label">
+                                            Fecha
+                                        </label>
+
+                                        <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
+                                            value="<?= date('Y-m-d') ?>" required>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save"></i>
+                                        Guardar
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -349,7 +686,3 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
             <?php require_once __DIR__ . '/../../includes/scripts.php'; ?>
-
-            </body>
-
-            </html>

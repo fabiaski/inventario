@@ -359,7 +359,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div>
 
-                                <a href="<?= BASE_URL ?>smmlv/agregar.php" class="btn btn-primary">
+                                <a href="agregar.php" class="btn btn-primary">
 
                                     <i class="bi bi-plus-circle"></i>
 
@@ -416,7 +416,7 @@ BUSCADOR POR OBJETO
 
                                 <div class="col-md-auto">
 
-                                    <a href="<?= BASE_URL ?>smmlv/index.php" class="btn btn-secondary">
+                                    <a href="<?= BASE_URL ?>smmlv/smmlv.php" class="btn btn-secondary">
 
                                         <i class="bi bi-x-circle"></i>
 

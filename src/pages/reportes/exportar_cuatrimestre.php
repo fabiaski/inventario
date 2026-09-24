@@ -14,9 +14,7 @@ use Dompdf\Options;
 $anio = (int) ($_GET['anio'] ?? date('Y'));
 
 if ($anio < 2000 || $anio > 2100) {
-
     exit('Año no válido.');
-
 }
 
 
@@ -24,14 +22,10 @@ if ($anio < 2000 || $anio > 2100) {
 // VALIDAR CUATRIMESTRE
 //==================================================
 
-$cuatrimestre =
-    (int) ($_GET['cuatrimestre'] ?? 0);
-
+$cuatrimestre = (int) ($_GET['cuatrimestre'] ?? 0);
 
 if (!in_array($cuatrimestre, [1, 2, 3], true)) {
-
     exit('Cuatrimestre no válido.');
-
 }
 
 
@@ -61,9 +55,7 @@ $cuatrimestres = [
 
 ];
 
-
-$periodo =
-    $cuatrimestres[$cuatrimestre];
+$periodo = $cuatrimestres[$cuatrimestre];
 
 
 //==================================================
@@ -75,7 +67,6 @@ $fechaInicio = sprintf(
     $anio,
     $periodo['mes_inicio']
 );
-
 
 $fechaFin = date(
     'Y-m-t',
@@ -99,25 +90,26 @@ $sql = "
         numero_contrato,
         fecha,
         objeto_contrato,
-        valor_contrato
+        valor_contrato,
+        tiene_iva,
+        valor_iva,
+        tiene_impoconsumo,
+        valor_impoconsumo,
+        tiene_retencion,
+        valor_retencion
     FROM contratos
     WHERE fecha BETWEEN ? AND ?
     ORDER BY fecha ASC, id ASC
 ";
 
-
 $stmt = $conexion->prepare($sql);
 
-
 if (!$stmt) {
-
     exit(
         'Error preparando contratos: '
         . $conexion->error
     );
-
 }
-
 
 $stmt->bind_param(
     "ss",
@@ -125,13 +117,9 @@ $stmt->bind_param(
     $fechaFin
 );
 
-
 $stmt->execute();
 
-
-$resultado =
-    $stmt->get_result();
-
+$resultado = $stmt->get_result();
 
 $contratos = [];
 
@@ -140,52 +128,95 @@ $contratos = [];
 // RECORRER CONTRATOS
 //==================================================
 
-while (
-    $contrato =
-    $resultado->fetch_assoc()
-) {
+while ($contrato = $resultado->fetch_assoc()) {
+
+    //==================================================
+    // VALOR CONTRATO
+    //==================================================
 
     $valorContrato =
         (float) $contrato['valor_contrato'];
 
 
-    //==============================================
-    // CONTRATO SIN IVA
-    //==============================================
-
-    $valorSinIva =
-        $valorContrato / 1.19;
-
-
-    //==============================================
+    //==================================================
     // IVA CONTRATO
-    //==============================================
+    //==================================================
 
-    $ivaContrato =
-        $valorContrato - $valorSinIva;
+    $ivaContrato = 0;
+
+    if ((int) $contrato['tiene_iva'] === 1) {
+
+        $ivaContrato =
+            (float) ($contrato['valor_iva'] ?? 0);
+
+    }
 
 
-    //==============================================
-    // FACTURAS
-    //==============================================
+    //==================================================
+    // IMPOCONSUMO CONTRATO
+    //==================================================
+
+    $impoconsumoContrato = 0;
+
+    if (
+        (int) $contrato['tiene_impoconsumo'] === 1
+    ) {
+
+        $impoconsumoContrato =
+            (float) ($contrato['valor_impoconsumo'] ?? 0);
+
+    }
+
+
+    //==================================================
+    // RETENCIÓN CONTRATO
+    //==================================================
+
+    $retencionContrato = 0;
+
+    if (
+        (int) $contrato['tiene_retencion'] === 1
+    ) {
+
+        $retencionContrato =
+            (float) ($contrato['valor_retencion'] ?? 0);
+
+    }
+
+
+    //==================================================
+    // INICIALIZAR FACTURAS
+    //==================================================
 
     $valorFacturas = 0;
 
     $ivaFacturado = 0;
 
+    $impoconsumoFacturado = 0;
+
+    $retencionFacturada = 0;
+
+
+    //==================================================
+    // CONSULTAR FACTURAS
+    //==================================================
 
     $sqlFacturas = "
         SELECT
             valor,
-            valor_iva
+            tiene_iva,
+            valor_iva,
+            tiene_impoconsumo,
+            valor_impoconsumo,
+            tiene_retencion,
+            valor_retencion
         FROM facturas
         WHERE contrato_id = ?
+        ORDER BY id ASC
     ";
-
 
     $stmtFacturas =
         $conexion->prepare($sqlFacturas);
-
 
     if (!$stmtFacturas) {
 
@@ -196,47 +227,91 @@ while (
 
     }
 
-
     $stmtFacturas->bind_param(
         "i",
         $contrato['id']
     );
 
-
     $stmtFacturas->execute();
-
 
     $resultadoFacturas =
         $stmtFacturas->get_result();
 
 
-    while (
-        $factura =
-        $resultadoFacturas->fetch_assoc()
-    ) {
+    //==================================================
+    // RECORRER FACTURAS
+    //==================================================
+
+    while ($factura = $resultadoFacturas->fetch_assoc()) {
+
+        //==============================================
+        // VALOR FACTURA
+        //==============================================
 
         $valorFacturas +=
             (float) $factura['valor'];
 
 
-        $ivaFacturado +=
-            (float) $factura['valor_iva'];
+        //==============================================
+        // IVA FACTURADO
+        //==============================================
+
+        if ((int) $factura['tiene_iva'] === 1) {
+
+            $ivaFacturado +=
+                (float) ($factura['valor_iva'] ?? 0);
+
+        }
+
+
+        //==============================================
+        // IMPOCONSUMO FACTURADO
+        //==============================================
+
+        if (
+            (int) $factura['tiene_impoconsumo'] === 1
+        ) {
+
+            $impoconsumoFacturado +=
+                (float) (
+                    $factura['valor_impoconsumo'] ?? 0
+                );
+
+        }
+
+
+        //==============================================
+        // RETENCIÓN FACTURADA
+        //==============================================
+
+        if (
+            (int) $factura['tiene_retencion'] === 1
+        ) {
+
+            $retencionFacturada +=
+                (float) (
+                    $factura['valor_retencion'] ?? 0
+                );
+
+        }
 
     }
-
 
     $stmtFacturas->close();
 
 
-    //==============================================
-    // GUARDAR
-    //==============================================
-
-    $contrato['valor_sin_iva'] =
-        $valorSinIva;
+    //==================================================
+    // GUARDAR DATOS
+    //==================================================
 
     $contrato['iva_contrato'] =
         $ivaContrato;
+
+    $contrato['impoconsumo_contrato'] =
+        $impoconsumoContrato;
+
+    $contrato['retencion_contrato'] =
+        $retencionContrato;
 
     $contrato['valor_facturas'] =
         $valorFacturas;
@@ -244,12 +319,17 @@ while (
     $contrato['iva_facturado'] =
         $ivaFacturado;
 
+    $contrato['impoconsumo_facturado'] =
+        $impoconsumoFacturado;
+
+    $contrato['retencion_facturada'] =
+        $retencionFacturada;
+
 
     $contratos[] =
         $contrato;
 
 }
-
 
 $stmt->close();
 
@@ -261,14 +341,21 @@ $stmt->close();
 $totalContratos =
     count($contratos);
 
-
 $totalValorContratos = 0;
 
 $totalIvaContratos = 0;
 
+$totalImpoconsumoContratos = 0;
+
+$totalRetencionContratos = 0;
+
 $totalValorFacturas = 0;
 
 $totalIvaFacturado = 0;
+
+$totalImpoconsumoFacturado = 0;
+
+$totalRetencionFacturada = 0;
 
 
 foreach ($contratos as $contrato) {
@@ -276,17 +363,26 @@ foreach ($contratos as $contrato) {
     $totalValorContratos +=
         (float) $contrato['valor_contrato'];
 
-
     $totalIvaContratos +=
         (float) $contrato['iva_contrato'];
 
+    $totalImpoconsumoContratos +=
+        (float) $contrato['impoconsumo_contrato'];
+
+    $totalRetencionContratos +=
+        (float) $contrato['retencion_contrato'];
 
     $totalValorFacturas +=
         (float) $contrato['valor_facturas'];
 
-
     $totalIvaFacturado +=
         (float) $contrato['iva_facturado'];
+
+    $totalImpoconsumoFacturado +=
+        (float) $contrato['impoconsumo_facturado'];
+
+    $totalRetencionFacturada +=
+        (float) $contrato['retencion_facturada'];
 
 }
 
@@ -301,14 +397,45 @@ $ivaIdeal =
     $totalIvaContratos * 0.02;
 
 
-// Diferencia de IVA
+//==================================================
+// DIFERENCIA IVA
+//==================================================
 
 $diferenciaIva =
     $totalIvaContratos
     - $totalIvaFacturado;
 
 
-// Ganancias
+//==================================================
+// SALDOS
+//==================================================
+
+$saldoIva =
+    $totalIvaContratos
+    - $totalIvaFacturado;
+
+$saldoImpoconsumo =
+    $totalImpoconsumoContratos
+    - $totalImpoconsumoFacturado;
+
+$saldoRetencion =
+    $totalRetencionContratos
+    - $totalRetencionFacturada;
+
+
+//==================================================
+// SALDO TOTAL IMPUESTOS
+//==================================================
+
+$saldoTotalImpuestos =
+    $saldoIva
+    + $saldoImpoconsumo
+    + $saldoRetencion;
+
+
+//==================================================
+// GANANCIAS
+//==================================================
 
 $ganancias =
     $totalValorContratos
@@ -321,14 +448,12 @@ $ganancias =
 
 function dineroPDF($valor)
 {
-
     return '$ ' . number_format(
         (float) $valor,
         0,
         ',',
         '.'
     );
-
 }
 
 
@@ -349,220 +474,131 @@ $html = '
 <style>
 
 @page {
-
     margin: 35px 35px 40px 35px;
-
 }
-
 
 body {
-
     font-family: DejaVu Sans, sans-serif;
-
     font-size: 10px;
-
     color: #333;
-
 }
-
 
 .header {
-
     text-align: center;
-
     margin-bottom: 20px;
-
 }
-
 
 .header h1 {
-
     margin: 0;
-
     font-size: 20px;
-
 }
-
 
 .header h2 {
-
     margin: 5px 0;
-
     font-size: 14px;
-
     font-weight: normal;
-
     color: #666;
-
 }
-
 
 .header p {
-
     margin: 3px 0;
-
     color: #777;
-
 }
-
 
 .resumen {
-
     width: 100%;
-
     border-collapse: separate;
-
     border-spacing: 6px;
-
     margin-bottom: 20px;
-
 }
-
 
 .resumen td {
-
     width: 33.33%;
-
     border: 1px solid #ddd;
-
     padding: 10px;
-
     vertical-align: top;
-
 }
-
 
 .indicador {
-
     background: #f8f9fa;
-
 }
-
 
 .titulo {
-
     color: #666;
-
     font-size: 9px;
-
     margin-bottom: 5px;
-
 }
-
 
 .valor {
-
     font-size: 13px;
-
     font-weight: bold;
-
 }
-
 
 .tabla {
-
     width: 100%;
-
     border-collapse: collapse;
-
     margin-top: 15px;
-
 }
-
 
 .tabla th {
-
     background: #343a40;
-
     color: white;
-
     padding: 7px;
-
     text-align: center;
-
-    font-size: 9px;
-
+    font-size: 8px;
 }
-
 
 .tabla td {
-
     border: 1px solid #ddd;
-
     padding: 6px;
-
-    font-size: 9px;
-
+    font-size: 8px;
 }
-
 
 .text-right {
-
     text-align: right;
-
 }
-
 
 .text-center {
-
     text-align: center;
-
 }
-
 
 .total {
-
     background: #f1f3f5;
-
     font-weight: bold;
-
 }
-
 
 .seccion {
-
     margin-top: 20px;
-
     margin-bottom: 8px;
-
     font-size: 13px;
-
     font-weight: bold;
-
     border-bottom: 2px solid #343a40;
-
     padding-bottom: 5px;
-
 }
-
 
 .footer {
-
     margin-top: 25px;
-
     text-align: center;
-
     color: #777;
-
     font-size: 8px;
-
 }
-
 
 </style>
 
 </head>
-
 
 <body>
 
 
 <div class="header">
 
-    <h1>Informe de Contratos y Facturación</h1>
+    <h1>
+        Informe de Contratos y Facturación
+    </h1>
 
     <h2>
-        Cuatrimestre: ' . htmlspecialchars($periodo['nombre']) . '
+        Cuatrimestre:
+        ' . htmlspecialchars($periodo['nombre']) . '
         - ' . $anio . '
     </h2>
 
@@ -577,17 +613,13 @@ body {
 
 
 <div class="seccion">
-
     Resumen financiero
-
 </div>
 
 
 <table class="resumen">
 
-
 <tr>
-
 
 <td>
 
@@ -627,11 +659,35 @@ body {
 
 </td>
 
-
 </tr>
 
 
 <tr>
+
+<td>
+
+    <div class="titulo">
+        Impoconsumo total de contratos
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($totalImpoconsumoContratos) . '
+    </div>
+
+</td>
+
+
+<td>
+
+    <div class="titulo">
+        Retención total de contratos
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($totalRetencionContratos) . '
+    </div>
+
+</td>
 
 
 <td>
@@ -646,11 +702,15 @@ body {
 
 </td>
 
+</tr>
+
+
+<tr>
 
 <td>
 
     <div class="titulo">
-        Total IVA facturado
+        IVA total facturado
     </div>
 
     <div class="valor">
@@ -663,15 +723,27 @@ body {
 <td>
 
     <div class="titulo">
-        Ganancias
+        Impoconsumo total facturado
     </div>
 
     <div class="valor">
-        ' . dineroPDF($ganancias) . '
+        ' . dineroPDF($totalImpoconsumoFacturado) . '
     </div>
 
 </td>
 
+
+<td>
+
+    <div class="titulo">
+        Retención total facturada
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($totalRetencionFacturada) . '
+    </div>
+
+</td>
 
 </tr>
 
@@ -680,17 +752,13 @@ body {
 
 
 <div class="seccion">
-
     Indicadores
-
 </div>
 
 
 <table class="resumen">
 
-
 <tr>
-
 
 <td class="indicador">
 
@@ -720,13 +788,77 @@ body {
     </div>
 
     <div class="titulo">
-        IVA del contrato − Total IVA facturado
+        IVA del contrato − IVA facturado
     </div>
 
 </td>
 
 
 <td class="indicador">
+
+    <div class="titulo">
+        Saldo total impuestos
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($saldoTotalImpuestos) . '
+    </div>
+
+    <div class="titulo">
+        IVA + Impoconsumo + Retención
+    </div>
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td class="indicador">
+
+    <div class="titulo">
+        Saldo IVA
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($saldoIva) . '
+    </div>
+
+</td>
+
+
+<td class="indicador">
+
+    <div class="titulo">
+        Saldo Impoconsumo
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($saldoImpoconsumo) . '
+    </div>
+
+</td>
+
+
+<td class="indicador">
+
+    <div class="titulo">
+        Saldo Retención
+    </div>
+
+    <div class="valor">
+        ' . dineroPDF($saldoRetencion) . '
+    </div>
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td colspan="3" class="indicador">
 
     <div class="titulo">
         Ganancias
@@ -742,7 +874,6 @@ body {
 
 </td>
 
-
 </tr>
 
 
@@ -750,46 +881,37 @@ body {
 
 
 <div class="seccion">
-
     Detalle de contratos
-
 </div>
 
 
 <table class="tabla">
 
-
 <thead>
 
 <tr>
 
-    <th>
-        N°
-    </th>
+    <th>N°</th>
 
-    <th>
-        N° Contrato
-    </th>
+    <th>N° Contrato</th>
 
-    <th>
-        Fecha
-    </th>
+    <th>Fecha</th>
 
-    <th>
-        Valor Contrato
-    </th>
+    <th>Valor Contrato</th>
 
-    <th>
-        IVA Contrato
-    </th>
+    <th>IVA Contrato</th>
 
-    <th>
-        Valor Facturas
-    </th>
+    <th>Impoconsumo Contrato</th>
 
-    <th>
-        IVA Facturado
-    </th>
+    <th>Retención Contrato</th>
+
+    <th>Valor Facturas</th>
+
+    <th>IVA Facturado</th>
+
+    <th>Impoconsumo Facturado</th>
+
+    <th>Retención Facturada</th>
 
 </tr>
 
@@ -803,7 +925,6 @@ body {
 if (!empty($contratos)) {
 
     $numero = 1;
-
 
     foreach ($contratos as $contrato) {
 
@@ -842,6 +963,18 @@ if (!empty($contratos)) {
 
             <td class="text-right">
                 ' . dineroPDF(
+                    $contrato['impoconsumo_contrato']
+                ) . '
+            </td>
+
+            <td class="text-right">
+                ' . dineroPDF(
+                    $contrato['retencion_contrato']
+                ) . '
+            </td>
+
+            <td class="text-right">
+                ' . dineroPDF(
                     $contrato['valor_facturas']
                 ) . '
             </td>
@@ -849,6 +982,18 @@ if (!empty($contratos)) {
             <td class="text-right">
                 ' . dineroPDF(
                     $contrato['iva_facturado']
+                ) . '
+            </td>
+
+            <td class="text-right">
+                ' . dineroPDF(
+                    $contrato['impoconsumo_facturado']
+                ) . '
+            </td>
+
+            <td class="text-right">
+                ' . dineroPDF(
+                    $contrato['retencion_facturada']
                 ) . '
             </td>
 
@@ -866,7 +1011,7 @@ if (!empty($contratos)) {
 
     <tr>
 
-        <td colspan="7" class="text-center">
+        <td colspan="11" class="text-center">
 
             No hay contratos registrados
             en este cuatrimestre.
@@ -897,11 +1042,27 @@ $html .= '
     </td>
 
     <td class="text-right">
+        ' . dineroPDF($totalImpoconsumoContratos) . '
+    </td>
+
+    <td class="text-right">
+        ' . dineroPDF($totalRetencionContratos) . '
+    </td>
+
+    <td class="text-right">
         ' . dineroPDF($totalValorFacturas) . '
     </td>
 
     <td class="text-right">
         ' . dineroPDF($totalIvaFacturado) . '
+    </td>
+
+    <td class="text-right">
+        ' . dineroPDF($totalImpoconsumoFacturado) . '
+    </td>
+
+    <td class="text-right">
+        ' . dineroPDF($totalRetencionFacturada) . '
     </td>
 
 </tr>
@@ -947,18 +1108,14 @@ $options->set(
 );
 
 
-$dompdf =
-    new Dompdf($options);
-
+$dompdf = new Dompdf($options);
 
 $dompdf->loadHtml($html);
-
 
 $dompdf->setPaper(
     'A4',
     'landscape'
 );
-
 
 $dompdf->render();
 

@@ -6,8 +6,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 // VALIDAR ID
 // ==================================================
 
-$personaId = (int) ($_GET['id'] ?? 0);
-
+$personaId = (int) ($_POST['id'] ?? $_GET['id'] ?? 0);
 if ($personaId <= 0) {
     header('Location: index.php');
     exit;
@@ -106,15 +105,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($stmtActualizar->execute()) {
 
-                $stmtActualizar->close();
+    $stmtActualizar->close();
 
-                header(
-                    "Location: ver.php?id=" . $personaId
-                );
+    header('Content-Type: application/json; charset=utf-8');
 
-                exit;
+    echo json_encode([
+        'success' => true,
+        'persona_id' => $personaId
+    ]);
 
-            } else {
+    exit;
+
+} else {
 
                 $error = 'No se pudo actualizar la persona.';
             }

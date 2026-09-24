@@ -46,13 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($stmt->execute()) {
 
-                $personaId = $conexion->insert_id;
+    $personaId = $conexion->insert_id;
 
-                header(
-                    "Location: ver.php?id=" . $personaId
-                );
+    header('Content-Type: application/json; charset=utf-8');
 
-                exit;
+    echo json_encode([
+        'success' => true,
+        'persona_id' => $personaId
+    ]);
+
+    exit;
+
 
             } else {
 

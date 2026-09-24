@@ -11,10 +11,10 @@
                     </button>
                 </div>
                 <div>
-                    <a class="navbar-brand brand-logo" href="index.html">
+                    <a class="navbar-brand brand-logo" href="../calendario/calendario.php">
                         <img src="/inventario/src/assets/images/myglogo.svg" alt="logo" />
                     </a>
-                    <a class="navbar-brand brand-logo-mini" href="index.html">
+                    <a class="navbar-brand brand-logo-mini" href="../calendario/calendario.php">
                         <img src="/inventario/src/assets/images/myglogo.svg" alt="logo" />
                     </a>
                 </div>

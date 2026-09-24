@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
 
                 header(
-                    'Location: index.php?mensaje=creado'
+                    'Location: smmlv.php?mensaje=creado'
                 );
 
                 exit;
@@ -219,7 +219,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div>
 
-                                <a href="index.php" class="btn btn-secondary">
+                                <a href="smmlv.php" class="btn btn-secondary">
 
                                     <i class="bi bi-arrow-left"></i>
 
@@ -472,7 +472,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <div class="d-flex justify-content-end gap-2">
 
 
-                                        <a href="index.php" class="btn btn-secondary">
+                                        <a href="smmlv.php" class="btn btn-secondary">
 
                                             <i class="bi bi-x-circle"></i>
 

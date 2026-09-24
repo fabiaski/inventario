@@ -1,0 +1,75 @@
+RewriteEngine On
+
+# ==========================================================
+# PRODUCTOS
+# ==========================================================
+
+RewriteRule ^productos/?$ src/pages/productos/productos.php [L]
+
+# Importar productos desde Excel
+RewriteRule ^importarprodu/?$ src/pages/productos/importar.php [L]
+
+RewriteRule ^productos/agregar/?$ src/pages/productos/agregar-produ.php [L]
+RewriteRule ^productos/editar/([0-9]+)/?$ src/pages/productos/editar.php?id=$1 [L]
+
+
+# ==========================================================
+# COTIZACIONES
+# ==========================================================
+
+RewriteRule ^cotizaciones/?$ src/pages/cotizaciones/cotizacion.php [L]
+RewriteRule ^cotizaciones-agregar/?$ src/pages/cotizaciones/agregar-coti.php [L]
+RewriteRule ^cotizaciones/editar/([0-9]+)/?$ src/pages/cotizaciones/editar.php?id=$1 [L]
+RewriteRule ^cotizaciones/ver/([0-9]+)/?$ src/pages/cotizaciones/ver.php?id=$1 [L]
+
+
+# ==========================================================
+# FACTURACIÓN
+# ==========================================================
+
+RewriteRule ^facturacion/?$ src/pages/facturacion/facturacion.php [L]
+RewriteRule ^facturacion-agregar/?$ src/pages/facturacion/agregar-fact.php [L]
+RewriteRule ^facturacion/ver/([0-9]+)/?$ src/pages/facturacion/ver.php?id=$1 [L]
+
+
+# ==========================================================
+# CALENDARIO
+# ==========================================================
+
+RewriteRule ^calendario/?$ src/pages/calendario/calendario.php [L]
+
+
+# ==========================================================
+# FAVORES
+# ==========================================================
+
+RewriteRule ^favores/?$ src/pages/favores/favores.php [L]
+RewriteRule ^favores/agregar/?$ src/pages/favores/agregar.php [L]
+RewriteRule ^favores/ver/([0-9]+)/?$ src/pages/favores/ver.php?id=$1 [L]
+
+
+# ==========================================================
+# PROCESOS
+# ==========================================================
+
+RewriteRule ^procesos/?$ src/pages/procesos/index.php [L]
+RewriteRule ^procesos/ver/([0-9]+)/?$ src/pages/procesos/ver.php?id=$1 [L]
+RewriteRule ^procesos/crear/?$ src/pages/procesos/crear.php [L]
+RewriteRule ^procesos/finalizados/?$ src/pages/procesos/finalizados.php [L]
+
+
+# ==========================================================
+# REPORTES
+# ==========================================================
+
+RewriteRule ^reportes/?$ src/pages/reportes/cuatrimestres.php [L]
+RewriteRule ^reportes/cuatrimestre/([0-9]+)/?$ src/pages/reportes/ver_cuatrimestre.php?id=$1 [L]
+
+
+# ==========================================================
+# SMMLV
+# ==========================================================
+
+RewriteRule ^smmlv/?$ src/pages/smmlv/smmlv.php [L]
+RewriteRule ^smmlv/agregar/?$ src/pages/smmlv/agregar.php [L]
+RewriteRule ^smmlv/editar/([0-9]+)/?$ src/pages/smmlv/editar.php?id=$1 [L]
