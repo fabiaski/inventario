@@ -108,8 +108,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
 
-                                <a href="editar.php?id=<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm">
-
+<a href="/inventario/cotizaciones/editar/<?= $cotizacion['id'] ?>" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil"></i>
 
                                     Editar
@@ -490,7 +489,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         </div>
                         <?php if ($cotizacion['estado'] === 'Borrador'): ?>
 
-                        <form action="finalizar.php" method="POST" class="d-inline"
+                       <form action="/inventario/src/pages/cotizaciones/finalizar.php" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Desea finalizar esta cotización?');">
 
                             <input type="hidden" name="cotizacion_id" value="<?= $cotizacion['id'] ?>">
@@ -507,12 +506,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <?php if ($cotizacion['estado'] === 'Finalizada'): ?>
 
-                        <a href="pdf.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger" target="_blank">
+                        <a href="/inventario/src/pages/cotizaciones/pdf.php?id=<?= $cotizacion['id'] ?>" class="btn btn-danger" target="_blank">
                             <i class="bi bi-file-earmark-pdf"></i>
                             Descargar PDF
                         </a>
 
-                        <a href="excel.php?id=<?= $cotizacion['id'] ?>" class="btn btn-success">
+                        <a href="/inventario/src/pages/cotizaciones/excel.php?id=<?= $cotizacion['id'] ?>" class="btn btn-success">
                             <i class="bi bi-file-earmark-excel"></i>
                             Descargar Excel
                         </a>

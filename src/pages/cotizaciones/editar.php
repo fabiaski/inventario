@@ -892,4 +892,4 @@ const productosEditar = <?= json_encode(
 <?php include __DIR__ . '/../../includes/footer.php'; ?>
 <?php include __DIR__ . '/../../includes/scripts.php'; ?>
 
-    <script src="../../../assets/js/cotizaciones.js"></script>
+   <script src="/inventario/src/assets/js/cotizaciones.js"></script>

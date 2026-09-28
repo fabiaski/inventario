@@ -1016,7 +1016,7 @@ if (btnGuardarCotizacion) {
       })
       .then(function (resultado) {
         console.log("RESPUESTA guardar.php:", resultado);
-        window.location.href = "ver.php?id=" + resultado;
+        window.location.href = "/inventario/cotizaciones/ver/" + resultado;
 
         // El PHP debería redireccionar,
         // por lo que normalmente aquí no necesitamos hacer nada.
@@ -1215,39 +1215,34 @@ if (btnActualizarCotizacion) {
     // ACTUALIZAR
     //========================================
 
-    fetch("actualizar.php", {
-      method: "POST",
+fetch("/inventario/cotizaciones/actualizar", {
+    method: "POST",
+    body: datos
+})
+.then(function (response) {
 
-      body: datos,
-    })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error("Error HTTP: " + response.status);
-        }
+    console.log("STATUS:", response.status);
+    console.log("URL RESPUESTA:", response.url);
 
-        return response.text();
-      })
+    return response.text();
 
-      .then(function (resultado) {
-        console.log("RESPUESTA actualizar.php:", resultado);
+})
+.then(function (resultado) {
 
-        if (
-          resultado.includes("Error") ||
-          resultado.includes("Fatal error") ||
-          resultado.includes("Warning")
-        ) {
-          alert("Hubo un error al actualizar. Revisa la consola.");
+    console.log("RESPUESTA ACTUALIZAR.PHP:", resultado);
 
-          return;
-        }
+    window.location.href = "/inventario/cotizaciones/ver/" + cotizacionId;
 
-        window.location.href = "ver.php?id=" + cotizacionId;
-      })
+})
+.catch(function (error) {
 
-      .catch(function (error) {
-        console.error("ERROR AL ACTUALIZAR:", error);
+    console.error("ERROR REAL AL ACTUALIZAR:", error);
 
-        alert("Ocurrió un error al actualizar la cotización.");
-      });
+    alert(
+        "Error real al actualizar:\n\n" +
+        error.message
+    );
+
+});
   });
 }

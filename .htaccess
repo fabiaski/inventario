@@ -22,6 +22,7 @@ RewriteRule ^cotizaciones-agregar/?$ src/pages/cotizaciones/agregar-coti.php [L]
 RewriteRule ^cotizaciones/editar/([0-9]+)/?$ src/pages/cotizaciones/editar.php?id=$1 [L]
 RewriteRule ^cotizaciones/ver/([0-9]+)/?$ src/pages/cotizaciones/ver.php?id=$1 [L]
 
+RewriteRule ^cotizaciones/actualizar/?$ src/pages/cotizaciones/actualizar.php [L]
 
 # ==========================================================
 # FACTURACIÓN

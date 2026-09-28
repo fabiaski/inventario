@@ -74,7 +74,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
 
-                            <a href="agregar-coti.php" class="btn btn-secondary">
+                            <!-- NUEVA COTIZACIÓN -->
+                            <a href="/inventario/cotizaciones-agregar" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Nueva Cotización
                             </a>
@@ -288,7 +289,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- VER -->
 
-                                                <a href="ver.php?id=<?= $cotizacion['id'] ?>"
+                                                <a href="/inventario/cotizaciones/ver/<?= $cotizacion['id'] ?>"
                                                     class="btn btn-info btn-sm" title="Ver">
 
                                                     <i class="bi bi-eye"></i>
@@ -298,7 +299,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- EDITAR -->
 
-                                                <a href="editar.php?id=<?= $cotizacion['id'] ?>"
+                                                <a href="/inventario/cotizaciones/editar/<?= $cotizacion['id'] ?>"
                                                     class="btn btn-warning btn-sm" title="Editar">
 
                                                     <i class="bi bi-pencil"></i>
@@ -308,7 +309,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- ELIMINAR -->
 
-                                                <a href="eliminar.php?id=<?= $cotizacion['id'] ?>"
+                                                <a href="/inventario/src/pages/cotizaciones/eliminar.php?id=<?= $cotizacion['id'] ?>"
                                                     class="btn btn-danger btn-sm" title="Eliminar" onclick="
                                                 return confirm(
                                                     '¿Está seguro de eliminar esta cotización?'

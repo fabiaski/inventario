@@ -365,11 +365,8 @@ try {
     // REDIRECCIONAR
     //========================================
 
-    header(
-        "Location: ver.php?id=" . $cotizacionId
-    );
-
-    exit;
+    echo "OK";
+exit;
 
 
 } catch (Exception $e) {
