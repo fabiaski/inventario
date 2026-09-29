@@ -182,3 +182,14 @@ MODIFY valor DECIMAL(15,3) NOT NULL DEFAULT 0.000,
 MODIFY valor_iva DECIMAL(15,3) DEFAULT NULL,
 MODIFY valor_impoconsumo DECIMAL(15,3) DEFAULT NULL,
 MODIFY valor_retencion DECIMAL(15,3) DEFAULT NULL;
+
+UPDATE favores_personas
+SET tipo = 'prestamo'
+WHERE tipo = 'me_debe';
+
+UPDATE favores_personas
+SET tipo = 'a_pagar'
+WHERE tipo = 'le_debo';
+
+ALTER TABLE favores_personas
+MODIFY COLUMN tipo ENUM('prestamo','a_pagar') NOT NULL;

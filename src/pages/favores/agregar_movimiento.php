@@ -6,10 +6,10 @@ require_once __DIR__ . '/../../config/conexion.php';
 // VALIDAR PERSONA
 // ==================================================
 
-$personaId = (int) ($_GET['id'] ?? 0);
+$personaId = (int) ($_GET['id'] ?? $_POST['persona_id'] ?? 0);
 
 if ($personaId <= 0) {
-    header('Location: index.php');
+header('Location: /inventario/favores');
     exit;
 }
 
@@ -38,10 +38,9 @@ $persona = $resultadoPersona->fetch_assoc();
 $stmtPersona->close();
 
 if (!$persona) {
-    header('Location: index.php');
+    header('Location: /inventario/favores');
     exit;
 }
-
 
 // ==================================================
 // GUARDAR MOVIMIENTO
@@ -111,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
 
                 header(
-                    "Location: ver.php?id=" . $personaId
-                );
+    "Location: /inventario/favores/ver/" . $personaId
+);
 
                 exit;
 
@@ -211,8 +210,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         </h4>
 
 
-                                        <form method="POST">
-
+                                        <form method="POST" action="<?= BASE_URL ?>favores/movimiento/agregar/<?= $personaId ?>">
+<input type="hidden" name="persona_id" value="<?= $personaId ?>">
 
                                             <!-- DESCRIPCIÓN -->
 
@@ -275,9 +274,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                     Guardar
                                                 </button>
 
-                                                <a href="ver.php?id=<?= $personaId ?>" class="btn btn-secondary">
-                                                    Cancelar
-                                                </a>
+                                                <a
+    href="<?= BASE_URL ?>favores/ver/<?= $personaId ?>"
+    class="btn btn-secondary"
+>
+    Cancelar
+</a>
 
                                             </div>
 

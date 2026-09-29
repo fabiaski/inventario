@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $error = 'Debe ingresar el nombre de la persona.';
 
-    } elseif (!in_array($tipo, ['me_debe', 'le_debo'], true)) {
+    } elseif (!in_array($tipo, ['prestamo', 'a_pagar'], true)) {
 
         $error = 'Debe seleccionar un tipo válido.';
 

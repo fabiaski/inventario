@@ -56,10 +56,22 @@ RewriteRule ^calendario/?$ src/pages/calendario/calendario.php [L]
 # ==========================================================
 
 RewriteRule ^favores/?$ src/pages/favores/favores.php [L]
+
 RewriteRule ^favores/agregar/?$ src/pages/favores/agregar.php [L]
+
 RewriteRule ^favores/ver/([0-9]+)/?$ src/pages/favores/ver.php?id=$1 [L]
 
+RewriteRule ^favores/editar/?$ src/pages/favores/editar.php [L]
 
+RewriteRule ^favores/movimiento/agregar/([0-9]+)/?$ src/pages/favores/agregar_movimiento.php?id=$1 [L]
+
+RewriteRule ^favores/movimiento/editar/?$ src/pages/favores/editar_movimiento.php [L]
+
+RewriteRule ^favores/movimiento/eliminar/?$ src/pages/favores/eliminar_movimiento.php [L]
+
+RewriteRule ^favores/movimiento/pagar/?$ src/pages/favores/pagar_movimiento.php [L]
+
+RewriteRule ^favores/pdf/([0-9]+)/?$ src/pages/favores/pdf.php?id=$1 [L]
 # ==========================================================
 # PROCESOS
 # ==========================================================

@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 $personaId = (int) ($_GET['id'] ?? 0);
 
 if ($personaId <= 0) {
-    header('Location: index.php');
+    header('Location: /inventario/favores');
     exit;
 }
 
@@ -115,16 +115,16 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </h2>
 
-                                <?php if ($persona['tipo'] === 'me_debe'): ?>
+                                <?php if ($persona['tipo'] === 'prestamo'): ?>
 
                                 <span class="badge badge-success">
-                                    Me debe
+                                    Préstamo
                                 </span>
 
                                 <?php else: ?>
 
                                 <span class="badge badge-warning">
-                                    Le debo
+                                    A pagar
                                 </span>
 
                                 <?php endif; ?>
@@ -133,11 +133,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div>
 
-                                <a href="favores.php" class="btn btn-secondary">
+                                <a href="<?= BASE_URL ?>favores" class="btn btn-secondary">
                                     Volver
                                 </a>
 
-                                <a href="pdf.php?id=<?= $personaId ?>" class="btn btn-danger" target="_blank">
+                                <a href="<?= BASE_URL ?>favores/pdf/<?= $personaId ?>" class="btn btn-danger"
+                                    target="_blank">
                                     <i class="mdi mdi-file-pdf"></i>
                                     Generar PDF
                                 </a>
@@ -300,7 +301,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                     <?php if ($movimiento['estado'] === 'pendiente'): ?>
 
-                                                    <a href="pagar_movimiento.php?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
+                                                    <a href="<?= BASE_URL ?>favores/movimiento/pagar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
                                                         class="btn btn-sm btn-success"
                                                         onclick="return confirm('¿Marcar este movimiento como pagado?')"
                                                         title="Marcar como pagado">
@@ -310,7 +311,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                     <?php endif; ?>
 
 
-                                                    <a href="eliminar_movimiento.php?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
+                                                    <a href="<?= BASE_URL ?>favores/movimiento/eliminar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
                                                         class="btn btn-sm btn-danger"
                                                         onclick="return confirm('¿Está seguro de eliminar este movimiento?')"
                                                         title="Eliminar">
@@ -346,256 +347,221 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                     </div>
 
                     <script>
+                    document.addEventListener('DOMContentLoaded', function() {
 
-document.addEventListener('DOMContentLoaded', function () {
+                        const modalElemento = document.getElementById('modalMovimiento');
 
-    const modalElemento = document.getElementById('modalMovimiento');
+                        const modal = new bootstrap.Modal(modalElemento);
 
-    const modal = new bootstrap.Modal(modalElemento);
+                        const form = document.getElementById('formMovimiento');
 
-    const form = document.getElementById('formMovimiento');
+                        const idMovimiento = document.getElementById('idMovimiento');
+                        const descripcion = document.getElementById('descripcionMovimiento');
+                        const valor = document.getElementById('valorMovimiento');
+                        const fecha = document.getElementById('fechaMovimiento');
 
-    const idMovimiento = document.getElementById('idMovimiento');
-    const descripcion = document.getElementById('descripcionMovimiento');
-    const valor = document.getElementById('valorMovimiento');
-    const fecha = document.getElementById('fechaMovimiento');
+                        const titulo = document.getElementById('tituloModalMovimiento');
 
-    const titulo = document.getElementById('tituloModalMovimiento');
-
-    const btnEliminar = document.getElementById('btnEliminarMovimiento');
-
-
-    // ==================================================
-    // FORMATO DEL VALOR
-    // ==================================================
-
-    valor.addEventListener('input', function () {
-
-        let numero = this.value.replace(/\D/g, '');
-
-        if (numero !== '') {
-            this.value = Number(numero).toLocaleString('es-CO');
-        }
-
-    });
+                        const btnEliminar = document.getElementById('btnEliminarMovimiento');
 
 
-    // ==================================================
-    // NUEVO MOVIMIENTO
-    // ==================================================
+                        // ==================================================
+                        // FORMATO DEL VALOR
+                        // ==================================================
 
-    document
-        .querySelector('[data-bs-target="#modalMovimiento"]')
-        .addEventListener('click', function () {
+                        valor.addEventListener('input', function() {
 
-            form.action = 'agregar_movimiento.php';
+                            let numero = this.value.replace(/\D/g, '');
 
-            idMovimiento.value = '';
+                            if (numero !== '') {
+                                this.value = Number(numero).toLocaleString('es-CO');
+                            }
 
-            descripcion.value = '';
-
-            valor.value = '';
-
-            fecha.value = '<?= date('Y-m-d') ?>';
-
-            titulo.innerText = 'Nuevo movimiento';
-
-            btnEliminar.classList.add('d-none');
-
-        });
+                        });
 
 
-    // ==================================================
-    // EDITAR MOVIMIENTO
-    // ==================================================
+                        // ==================================================
+                        // NUEVO MOVIMIENTO
+                        // ==================================================
 
-    document
-        .querySelectorAll('.btn-editar-movimiento')
-        .forEach(function (boton) {
+                        document
+                            .querySelector('[data-bs-target="#modalMovimiento"]')
+                            .addEventListener('click', function() {
 
-            boton.addEventListener('click', function () {
+                                form.action = '<?= BASE_URL ?>favores/movimiento/agregar/<?= $personaId ?>';
 
-                const id = this.dataset.id;
-                const descripcionDato = this.dataset.descripcion;
-                const valorDato = this.dataset.valor;
-                const fechaDato = this.dataset.fecha;
+                                idMovimiento.value = '';
 
-                form.action = 'editar_movimiento.php';
+                                descripcion.value = '';
 
-                idMovimiento.value = id;
+                                valor.value = '';
 
-                descripcion.value = descripcionDato;
+                                fecha.value = '<?= date('Y-m-d') ?>';
 
-                valor.value = Number(valorDato).toLocaleString('es-CO');
+                                titulo.innerText = 'Nuevo movimiento';
 
-                fecha.value = fechaDato;
+                                btnEliminar.classList.add('d-none');
 
-                titulo.innerText = 'Editar movimiento';
-
-                btnEliminar.classList.remove('d-none');
-
-                modal.show();
-
-            });
-
-        });
+                            });
 
 
-    // ==================================================
-    // ELIMINAR MOVIMIENTO
-    // ==================================================
+                        // ==================================================
+                        // EDITAR MOVIMIENTO
+                        // ==================================================
 
-    btnEliminar.addEventListener('click', function () {
+                        document
+                            .querySelectorAll('.btn-editar-movimiento')
+                            .forEach(function(boton) {
 
-        const id = idMovimiento.value;
+                                boton.addEventListener('click', function() {
 
-        if (!id) {
-            return;
-        }
+                                    const id = this.dataset.id;
+                                    const descripcionDato = this.dataset.descripcion;
+                                    const valorDato = this.dataset.valor;
+                                    const fechaDato = this.dataset.fecha;
 
-        if (confirm('¿Está seguro de eliminar este movimiento?')) {
+                                    form.action = '<?= BASE_URL ?>favores/movimiento/editar';
+                                    idMovimiento.value = id;
 
-            window.location.href =
-                'eliminar_movimiento.php?id=' +
-                id +
-                '&persona_id=<?= $personaId ?>';
+                                    descripcion.value = descripcionDato;
 
-        }
+                                    valor.value = Number(valorDato).toLocaleString('es-CO');
 
-    });
+                                    fecha.value = fechaDato;
 
-});
+                                    titulo.innerText = 'Editar movimiento';
 
-</script>
+                                    btnEliminar.classList.remove('d-none');
+
+                                    modal.show();
+
+                                });
+
+                            });
+
+
+                        // ==================================================
+                        // ELIMINAR MOVIMIENTO
+                        // ==================================================
+
+                        btnEliminar.addEventListener('click', function() {
+
+                            const id = idMovimiento.value;
+
+                            if (!id) {
+                                return;
+                            }
+
+                            if (confirm('¿Está seguro de eliminar este movimiento?')) {
+
+                                window.location.href =
+                                    '<?= BASE_URL ?>favores/movimiento/eliminar?id=' +
+                                    id +
+                                    '&persona_id=<?= $personaId ?>';
+
+                            }
+
+                        });
+
+                    });
+                    </script>
                     <!-- MODAL MOVIMIENTO -->
 
-<div class="modal fade" id="modalMovimiento" tabindex="-1">
+                    <div class="modal fade" id="modalMovimiento" tabindex="-1">
 
-    <div class="modal-dialog">
+                        <div class="modal-dialog">
 
-        <div class="modal-content">
+                            <div class="modal-content">
 
-            <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
+                                <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
 
-                <input type="hidden" name="persona_id" value="<?= $personaId ?>">
-                <input type="hidden" name="id" id="idMovimiento">
+                                    <input type="hidden" name="persona_id" value="<?= $personaId ?>">
+                                    <input type="hidden" name="id" id="idMovimiento">
 
-                <div class="modal-header">
+                                    <div class="modal-header">
 
-                    <h5 class="modal-title" id="tituloModalMovimiento">
-                        Nuevo movimiento
-                    </h5>
+                                        <h5 class="modal-title" id="tituloModalMovimiento">
+                                            Nuevo movimiento
+                                        </h5>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                    </button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                        </button>
 
-                </div>
+                                    </div>
 
-                <div class="modal-body">
+                                    <div class="modal-body">
 
-                    <div class="mb-3">
+                                        <div class="mb-3">
 
-                        <label class="form-label">
-                            Descripción
-                        </label>
+                                            <label class="form-label">
+                                                Descripción
+                                            </label>
 
-                        <input
-                            type="text"
-                            name="descripcion"
-                            id="descripcionMovimiento"
-                            class="form-control"
-                            maxlength="255"
-                            placeholder="Ej: Préstamo"
-                            required
-                        >
+                                            <input type="text" name="descripcion" id="descripcionMovimiento"
+                                                class="form-control" maxlength="255" placeholder="Ej: Préstamo"
+                                                required>
+
+                                        </div>
+
+                                        <div class="mb-3">
+
+                                            <label class="form-label">
+                                                Valor
+                                            </label>
+
+                                            <input type="text" name="valor" id="valorMovimiento" class="form-control"
+                                                placeholder="Ej: 50.000" inputmode="numeric" required>
+
+                                            <small class="text-muted">
+                                                Ingrese el valor sin decimales.
+                                            </small>
+
+                                        </div>
+
+                                        <div class="mb-3">
+
+                                            <label class="form-label">
+                                                Fecha
+                                            </label>
+
+                                            <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
+                                                required>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="modal-footer">
+
+                                        <button type="button" class="btn btn-danger d-none" id="btnEliminarMovimiento">
+                                            <i class="mdi mdi-delete"></i>
+                                            Eliminar
+                                        </button>
+
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Cancelar
+                                        </button>
+
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i>
+                                            Guardar
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                        </div>
 
                     </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Valor
-                        </label>
-
-                        <input
-                            type="text"
-                            name="valor"
-                            id="valorMovimiento"
-                            class="form-control"
-                            placeholder="Ej: 50.000"
-                            inputmode="numeric"
-                            required
-                        >
-
-                        <small class="text-muted">
-                            Ingrese el valor sin decimales.
-                        </small>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Fecha
-                        </label>
-
-                        <input
-                            type="date"
-                            name="fecha"
-                            id="fechaMovimiento"
-                            class="form-control"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-danger d-none"
-                        id="btnEliminarMovimiento"
-                    >
-                        <i class="mdi mdi-delete"></i>
-                        Eliminar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                    >
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-                        <i class="bi bi-save"></i>
-                        Guardar
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
 
                     <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
 
                 </div>
 
-                
+
 
                 <!-- MODAL NUEVO MOVIMIENTO -->
 
