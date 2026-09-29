@@ -272,8 +272,8 @@ class="btn btn-secondary">
                                             name="valor"
                                             id="valor"
                                             class="form-control"
-                                            inputmode="numeric"
-                                            value="<?= number_format((float) $factura['valor'], 0, ',', '.') ?>"
+                                            inputmode="decimal"
+value="<?= number_format((float) $factura['valor'], 3, ',', '.') ?>"
                                             required
                                         >
 
@@ -357,10 +357,11 @@ class="btn btn-secondary">
                                                     name="valor_iva"
                                                     id="valor_iva"
                                                     class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 285.000"
-                                                    value="<?= !empty($factura['valor_iva']) ? number_format((float) $factura['valor_iva'], 0, ',', '.') : '' ?>"
-                                                >
+                                                    inputmode="decimal"
+placeholder="Ej. 285.000,125"
+value="<?= $factura['valor_iva'] !== null
+    ? number_format((float) $factura['valor_iva'], 3, ',', '.')
+    : '' ?>">
 
                                             </div>
 
@@ -426,10 +427,12 @@ class="btn btn-secondary">
                                                     name="valor_impoconsumo"
                                                     id="valor_impoconsumo"
                                                     class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 100.000"
-                                                    value="<?= !empty($factura['valor_impoconsumo']) ? number_format((float) $factura['valor_impoconsumo'], 0, ',', '.') : '' ?>"
-                                                >
+                                                
+                                                inputmode="decimal"
+placeholder="Ej. 100.000,125"
+value="<?= $factura['valor_impoconsumo'] !== null
+    ? number_format((float) $factura['valor_impoconsumo'], 3, ',', '.')
+    : '' ?>">
 
                                             </div>
 
@@ -495,10 +498,11 @@ class="btn btn-secondary">
                                                     name="valor_retencion"
                                                     id="valor_retencion"
                                                     class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 50.000"
-                                                    value="<?= !empty($factura['valor_retencion']) ? number_format((float) $factura['valor_retencion'], 0, ',', '.') : '' ?>"
-                                                >
+                                                inputmode="decimal"
+placeholder="Ej. 50.000,125"
+value="<?= $factura['valor_retencion'] !== null
+    ? number_format((float) $factura['valor_retencion'], 3, ',', '.')
+    : '' ?>">
 
                                             </div>
 
@@ -956,29 +960,58 @@ document.addEventListener('DOMContentLoaded', function () {
     // FORMATEAR VALORES
     //==================================================
 
-    function formatearValor(campo) {
+  function formatearValor(campo) {
 
-        campo.addEventListener('input', function () {
+    campo.addEventListener('input', function () {
 
-            let valorNumerico =
-                this.value.replace(/\D/g, '');
+        let valor = this.value;
 
-            if (valorNumerico !== '') {
+        // Permitir números y coma decimal
+        valor = valor.replace(/[^\d,]/g, '');
 
-                this.value =
-                    Number(valorNumerico)
-                        .toLocaleString('es-CO');
+        // Separar parte entera y decimal
+        const partes = valor.split(',');
 
-            } else {
+        let parteEntera = partes[0];
 
-                this.value = '';
+        let parteDecimal =
+            partes.length > 1
+                ? partes[1].substring(0, 3)
+                : null;
 
-            }
+        // Quitar ceros innecesarios
+        if (parteEntera !== '') {
 
-        });
+            parteEntera =
+                parteEntera.replace(/^0+(?=\d)/, '');
 
-    }
+        }
 
+        // Formatear miles
+        if (parteEntera !== '') {
+
+            parteEntera =
+                Number(parteEntera)
+                    .toLocaleString('es-CO');
+
+        }
+
+        // Reconstruir valor
+        if (parteDecimal !== null) {
+
+            this.value =
+                parteEntera + ',' + parteDecimal;
+
+        } else {
+
+            this.value =
+                parteEntera;
+
+        }
+
+    });
+
+}
 
     formatearValor(valor);
 

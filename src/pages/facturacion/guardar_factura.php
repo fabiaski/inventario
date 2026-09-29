@@ -57,15 +57,19 @@ if ($numeroFactura === '') {
 //==================================================
 // LIMPIAR VALOR DE FACTURA
 //==================================================
-
-$valor = str_replace(['.', ','], '', $valor);
+$valor = str_replace('.', '', $valor);
+$valor = str_replace(',', '.', $valor);
 
 if ($valor === '' || !is_numeric($valor)) {
     exit('El valor de la factura no es válido.');
 }
 
-$valor = (float) $valor;
-
+$valor = number_format(
+    (float) $valor,
+    3,
+    '.',
+    ''
+);
 if ($valor < 0) {
     exit('El valor de la factura no puede ser negativo.');
 }
@@ -100,13 +104,19 @@ if ($tieneIva) {
 
     $valorIva = trim($_POST['valor_iva'] ?? '');
 
-    $valorIva = str_replace(['.', ','], '', $valorIva);
+    $valorIva = str_replace('.', '', $valorIva);
+$valorIva = str_replace(',', '.', $valorIva);
 
-    if ($valorIva === '' || !is_numeric($valorIva)) {
-        exit('Debe ingresar un valor válido para el IVA.');
-    }
+if ($valorIva === '' || !is_numeric($valorIva)) {
+    exit('Debe ingresar un valor válido para el IVA.');
+}
 
-    $valorIva = (float) $valorIva;
+$valorIva = number_format(
+    (float) $valorIva,
+    3,
+    '.',
+    ''
+);
 
     if ($valorIva < 0) {
         exit('El valor del IVA no puede ser negativo.');
@@ -121,21 +131,26 @@ if ($tieneIva) {
 if ($tieneImpoconsumo) {
 
     $valorImpoconsumo =
-        trim($_POST['valor_impoconsumo'] ?? '');
+    str_replace('.', '', $valorImpoconsumo);
 
-    $valorImpoconsumo =
-        str_replace(['.', ','], '', $valorImpoconsumo);
+$valorImpoconsumo =
+    str_replace(',', '.', $valorImpoconsumo);
 
-    if (
-        $valorImpoconsumo === '' ||
-        !is_numeric($valorImpoconsumo)
-    ) {
-        exit(
-            'Debe ingresar un valor válido para el Impoconsumo.'
-        );
-    }
+if (
+    $valorImpoconsumo === '' ||
+    !is_numeric($valorImpoconsumo)
+) {
+    exit(
+        'Debe ingresar un valor válido para el Impoconsumo.'
+    );
+}
 
-    $valorImpoconsumo = (float) $valorImpoconsumo;
+$valorImpoconsumo = number_format(
+    (float) $valorImpoconsumo,
+    3,
+    '.',
+    ''
+);
 
     if ($valorImpoconsumo < 0) {
         exit(
@@ -155,19 +170,26 @@ if ($tieneRetencion) {
         trim($_POST['valor_retencion'] ?? '');
 
     $valorRetencion =
-        str_replace(['.', ','], '', $valorRetencion);
+    str_replace('.', '', $valorRetencion);
 
-    if (
-        $valorRetencion === '' ||
-        !is_numeric($valorRetencion)
-    ) {
-        exit(
-            'Debe ingresar un valor válido para la Retención.'
-        );
-    }
+$valorRetencion =
+    str_replace(',', '.', $valorRetencion);
 
-    $valorRetencion = (float) $valorRetencion;
+if (
+    $valorRetencion === '' ||
+    !is_numeric($valorRetencion)
+) {
+    exit(
+        'Debe ingresar un valor válido para la Retención.'
+    );
+}
 
+$valorRetencion = number_format(
+    (float) $valorRetencion,
+    3,
+    '.',
+    ''
+);
     if ($valorRetencion < 0) {
         exit(
             'El valor de la Retención no puede ser negativo.'
@@ -252,7 +274,7 @@ if (!$stmt) {
 //==================================================
 
 $stmt->bind_param(
-    "issdididids",
+    "isssisisiss",
     $contratoId,
     $proveedor,
     $numeroFactura,
@@ -265,7 +287,6 @@ $stmt->bind_param(
     $valorRetencion,
     $observacion
 );
-
 
 //==================================================
 // EJECUTAR
