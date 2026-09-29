@@ -590,14 +590,16 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="mb-3">
 
-                                        <label for="descripcionMovimiento" class="form-label">
-                                            Descripción
+                                        <label for="fechaMovimiento" class="form-label">
+                                            Fecha
                                         </label>
 
-                                        <input type="text" name="descripcion" id="descripcionMovimiento"
-                                            class="form-control" maxlength="255" placeholder="Ej: Préstamo" required>
+                                        <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
+                                            value="<?= date('Y-m-d') ?>" required>
 
                                     </div>
+
+                                    
 
                                     <div class="mb-3">
 
@@ -616,12 +618,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="mb-3">
 
-                                        <label for="fechaMovimiento" class="form-label">
-                                            Fecha
+                                        <label for="descripcionMovimiento" class="form-label">
+                                            Descripción
                                         </label>
 
-                                        <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
-                                            value="<?= date('Y-m-d') ?>" required>
+                                        <input type="text" name="descripcion" id="descripcionMovimiento"
+                                            class="form-control" maxlength="255" placeholder="Ej: Préstamo" required>
 
                                     </div>
 
