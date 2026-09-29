@@ -130,7 +130,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <!-- OBJETO -->
 
-                                        <td>
+                                        <td style="
+                            white-space: normal;
+                            overflow-wrap: break-word;
+                            word-break: normal;
+                            line-height: 1.4; ">
 
                                             <?= htmlspecialchars(
                                         $contrato['objeto_contrato']

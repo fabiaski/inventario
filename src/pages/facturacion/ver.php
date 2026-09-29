@@ -964,327 +964,332 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-                            <div class="card-body">
+                                <div class="card-body">
 
 
-                                <?php if (!empty($facturas)): ?>
+                                    <?php if (!empty($facturas)): ?>
 
 
-                                <div class="table-responsive">
+                                    <div class="table-responsive">
 
-                                    <table class="table table-bordered table-hover align-middle">
+                                        <table class="table table-bordered table-hover align-middle">
 
 
-                                        <thead class="table-light">
+                                            <thead class="table-light">
 
-                                            <tr>
+                                                <tr>
 
-                                                <th>
-                                                    #
-                                                </th>
+                                                    <th>
+                                                        #
+                                                    </th>
 
-                                                <th>
-                                                    Proveedor
-                                                </th>
+                                                    <th>
+                                                        Proveedor
+                                                    </th>
 
-                                                <th>
-                                                    N° Factura
-                                                </th>
+                                                    <th>
+                                                        N° Factura
+                                                    </th>
 
-                                                <th>
-                                                    Valor
-                                                </th>
+                                                    <th>
+                                                        Valor
+                                                    </th>
 
-                                                <th>
-                                                    IVA
-                                                </th>
+                                                    <th>
+                                                        IVA
+                                                    </th>
 
-                                                <th>
-                                                    Impoconsumo
-                                                </th>
+                                                    <th>
+                                                        Impoconsumo
+                                                    </th>
 
-                                                <th>
-                                                    Retención
-                                                </th>
+                                                    <th>
+                                                        Retención
+                                                    </th>
 
-                                                <th>
-                                                    Observación
-                                                </th>
+                                                    <th>
+                                                        Observación
+                                                    </th>
 
-                                                <th>
-                                                    Soportes
-                                                </th>
+                                                    <th>
+                                                        Soportes
+                                                    </th>
 
-                                                <th>
-                                                    Acciones
-                                                </th>
+                                                    <th>
+                                                        Acciones
+                                                    </th>
 
-                                            </tr>
+                                                </tr>
 
-                                        </thead>
+                                            </thead>
 
 
-                                        <tbody>
+                                            <tbody>
 
 
-                                            <?php foreach (
-                                                $facturas
-                                                as $indice => $factura
-                                            ): ?>
+                                                <?php foreach (
+                                                    $facturas
+                                                    as $indice => $factura
+                                                ): ?>
 
 
-                                            <tr>
+                                                <tr>
 
 
-                                                <!-- # -->
+                                                    <!-- # -->
 
-                                                <td>
+                                                    <td>
 
-                                                    <?= $indice + 1 ?>
+                                                        <?= $indice + 1 ?>
 
-                                                </td>
+                                                    </td>
 
 
-                                                <!-- PROVEEDOR -->
+                                                    <!-- PROVEEDOR -->
 
-                                                <td>
+                                                    <td style="
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.4;
+">
+    <?= htmlspecialchars($factura['proveedor']) ?>
+</td>
 
-                                                    <?= htmlspecialchars(
-                                                        $factura['proveedor']
-                                                    ) ?>
 
-                                                </td>
+                                                    <!-- NÚMERO -->
 
+                                                    <td style="
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.4;
+">
+    <?= htmlspecialchars($factura['numero_factura']) ?>
+</td>
 
-                                                <!-- NÚMERO -->
 
-                                                <td>
+                                                    <!-- VALOR -->
 
-                                                    <?= htmlspecialchars(
-                                                        $factura['numero_factura']
-                                                    ) ?>
+                                                    <td class="text-end">
 
-                                                </td>
+                                                        <?= dinero(
+                                                            $factura['valor']
+                                                        ) ?>
 
+                                                    </td>
 
-                                                <!-- VALOR -->
 
-                                                <td class="text-end">
+                                                    <!-- IVA -->
 
-                                                    <?= dinero(
-                                                        $factura['valor']
-                                                    ) ?>
+                                                    <td class="text-end">
 
-                                                </td>
+                                                        <?= (int) $factura['tiene_iva'] === 1
+                                                            ? dinero($factura['valor_iva'])
+                                                            : 'No aplica' ?>
 
+                                                    </td>
 
-                                                <!-- IVA -->
 
-                                                <td class="text-end">
+                                                    <!-- IMPOCONSUMO -->
 
-                                                    <?= (int) $factura['tiene_iva'] === 1
-                                                        ? dinero($factura['valor_iva'])
-                                                        : 'No aplica' ?>
+                                                    <td class="text-end">
 
-                                                </td>
+                                                        <?= (int) $factura['tiene_impoconsumo'] === 1
+                                                            ? dinero($factura['valor_impoconsumo'])
+                                                            : 'No aplica' ?>
 
+                                                    </td>
 
-                                                <!-- IMPOCONSUMO -->
 
-                                                <td class="text-end">
+                                                    <!-- RETENCIÓN -->
 
-                                                    <?= (int) $factura['tiene_impoconsumo'] === 1
-                                                        ? dinero($factura['valor_impoconsumo'])
-                                                        : 'No aplica' ?>
+                                                    <td class="text-end">
 
-                                                </td>
+                                                        <?= (int) $factura['tiene_retencion'] === 1
+                                                            ? dinero($factura['valor_retencion'])
+                                                            : 'No aplica' ?>
 
+                                                    </td>
 
-                                                <!-- RETENCIÓN -->
 
-                                                <td class="text-end">
+                                                    <!-- OBSERVACIÓN -->
 
-                                                    <?= (int) $factura['tiene_retencion'] === 1
-                                                        ? dinero($factura['valor_retencion'])
-                                                        : 'No aplica' ?>
+                                                    <td style="
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.4;
+">
+    <?= !empty($factura['observacion'])
+        ? htmlspecialchars($factura['observacion'])
+        : '<span class="text-muted">—</span>' ?>
+</td>
 
-                                                </td>
 
+                                                    <!-- SOPORTES -->
 
-                                                <!-- OBSERVACIÓN -->
-
-                                                <td>
-
-                                                    <?= !empty(
-                                                        $factura['observacion']
-                                                    )
-                                                        ? htmlspecialchars(
-                                                            $factura['observacion']
-                                                        )
-                                                        : '<span class="text-muted">—</span>'
-                                                    ?>
-
-                                                </td>
-
-
-                                                <!-- SOPORTES -->
-
-                                                <td>
-
-                                                    <?php
-
-                                                    $idFactura =
-                                                        (int) $factura['id'];
-
-                                                    $soportes =
-                                                        $soportesPorFactura[
-                                                            $idFactura
-                                                        ] ?? [];
-
-                                                    ?>
-
-
-                                                    <?php if (
-                                                        !empty($soportes)
-                                                    ): ?>
-
-
-                                                    <div class="d-flex flex-column gap-1">
-
-                                                        <?php foreach (
-                                                            $soportes
-                                                            as $soporte
-                                                        ): ?>
-
+                                                    <td style="
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+    line-height: 1.4;
+">
 
                                                         <?php
 
-                                                        $extension =
-                                                            strtolower(
-                                                                pathinfo(
-                                                                    $soporte['archivo'],
-                                                                    PATHINFO_EXTENSION
-                                                                )
-                                                            );
+                                                        $idFactura =
+                                                            (int) $factura['id'];
+
+                                                        $soportes =
+                                                            $soportesPorFactura[
+                                                                $idFactura
+                                                            ] ?? [];
 
                                                         ?>
 
 
-                                                        <a href="/inventario/uploads/soportes_facturas/<?= rawurlencode(
-    $soporte['archivo']
-) ?>" target="_blank" class="text-decoration-none" title="Abrir soporte">
+                                                        <?php if (
+                                                            !empty($soportes)
+                                                        ): ?>
 
 
-                                                            <?php if (
-                                                                $extension === 'pdf'
+                                                        <div class="d-flex flex-column gap-1">
+
+                                                            <?php foreach (
+                                                                $soportes
+                                                                as $soporte
                                                             ): ?>
 
-                                                            <i class="bi bi-file-earmark-pdf text-danger"></i>
 
-                                                            <?php else: ?>
+                                                            <?php
 
-                                                            <i class="bi bi-file-earmark-image text-primary"></i>
+                                                            $extension =
+                                                                strtolower(
+                                                                    pathinfo(
+                                                                        $soporte['archivo'],
+                                                                        PATHINFO_EXTENSION
+                                                                    )
+                                                                );
 
-                                                            <?php endif; ?>
-
-
-                                                            <?= htmlspecialchars(
-                                                                $soporte['archivo']
-                                                            ) ?>
-
-                                                        </a>
+                                                            ?>
 
 
-                                                        <?php endforeach; ?>
-
-                                                    </div>
-
-
-                                                    <?php else: ?>
+                                                            <a href="/inventario/uploads/soportes_facturas/<?= rawurlencode(
+        $soporte['archivo']
+    ) ?>" target="_blank" class="text-decoration-none" title="Abrir soporte">
 
 
-                                                    <span class="text-muted">
+                                                                <?php if (
+                                                                    $extension === 'pdf'
+                                                                ): ?>
 
-                                                        Sin soporte
+                                                                <i class="bi bi-file-earmark-pdf text-danger"></i>
 
-                                                    </span>
+                                                                <?php else: ?>
 
+                                                                <i class="bi bi-file-earmark-image text-primary"></i>
 
-                                                    <?php endif; ?>
-
-                                                </td>
-
-
-                                                <!-- ACCIONES -->
-
-                                                <td>
-
-                                                    <div class="d-flex gap-1">
+                                                                <?php endif; ?>
 
 
-                                                        <!-- EDITAR -->
+                                                                <?= htmlspecialchars(
+                                                                    $soporte['archivo']
+                                                                ) ?>
 
-                                                        <a href="/inventario/facturacion/editar-factura/<?= $factura['id'] ?>"
-                                                            class="btn btn-warning btn-sm" title="Editar factura">
-
-                                                            <i class="bi bi-pencil"></i>
-
-                                                        </a>
+                                                            </a>
 
 
-                                                        <!-- ELIMINAR -->
+                                                            <?php endforeach; ?>
 
-                                                        <a href="/inventario/facturacion/eliminar-factura?id=<?= $factura['id'] ?>"
-                                                            class="btn btn-danger btn-sm" title="Eliminar factura"
-                                                            onclick="return confirm('¿Está seguro de eliminar esta factura?');">
-
-                                                            <i class="bi bi-trash"></i>
-
-                                                        </a>
+                                                        </div>
 
 
-                                                    </div>
-
-                                                </td>
+                                                        <?php else: ?>
 
 
-                                            </tr>
+                                                        <span class="text-muted">
+
+                                                            Sin soporte
+
+                                                        </span>
 
 
-                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+
+                                                    </td>
 
 
-                                        </tbody>
+                                                    <!-- ACCIONES -->
+
+                                                    <td>
+
+                                                        <div class="d-flex gap-1">
 
 
-                                    </table>
+                                                            <!-- EDITAR -->
+
+                                                            <a href="/inventario/facturacion/editar-factura/<?= $factura['id'] ?>"
+                                                                class="btn btn-warning btn-sm" title="Editar factura">
+
+                                                                <i class="bi bi-pencil"></i>
+
+                                                            </a>
+
+
+                                                            <!-- ELIMINAR -->
+
+                                                            <a href="/inventario/facturacion/eliminar-factura?id=<?= $factura['id'] ?>"
+                                                                class="btn btn-danger btn-sm" title="Eliminar factura"
+                                                                onclick="return confirm('¿Está seguro de eliminar esta factura?');">
+
+                                                                <i class="bi bi-trash"></i>
+
+                                                            </a>
+
+
+                                                        </div>
+
+                                                    </td>
+
+
+                                                </tr>
+
+
+                                                <?php endforeach; ?>
+
+
+                                            </tbody>
+
+
+                                        </table>
+
+                                    </div>
+
+
+                                    <?php else: ?>
+
+
+                                    <div class="text-center text-muted py-4">
+
+                                        <i class="bi bi-receipt fs-3"></i>
+
+                                        <p class="mb-0 mt-2">
+
+                                            Este contrato todavía
+                                            no tiene facturas.
+
+                                        </p>
+
+                                    </div>
+
+
+                                    <?php endif; ?>
+
 
                                 </div>
-
-
-                                <?php else: ?>
-
-
-                                <div class="text-center text-muted py-4">
-
-                                    <i class="bi bi-receipt fs-3"></i>
-
-                                    <p class="mb-0 mt-2">
-
-                                        Este contrato todavía
-                                        no tiene facturas.
-
-                                    </p>
-
-                                </div>
-
-
-                                <?php endif; ?>
-
 
                             </div>
-
-                        </div>
 
 
                     </div>
