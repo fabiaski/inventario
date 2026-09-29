@@ -127,8 +127,7 @@ $stmtSoportes->close();
 
 $directorioSoportes =
     __DIR__
-    . '/../uploads/soportes_facturas/';
-
+. '/../../../uploads/soportes_facturas/';
 
 foreach ($soportes as $archivo) {
 
@@ -198,7 +197,7 @@ $stmtEliminar->close();
 //==================================================
 
 header(
-    'Location: facturacion.php'
+    'Location: /inventario/facturacion'
 );
 
 exit;
