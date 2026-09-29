@@ -341,7 +341,8 @@ if (
     //==================================================
 
     $carpeta =
-        __DIR__ . '/../uploads/soportes_facturas/';
+        
+          __DIR__ . '/../../../uploads/soportes_facturas/';
 
 
     if (!is_dir($carpeta)) {
@@ -358,12 +359,60 @@ if (
     // NOMBRE ÚNICO
     //==================================================
 
-    $nombreArchivo =
-        uniqid(
-            'factura_',
-            true
-        ) . '.' . $extension;
+$nombreContrato = '';
 
+$sqlNombreContrato = "
+    SELECT numero_contrato
+    FROM contratos
+    WHERE id = ?
+";
+
+$stmtNombreContrato = $conexion->prepare($sqlNombreContrato);
+
+if ($stmtNombreContrato) {
+
+    $stmtNombreContrato->bind_param(
+        "i",
+        $contratoId
+    );
+
+    $stmtNombreContrato->execute();
+
+    $resultadoNombreContrato =
+        $stmtNombreContrato->get_result();
+
+    $datosContrato =
+        $resultadoNombreContrato->fetch_assoc();
+
+    $nombreContrato =
+        $datosContrato['numero_contrato'] ?? '';
+
+    $stmtNombreContrato->close();
+}
+
+
+// Limpiar caracteres no permitidos
+$nombreContrato = preg_replace(
+    '/[^A-Za-z0-9_-]/',
+    '_',
+    $nombreContrato
+);
+
+$numeroFacturaLimpio = preg_replace(
+    '/[^A-Za-z0-9_-]/',
+    '_',
+    $numeroFactura
+);
+
+
+$nombreArchivo =
+    'Contrato_' .
+    $nombreContrato .
+    '_Factura_' .
+    $numeroFacturaLimpio .
+    '.' .
+    $extension;
+    
 
     $rutaArchivo =
         $carpeta . $nombreArchivo;

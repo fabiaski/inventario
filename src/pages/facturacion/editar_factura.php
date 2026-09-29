@@ -149,9 +149,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                             <a
-                                href="ver.php?id=<?= $factura['contrato_id'] ?>"
-                                class="btn btn-secondary"
-                            >
+                             href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
+class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
 
@@ -170,7 +169,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         ==================================================-->
 
                         <form
-                            action="actualizar_factura.php"
+                            action="/inventario/facturacion/actualizar-factura"
                             method="POST"
                             id="formFactura"
                         >
@@ -545,7 +544,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <div class="d-flex justify-content-end gap-2">
 
                                 <a
-                                    href="ver.php?id=<?= $factura['contrato_id'] ?>"
+                                    href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
                                     class="btn btn-secondary"
                                 >
 
@@ -697,7 +696,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                                                 <a
-                                                                    href="../uploads/soportes_facturas/<?= rawurlencode($nombreArchivo) ?>"
+                                                                    href="/inventario/uploads/soportes_facturas/<?= rawurlencode($nombreArchivo) ?>"
                                                                     target="_blank"
                                                                     class="btn btn-info btn-sm"
                                                                     title="Ver archivo"
@@ -709,7 +708,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                                                 <a
-                                                                    href="eliminar_soporte.php?id=<?= $soporte['id'] ?>"
+                                                                    href="/inventario/facturacion/eliminar-soporte?id=<?= $soporte['id'] ?>"
                                                                     class="btn btn-danger btn-sm"
                                                                     title="Eliminar soporte"
                                                                     onclick="return confirm('¿Está seguro de eliminar este soporte?');"
@@ -760,7 +759,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                 <form
-                                    action="agregar_soporte.php"
+    action="/inventario/facturacion/agregar-soporte"
                                     method="POST"
                                     enctype="multipart/form-data"
                                 >
