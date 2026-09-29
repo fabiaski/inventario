@@ -218,7 +218,7 @@ function dinero($valor)
 {
     return '$' . number_format(
         (float) $valor,
-        0,
+        3,
         ',',
         '.'
     );

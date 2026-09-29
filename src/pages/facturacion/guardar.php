@@ -38,7 +38,9 @@ $valorContrato = trim(
 );
 
 // Quitar puntos y comas
-$valorContrato = str_replace(['.', ','], '', $valorContrato);
+// Convertir formato colombiano a número decimal
+$valorContrato = str_replace('.', '', $valorContrato);
+$valorContrato = str_replace(',', '.', $valorContrato);
 
 
 if ($valorContrato === '' || !is_numeric($valorContrato)) {
@@ -47,8 +49,12 @@ if ($valorContrato === '' || !is_numeric($valorContrato)) {
 
 }
 
-$valorContrato = (float) $valorContrato;
-
+$valorContrato = number_format(
+    (float) $valorContrato,
+    3,
+    '.',
+    ''
+);
 
 if ($valorContrato < 0) {
 
@@ -73,7 +79,8 @@ if ($tieneIva) {
     );
 
     // Quitar puntos y comas
-    $valorIva = str_replace(['.', ','], '', $valorIva);
+    $valorIva = str_replace('.', '', $valorIva);
+$valorIva = str_replace(',', '.', $valorIva);
 
 
     if ($valorIva === '' || !is_numeric($valorIva)) {
@@ -83,8 +90,12 @@ exit;
     }
 
 
-    $valorIva = (float) $valorIva;
-
+$valorIva = number_format(
+    (float) $valorIva,
+    3,
+    '.',
+    ''
+);
 
     if ($valorIva < 0) {
 
@@ -111,7 +122,8 @@ if ($tieneImpoconsumo) {
     );
 
     // Quitar puntos y comas
-    $valorImpoconsumo = str_replace(['.', ','], '', $valorImpoconsumo);
+$valorImpoconsumo = str_replace('.', '', $valorImpoconsumo);
+$valorImpoconsumo = str_replace(',', '.', $valorImpoconsumo);
 
 
     if ($valorImpoconsumo === '' || !is_numeric($valorImpoconsumo)) {
@@ -120,8 +132,12 @@ header("Location: /inventario/facturacion-agregar?error=impoconsumo");exit;
     }
 
 
-    $valorImpoconsumo = (float) $valorImpoconsumo;
-
+$valorImpoconsumo = number_format(
+    (float) $valorImpoconsumo,
+    3,
+    '.',
+    ''
+);
 
     if ($valorImpoconsumo < 0) {
 
@@ -148,8 +164,8 @@ if ($tieneRetencion) {
     );
 
     // Quitar puntos y comas
-    $valorRetencion = str_replace(['.', ','], '', $valorRetencion);
-
+$valorRetencion = str_replace('.', '', $valorRetencion);
+$valorRetencion = str_replace(',', '.', $valorRetencion);
 
     if ($valorRetencion === '' || !is_numeric($valorRetencion)) {
 
@@ -158,7 +174,12 @@ exit;
     }
 
 
-    $valorRetencion = (float) $valorRetencion;
+$valorRetencion = number_format(
+    (float) $valorRetencion,
+    3,
+    '.',
+    ''
+);
 
 
     if ($valorRetencion < 0) {
@@ -232,9 +253,8 @@ if (!$stmt) {
 //==================================================
 // VINCULAR DATOS
 //==================================================
-
 $stmt->bind_param(
-    "ssdiddidds",
+    "sssisissis",
     $numeroContrato,
     $objetoContrato,
     $valorContrato,
@@ -246,7 +266,6 @@ $stmt->bind_param(
     $valorRetencion,
     $fecha
 );
-
 
 //==================================================
 // EJECUTAR

@@ -171,24 +171,14 @@ RESULTADO: ALERTA ENVIADA CORRECTAMENTE
 
 
 
+ALTER TABLE contratos
+MODIFY valor_contrato DECIMAL(15,3) NOT NULL DEFAULT 0.000,
+MODIFY valor_iva DECIMAL(15,3) DEFAULT NULL,
+MODIFY valor_impoconsumo DECIMAL(15,3) DEFAULT NULL,
+MODIFY valor_retencion DECIMAL(15,3) DEFAULT NULL;
 
-CREATE TABLE favores_personas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(150) NOT NULL,
-    tipo ENUM('me_debe', 'le_debo') NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE favores_movimientos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    persona_id INT NOT NULL,
-    descripcion VARCHAR(255) NOT NULL,
-    valor INT NOT NULL,
-    fecha DATE NOT NULL DEFAULT (CURRENT_DATE),
-    estado ENUM('pendiente', 'pagado') NOT NULL DEFAULT 'pendiente',
-
-    FOREIGN KEY (persona_id)
-        REFERENCES favores_personas(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
+ALTER TABLE facturas
+MODIFY valor DECIMAL(15,3) NOT NULL DEFAULT 0.000,
+MODIFY valor_iva DECIMAL(15,3) DEFAULT NULL,
+MODIFY valor_impoconsumo DECIMAL(15,3) DEFAULT NULL,
+MODIFY valor_retencion DECIMAL(15,3) DEFAULT NULL;

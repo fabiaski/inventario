@@ -105,13 +105,8 @@ if ($objetoContrato === '') {
 // LIMPIAR VALOR DEL CONTRATO
 //==================================================
 
-$valorContrato =
-    str_replace(
-        ['.', ','],
-        '',
-        $valorContrato
-    );
-
+$valorContrato = str_replace('.', '', $valorContrato);
+$valorContrato = str_replace(',', '.', $valorContrato);
 
 if (
     $valorContrato === ''
@@ -122,10 +117,12 @@ if (
 
 }
 
-
-$valorContrato =
-    (float) $valorContrato;
-
+$valorContrato = number_format(
+    (float) $valorContrato,
+    3,
+    '.',
+    ''
+);
 
 if ($valorContrato < 0) {
 
@@ -148,28 +145,26 @@ if ($tieneIva) {
         );
 
 
-    $valorIva =
-        str_replace(
-            ['.', ','],
-            '',
-            $valorIva
-        );
+    $valorIva = str_replace('.', '', $valorIva);
+$valorIva = str_replace(',', '.', $valorIva);
 
+if (
+    $valorIva === ''
+    || !is_numeric($valorIva)
+) {
 
-    if (
-        $valorIva === ''
-        || !is_numeric($valorIva)
-    ) {
+    exit(
+        'Debe ingresar un valor válido para el IVA.'
+    );
 
-        exit(
-            'Debe ingresar un valor válido para el IVA.'
-        );
+}
 
-    }
-
-
-    $valorIva =
-        (float) $valorIva;
+$valorIva = number_format(
+    (float) $valorIva,
+    3,
+    '.',
+    ''
+);  
 
 
     if ($valorIva < 0) {
@@ -371,7 +366,7 @@ if (!$stmtActualizar) {
 //==================================================
 
 $stmtActualizar->bind_param(
-    "sssdidididi",
+    "ssssisisisi",
     $numeroContrato,
     $fecha,
     $objetoContrato,
@@ -384,7 +379,6 @@ $stmtActualizar->bind_param(
     $valorRetencion,
     $contratoId
 );
-
 
 //==================================================
 // EJECUTAR ACTUALIZACIÓN

@@ -94,7 +94,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-                           <a href="/inventario/facturacion/ver/<?= $contratoId ?>" class="btn btn-secondary">
+                            <a href="/inventario/facturacion/ver/<?= $contratoId ?>" class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
 
@@ -112,18 +112,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         FORMULARIO
                         ==================================================-->
 
-                        <form
-    action="/inventario/facturacion/guardar-factura"
-    method="POST"
-    enctype="multipart/form-data"
-    id="formFactura"
->
+                        <form action="/inventario/facturacion/guardar-factura" method="POST"
+                            enctype="multipart/form-data" id="formFactura">
 
-                            <input
-                                type="hidden"
-                                name="contrato_id"
-                                value="<?= $contratoId ?>"
-                            >
+                            <input type="hidden" name="contrato_id" value="<?= $contratoId ?>">
 
 
                             <div class="row g-3">
@@ -143,14 +135,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="proveedor"
-                                        id="proveedor"
-                                        class="form-control"
-                                        maxlength="150"
-                                        required
-                                    >
+                                    <input type="text" name="proveedor" id="proveedor" class="form-control"
+                                        maxlength="150" required>
 
                                 </div>
 
@@ -169,14 +155,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="numero_factura"
-                                        id="numero_factura"
-                                        class="form-control"
-                                        maxlength="100"
-                                        required
-                                    >
+                                    <input type="text" name="numero_factura" id="numero_factura" class="form-control"
+                                        maxlength="100" required>
 
                                 </div>
 
@@ -201,15 +181,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             $
                                         </span>
 
-                                        <input
-                                            type="text"
-                                            name="valor"
-                                            id="valor"
-                                            class="form-control"
-                                            inputmode="numeric"
-                                            placeholder="Ej. 1.500.000"
-                                            required
-                                        >
+                                        <input type="text" name="valor" id="valor" class="form-control"
+                                            inputmode="decimal" placeholder="Ej. 1.500.000,50" required>
 
                                     </div>
 
@@ -242,53 +215,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_iva"
-                                                id="tiene_iva"
-                                                value="1"
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_iva"
+                                                id="tiene_iva" value="1">
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_iva"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_iva">
                                                 Tiene IVA
                                             </label>
 
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_iva"
-                                            style="display: none;"
-                                        >
+                                        <div id="contenedor_iva" style="display: none;">
 
-                                            <label
-                                                for="valor_iva"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_iva" class="form-label">
                                                 Valor IVA
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_iva"
-                                                    id="valor_iva"
-                                                    class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 285.000"
-                                                >
+                                                <input type="text" name="valor_iva" id="valor_iva" class="form-control"
+                                                    inputmode="decimal" placeholder="Ej. 285.000">
 
                                             </div>
 
@@ -305,53 +255,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_impoconsumo"
-                                                id="tiene_impoconsumo"
-                                                value="1"
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_impoconsumo"
+                                                id="tiene_impoconsumo" value="1">
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_impoconsumo"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_impoconsumo">
                                                 Tiene Impoconsumo
                                             </label>
 
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_impoconsumo"
-                                            style="display: none;"
-                                        >
+                                        <div id="contenedor_impoconsumo" style="display: none;">
 
-                                            <label
-                                                for="valor_impoconsumo"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_impoconsumo" class="form-label">
                                                 Valor Impoconsumo
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_impoconsumo"
-                                                    id="valor_impoconsumo"
-                                                    class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 100.000"
-                                                >
+                                                <input type="text" name="valor_impoconsumo" id="valor_impoconsumo"
+                                                    class="form-control" inputmode="numeric" placeholder="Ej. 100.000">
 
                                             </div>
 
@@ -368,53 +295,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_retencion"
-                                                id="tiene_retencion"
-                                                value="1"
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_retencion"
+                                                id="tiene_retencion" value="1">
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_retencion"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_retencion">
                                                 Tiene Retención
                                             </label>
 
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_retencion"
-                                            style="display: none;"
-                                        >
+                                        <div id="contenedor_retencion" style="display: none;">
 
-                                            <label
-                                                for="valor_retencion"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_retencion" class="form-label">
                                                 Valor Retención
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_retencion"
-                                                    id="valor_retencion"
-                                                    class="form-control"
-                                                    inputmode="numeric"
-                                                    placeholder="Ej. 50.000"
-                                                >
+                                                <input type="text" name="valor_retencion" id="valor_retencion"
+                                                    class="form-control" inputmode="numeric" placeholder="Ej. 50.000">
 
                                             </div>
 
@@ -432,21 +336,14 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-12">
 
-                                    <label
-                                        for="observacion"
-                                        class="form-label"
-                                    >
+                                    <label for="observacion" class="form-label">
 
                                         Observación
 
                                     </label>
 
-                                    <textarea
-                                        name="observacion"
-                                        id="observacion"
-                                        class="form-control"
-                                        rows="3"
-                                    ></textarea>
+                                    <textarea name="observacion" id="observacion" class="form-control"
+                                        rows="3"></textarea>
 
                                 </div>
 
@@ -457,22 +354,14 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-12">
 
-                                    <label
-                                        for="soporte"
-                                        class="form-label"
-                                    >
+                                    <label for="soporte" class="form-label">
 
                                         Soporte de la Factura
 
                                     </label>
 
-                                    <input
-                                        type="file"
-                                        name="soporte"
-                                        id="soporte"
-                                        class="form-control"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                    >
+                                    <input type="file" name="soporte" id="soporte" class="form-control"
+                                        accept=".pdf,.jpg,.jpeg,.png">
 
                                     <small class="text-muted">
 
@@ -495,10 +384,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div class="d-flex justify-content-end gap-2">
 
-                                <a
-    href="/inventario/facturacion/ver/<?= $contratoId ?>"
-    class="btn btn-secondary"
->
+                                <a href="/inventario/facturacion/ver/<?= $contratoId ?>" class="btn btn-secondary">
 
                                     <i class="bi bi-x-circle"></i>
 
@@ -507,10 +393,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </a>
 
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-success"
-                                >
+                                <button type="submit" class="btn btn-success">
 
                                     <i class="bi bi-save"></i>
 
@@ -533,7 +416,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
 
-<?php
+        <?php
 
 include __DIR__ . '/../../includes/footer.php';
 
@@ -542,220 +425,247 @@ include __DIR__ . '/../../includes/scripts.php';
 ?>
 
 
-<script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-document.addEventListener('DOMContentLoaded', function () {
+            const formulario = document.getElementById('formFactura');
 
-    const formulario = document.getElementById('formFactura');
-
-    const valor = document.getElementById('valor');
-
-
-    const tieneIva =
-        document.getElementById('tiene_iva');
-
-    const valorIva =
-        document.getElementById('valor_iva');
-
-    const contenedorIva =
-        document.getElementById('contenedor_iva');
+            const valor = document.getElementById('valor');
 
 
-    const tieneImpoconsumo =
-        document.getElementById('tiene_impoconsumo');
+            const tieneIva =
+                document.getElementById('tiene_iva');
 
-    const valorImpoconsumo =
-        document.getElementById('valor_impoconsumo');
+            const valorIva =
+                document.getElementById('valor_iva');
 
-    const contenedorImpoconsumo =
-        document.getElementById('contenedor_impoconsumo');
-
-
-    const tieneRetencion =
-        document.getElementById('tiene_retencion');
-
-    const valorRetencion =
-        document.getElementById('valor_retencion');
-
-    const contenedorRetencion =
-        document.getElementById('contenedor_retencion');
+            const contenedorIva =
+                document.getElementById('contenedor_iva');
 
 
-    //==================================================
-    // MOSTRAR / OCULTAR IVA
-    //==================================================
+            const tieneImpoconsumo =
+                document.getElementById('tiene_impoconsumo');
 
-    tieneIva.addEventListener('change', function () {
+            const valorImpoconsumo =
+                document.getElementById('valor_impoconsumo');
 
-        if (this.checked) {
+            const contenedorImpoconsumo =
+                document.getElementById('contenedor_impoconsumo');
 
-            contenedorIva.style.display = 'block';
+
+            const tieneRetencion =
+                document.getElementById('tiene_retencion');
+
+            const valorRetencion =
+                document.getElementById('valor_retencion');
+
+            const contenedorRetencion =
+                document.getElementById('contenedor_retencion');
+
+
+            //==================================================
+            // MOSTRAR / OCULTAR IVA
+            //==================================================
+
+            tieneIva.addEventListener('change', function() {
+
+                if (this.checked) {
+
+                    contenedorIva.style.display = 'block';
+
+                } else {
+
+                    contenedorIva.style.display = 'none';
+
+                    valorIva.value = '';
+
+                }
+
+            });
+
+
+            //==================================================
+            // MOSTRAR / OCULTAR IMPOCONSUMO
+            //==================================================
+
+            tieneImpoconsumo.addEventListener('change', function() {
+
+                if (this.checked) {
+
+                    contenedorImpoconsumo.style.display = 'block';
+
+                } else {
+
+                    contenedorImpoconsumo.style.display = 'none';
+
+                    valorImpoconsumo.value = '';
+
+                }
+
+            });
+
+
+            //==================================================
+            // MOSTRAR / OCULTAR RETENCIÓN
+            //==================================================
+
+            tieneRetencion.addEventListener('change', function() {
+
+                if (this.checked) {
+
+                    contenedorRetencion.style.display = 'block';
+
+                } else {
+
+                    contenedorRetencion.style.display = 'none';
+
+                    valorRetencion.value = '';
+
+                }
+
+            });
+
+
+            //==================================================
+            // FORMATEAR VALORES
+            //==================================================
+
+            function formatearValor(campo) {
+
+    campo.addEventListener('input', function () {
+
+        let valor = this.value;
+
+        // Permitir solamente números y coma
+        valor = valor.replace(/[^\d,]/g, '');
+
+        // Permitir solamente una coma decimal
+        const partes = valor.split(',');
+
+        let parteEntera = partes[0];
+
+        let parteDecimal =
+            partes.length > 1
+                ? partes[1].substring(0, 3)
+                : null;
+
+        // Quitar ceros innecesarios al inicio
+        if (parteEntera !== '') {
+
+            parteEntera =
+                parteEntera.replace(/^0+(?=\d)/, '');
+
+        }
+
+        // Formatear miles
+        if (parteEntera !== '') {
+
+            parteEntera =
+                Number(parteEntera)
+                    .toLocaleString('es-CO');
+        }
+
+        // Reconstruir valor
+        if (parteDecimal !== null) {
+
+            this.value =
+                parteEntera + ',' + parteDecimal;
 
         } else {
 
-            contenedorIva.style.display = 'none';
-
-            valorIva.value = '';
+            this.value =
+                parteEntera;
 
         }
 
     });
 
-
-    //==================================================
-    // MOSTRAR / OCULTAR IMPOCONSUMO
-    //==================================================
-
-    tieneImpoconsumo.addEventListener('change', function () {
-
-        if (this.checked) {
-
-            contenedorImpoconsumo.style.display = 'block';
-
-        } else {
-
-            contenedorImpoconsumo.style.display = 'none';
-
-            valorImpoconsumo.value = '';
-
-        }
-
-    });
+}
 
 
-    //==================================================
-    // MOSTRAR / OCULTAR RETENCIÓN
-    //==================================================
+            formatearValor(valor);
 
-    tieneRetencion.addEventListener('change', function () {
+            formatearValor(valorIva);
 
-        if (this.checked) {
+            formatearValor(valorImpoconsumo);
 
-            contenedorRetencion.style.display = 'block';
-
-        } else {
-
-            contenedorRetencion.style.display = 'none';
-
-            valorRetencion.value = '';
-
-        }
-
-    });
+            formatearValor(valorRetencion);
 
 
-    //==================================================
-    // FORMATEAR VALORES
-    //==================================================
+            //==================================================
+            // VALIDAR FORMULARIO
+            //==================================================
 
-    function formatearValor(campo) {
+            formulario.addEventListener('submit', function(e) {
 
-        campo.addEventListener('input', function () {
+                if (valor.value.trim() === '') {
 
-            let valorNumerico =
-                this.value.replace(/\D/g, '');
+                    e.preventDefault();
 
-            if (valorNumerico !== '') {
+                    alert(
+                        'Debe ingresar el valor de la factura.'
+                    );
 
-                this.value =
-                    Number(valorNumerico)
-                        .toLocaleString('es-CO');
+                    valor.focus();
 
-            } else {
+                    return false;
+                }
 
-                this.value = '';
 
-            }
+                if (
+                    tieneIva.checked &&
+                    valorIva.value.trim() === ''
+                ) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Debe ingresar el valor del IVA.'
+                    );
+
+                    valorIva.focus();
+
+                    return false;
+                }
+
+
+                if (
+                    tieneImpoconsumo.checked &&
+                    valorImpoconsumo.value.trim() === ''
+                ) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Debe ingresar el valor del Impoconsumo.'
+                    );
+
+                    valorImpoconsumo.focus();
+
+                    return false;
+                }
+
+
+                if (
+                    tieneRetencion.checked &&
+                    valorRetencion.value.trim() === ''
+                ) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Debe ingresar el valor de la Retención.'
+                    );
+
+                    valorRetencion.focus();
+
+                    return false;
+                }
+
+
+                return true;
+
+            });
 
         });
-
-    }
-
-
-    formatearValor(valor);
-
-    formatearValor(valorIva);
-
-    formatearValor(valorImpoconsumo);
-
-    formatearValor(valorRetencion);
-
-
-    //==================================================
-    // VALIDAR FORMULARIO
-    //==================================================
-
-    formulario.addEventListener('submit', function (e) {
-
-        if (valor.value.trim() === '') {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor de la factura.'
-            );
-
-            valor.focus();
-
-            return false;
-        }
-
-
-        if (
-            tieneIva.checked &&
-            valorIva.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor del IVA.'
-            );
-
-            valorIva.focus();
-
-            return false;
-        }
-
-
-        if (
-            tieneImpoconsumo.checked &&
-            valorImpoconsumo.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor del Impoconsumo.'
-            );
-
-            valorImpoconsumo.focus();
-
-            return false;
-        }
-
-
-        if (
-            tieneRetencion.checked &&
-            valorRetencion.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor de la Retención.'
-            );
-
-            valorRetencion.focus();
-
-            return false;
-        }
-
-
-        return true;
-
-    });
-
-});
-
-</script>
+        </script>

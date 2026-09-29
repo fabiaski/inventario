@@ -246,10 +246,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             name="valor_contrato"
                                             id="valor_contrato"
                                             class="form-control"
-                                            inputmode="numeric"
+                                            inputmode="decimal"
                                             value="<?= number_format(
                                                 (float) $contrato['valor_contrato'],
-                                                0,
+                                                3,
                                                 ',',
                                                 '.'
                                             ) ?>"
@@ -376,12 +376,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 name="valor_iva"
                                                 id="valor_iva"
                                                 class="form-control"
-                                                inputmode="numeric"
+                                                inputmode="decimal"
                                                 placeholder="Ej. 9.500.000"
                                                 value="<?= !empty($contrato['valor_iva'])
                                                     ? number_format(
                                                         (float) $contrato['valor_iva'],
-                                                        0,
+                                                        3,
                                                         ',',
                                                         '.'
                                                     )
@@ -457,12 +457,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 name="valor_impoconsumo"
                                                 id="valor_impoconsumo"
                                                 class="form-control"
-                                                inputmode="numeric"
+                                                inputmode="decimal"
                                                 placeholder="Ej. 500.000"
                                                 value="<?= !empty($contrato['valor_impoconsumo'])
                                                     ? number_format(
                                                         (float) $contrato['valor_impoconsumo'],
-                                                        0,
+                                                        3,
                                                         ',',
                                                         '.'
                                                     )
@@ -538,12 +538,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 name="valor_retencion"
                                                 id="valor_retencion"
                                                 class="form-control"
-                                                inputmode="numeric"
+                                                inputmode="decimal"
                                                 placeholder="Ej. 1.000.000"
                                                 value="<?= !empty($contrato['valor_retencion'])
                                                     ? number_format(
                                                         (float) $contrato['valor_retencion'],
-                                                        0,
+                                                        3,
                                                         ',',
                                                         '.'
                                                     )
@@ -728,29 +728,56 @@ document.addEventListener('DOMContentLoaded', function () {
     //==================================================
     // FORMATEAR DINERO
     //==================================================
+function formatearValor(campo) {
 
-    function formatearValor(campo) {
+    campo.addEventListener('input', function () {
 
-        campo.addEventListener('input', function () {
+        let valor = this.value;
 
-            let valor =
-                this.value.replace(/\D/g, '');
+        // Permitir únicamente números y coma
+        valor = valor.replace(/[^\d,]/g, '');
 
-            if (valor !== '') {
+        const partes = valor.split(',');
 
-                this.value =
-                    Number(valor).toLocaleString('es-CO');
+        let parteEntera = partes[0];
 
-            } else {
+        let parteDecimal =
+            partes.length > 1
+                ? partes[1].substring(0, 3)
+                : null;
 
-                this.value = '';
+        // Quitar ceros iniciales
+        if (parteEntera !== '') {
 
-            }
+            parteEntera =
+                parteEntera.replace(/^0+(?=\d)/, '');
 
-        });
+        }
 
-    }
+        // Formatear miles
+        if (parteEntera !== '') {
 
+            parteEntera =
+                Number(parteEntera)
+                    .toLocaleString('es-CO');
+
+        }
+
+        // Mantener coma decimal
+        if (parteDecimal !== null) {
+
+            this.value =
+                parteEntera + ',' + parteDecimal;
+
+        } else {
+
+            this.value = parteEntera;
+
+        }
+
+    });
+
+}
 
     formatearValor(valorContrato);
     formatearValor(valorIva);
