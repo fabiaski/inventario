@@ -93,7 +93,7 @@ $facturaId =
 
 $rutaArchivo =
     __DIR__
-    . '/../uploads/soportes_facturas/'
+    . '/../../../uploads/soportes_facturas/'
     . $soporte['archivo'];
 
 
@@ -174,9 +174,8 @@ if (
                 );
 
                 window.location.href =
-                    'editar_factura.php?id="
-                    . $facturaId
-                    . "';
+    '/inventario/facturacion/editar-factura/'
+    . $facturaId;
             </script>
         ";
 
@@ -192,7 +191,7 @@ if (
 //==================================================
 
 header(
-    "Location: editar_factura.php?id="
+    'Location: /inventario/facturacion/editar-factura/'
     . $facturaId
 );
 

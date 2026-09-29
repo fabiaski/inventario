@@ -115,7 +115,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                             <a
-                                href="ver.php?id=<?= $contrato['id'] ?>"
+                                href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
                                 class="btn btn-secondary"
                             >
 
@@ -136,10 +136,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         ==================================================-->
 
                         <form
-                            action="actualizar.php"
-                            method="POST"
-                            id="formContrato"
-                        >
+    action="/inventario/facturacion/actualizar"
+    method="POST"
+    id="formContrato"
+>
 
 
                             <input
@@ -580,7 +580,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                 <a
-                                    href="ver.php?id=<?= $contrato['id'] ?>"
+                                    href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
                                     class="btn btn-secondary"
                                 >
 

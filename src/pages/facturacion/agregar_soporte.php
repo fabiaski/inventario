@@ -31,6 +31,7 @@ $sql = "
     SELECT
         f.id,
         f.contrato_id,
+        f.numero_factura,
         c.numero_contrato
     FROM facturas f
 
@@ -98,7 +99,9 @@ if (
     !== UPLOAD_ERR_OK
 ) {
 
-    exit('Ocurrió un error al subir el archivo.');
+    exit(
+        'Ocurrió un error al subir el archivo.'
+    );
 
 }
 
@@ -128,7 +131,9 @@ if (
 //==================================================
 
 $nombreOriginal =
-    $_FILES['soporte']['name'];
+    basename(
+        $_FILES['soporte']['name']
+    );
 
 
 $extension =
@@ -170,6 +175,16 @@ if (
 
 $finfo =
     finfo_open(FILEINFO_MIME_TYPE);
+
+
+if (!$finfo) {
+
+    exit(
+        'No fue posible validar el tipo '
+        . 'del archivo.'
+    );
+
+}
 
 
 $mime =
@@ -218,7 +233,7 @@ if (
 
 $carpeta =
     __DIR__
-    . '/../uploads/soportes_facturas/';
+    . '/../../../uploads/soportes_facturas/';
 
 
 if (!is_dir($carpeta)) {
@@ -242,69 +257,6 @@ if (!is_dir($carpeta)) {
 
 
 //==================================================
-// OBTENER NÚMERO DE SOPORTE
-//==================================================
-
-/*
- * Buscamos cuántos soportes tiene
- * actualmente esta factura.
- *
- * Si tiene 0:
- *
- * factura_1
- *
- * Si tiene 1:
- *
- * factura_2
- */
-
-
-$sqlNumero = "
-    SELECT COUNT(*) AS total
-    FROM soportes_factura
-    WHERE factura_id = ?
-";
-
-
-$stmtNumero =
-    $conexion->prepare($sqlNumero);
-
-
-if (!$stmtNumero) {
-
-    exit(
-        'Error calculando número de soporte: '
-        . $conexion->error
-    );
-
-}
-
-
-$stmtNumero->bind_param(
-    "i",
-    $facturaId
-);
-
-
-$stmtNumero->execute();
-
-
-$resultadoNumero =
-    $stmtNumero->get_result();
-
-
-$filaNumero =
-    $resultadoNumero->fetch_assoc();
-
-
-$stmtNumero->close();
-
-
-$numeroSoporte =
-    (int) $filaNumero['total'] + 1;
-
-
-//==================================================
 // LIMPIAR NÚMERO DE CONTRATO
 //==================================================
 
@@ -323,33 +275,54 @@ $numeroContrato =
 
 
 //==================================================
+// LIMPIAR NÚMERO DE FACTURA
+//==================================================
+
+$numeroFactura =
+    trim(
+        $factura['numero_factura']
+    );
+
+
+$numeroFacturaLimpio =
+    preg_replace(
+        '/[^A-Za-z0-9_\-]/',
+        '_',
+        $numeroFactura
+    );
+
+
+//==================================================
+// NOMBRE BASE
+//==================================================
+
+$nombreBase =
+    'Contrato_' .
+    $numeroContrato .
+    '_Factura_' .
+    $numeroFacturaLimpio;
+
+
+//==================================================
 // NOMBRE DEL ARCHIVO
 //==================================================
 
 $archivo =
-    $numeroContrato
-    . '_factura_'
-    . $numeroSoporte
-    . '.'
-    . $extension;
+    $nombreBase .
+    '.' .
+    $extension;
 
 
 $ruta =
-    $carpeta
-    . $archivo;
+    $carpeta .
+    $archivo;
 
 
 //==================================================
 // EVITAR SOBRESCRIBIR
 //==================================================
 
-$contador = 1;
-
-
-$nombreBase =
-    $numeroContrato
-    . '_factura_'
-    . $numeroSoporte;
+$contador = 2;
 
 
 while (
@@ -357,16 +330,16 @@ while (
 ) {
 
     $archivo =
-        $nombreBase
-        . '_'
-        . $contador
-        . '.'
-        . $extension;
+        $nombreBase .
+        '_' .
+        $contador .
+        '.' .
+        $extension;
 
 
     $ruta =
-        $carpeta
-        . $archivo;
+        $carpeta .
+        $archivo;
 
 
     $contador++;
@@ -469,7 +442,7 @@ $stmtSoporte->close();
 //==================================================
 
 header(
-    "Location: editar_factura.php?id="
+    "Location: /inventario/facturacion/editar-factura/"
     . $facturaId
 );
 

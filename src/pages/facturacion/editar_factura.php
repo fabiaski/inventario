@@ -786,13 +786,12 @@ class="btn btn-secondary">
                                         <div class="col-md-9">
 
                                             <input
-                                                type="file"
-                                                name="soporte"
-                                                id="soporte"
-                                                class="form-control"
-                                                accept=".pdf,.jpg,.jpeg,.png"
-                                                required
-                                            >
+    type="file"
+    name="soporte"
+    class="form-control"
+    accept=".pdf,.jpg,.jpeg,.png"
+    required
+>
 
                                             <div class="form-text">
 

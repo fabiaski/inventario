@@ -27,7 +27,11 @@ $sqlFactura = "
 ";
 
 
-$stmtFactura = $conexion->prepare($sqlFactura);
+$stmtFactura =
+    $conexion->prepare(
+        $sqlFactura
+    );
+
 
 if (!$stmtFactura) {
     exit(
@@ -132,7 +136,7 @@ $stmtSoportes->close();
 
 $directorioSoportes =
     __DIR__
-    . '/../uploads/soportes_facturas/';
+    . '/../../../uploads/soportes_facturas/';
 
 
 foreach ($soportes as $archivo) {
@@ -151,6 +155,54 @@ foreach ($soportes as $archivo) {
     }
 
 }
+
+
+//==================================================
+// ELIMINAR SOPORTES DE LA BASE DE DATOS
+//==================================================
+
+$sqlEliminarSoportes = "
+    DELETE FROM soportes_factura
+    WHERE factura_id = ?
+";
+
+
+$stmtEliminarSoportes =
+    $conexion->prepare(
+        $sqlEliminarSoportes
+    );
+
+
+if (!$stmtEliminarSoportes) {
+    exit(
+        'Error preparando la eliminación '
+        . 'de soportes: '
+        . $conexion->error
+    );
+}
+
+
+$stmtEliminarSoportes->bind_param(
+    "i",
+    $facturaId
+);
+
+
+if (
+    !$stmtEliminarSoportes->execute()
+) {
+
+    $stmtEliminarSoportes->close();
+
+    exit(
+        'Error eliminando los soportes: '
+        . $conexion->error
+    );
+
+}
+
+
+$stmtEliminarSoportes->close();
 
 
 //==================================================
@@ -183,13 +235,18 @@ $stmtEliminar->bind_param(
 );
 
 
-if (!$stmtEliminar->execute()) {
+if (
+    !$stmtEliminar->execute()
+) {
+
+    $error =
+        $stmtEliminar->error;
 
     $stmtEliminar->close();
 
     exit(
         'Error eliminando la factura: '
-        . $conexion->error
+        . $error
     );
 
 }
@@ -197,13 +254,12 @@ if (!$stmtEliminar->execute()) {
 
 $stmtEliminar->close();
 
-
 //==================================================
 // VOLVER AL CONTRATO
 //==================================================
 
 header(
-    'Location: ver.php?id='
+    'Location: /inventario/facturacion/ver/'
     . $contratoId
 );
 
