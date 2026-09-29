@@ -114,10 +114,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-                            <a
-                                href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
-                                class="btn btn-secondary"
-                            >
+                            <a href="/inventario/facturacion/ver/<?= $contrato['id'] ?>" class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
 
@@ -135,18 +132,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         FORMULARIO
                         ==================================================-->
 
-                        <form
-    action="/inventario/facturacion/actualizar"
-    method="POST"
-    id="formContrato"
->
+                        <form action="/inventario/facturacion/actualizar" method="POST" id="formContrato">
 
 
-                            <input
-                                type="hidden"
-                                name="id"
-                                value="<?= $contrato['id'] ?>"
-                            >
+                            <input type="hidden" name="id" value="<?= $contrato['id'] ?>">
 
 
                             <div class="row g-3">
@@ -158,10 +147,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-md-3">
 
-                                    <label
-                                        for="numero_contrato"
-                                        class="form-label"
-                                    >
+                                    <label for="numero_contrato" class="form-label">
 
                                         Número de Contrato
 
@@ -170,17 +156,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     </label>
 
 
-                                    <input
-                                        type="text"
-                                        name="numero_contrato"
-                                        id="numero_contrato"
-                                        class="form-control"
-                                        maxlength="100"
-                                        value="<?= htmlspecialchars(
+                                    <input type="text" name="numero_contrato" id="numero_contrato" class="form-control"
+                                        maxlength="100" value="<?= htmlspecialchars(
                                             $contrato['numero_contrato']
-                                        ) ?>"
-                                        required
-                                    >
+                                        ) ?>" required>
 
                                 </div>
 
@@ -191,10 +170,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-md-2">
 
-                                    <label
-                                        for="fecha"
-                                        class="form-label"
-                                    >
+                                    <label for="fecha" class="form-label">
 
                                         Fecha
 
@@ -203,16 +179,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     </label>
 
 
-                                    <input
-                                        type="date"
-                                        name="fecha"
-                                        id="fecha"
-                                        class="form-control"
-                                        value="<?= htmlspecialchars(
+                                    <input type="date" name="fecha" id="fecha" class="form-control" value="<?= htmlspecialchars(
                                             $contrato['fecha']
-                                        ) ?>"
-                                        required
-                                    >
+                                        ) ?>" required>
 
                                 </div>
 
@@ -223,10 +192,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-md-4">
 
-                                    <label
-                                        for="valor_contrato"
-                                        class="form-label"
-                                    >
+                                    <label for="valor_contrato" class="form-label">
 
                                         Valor del Contrato
 
@@ -241,20 +207,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             $
                                         </span>
 
-                                        <input
-                                            type="text"
-                                            name="valor_contrato"
-                                            id="valor_contrato"
-                                            class="form-control"
-                                            inputmode="decimal"
-                                            value="<?= number_format(
+                                        <input type="text" name="valor_contrato" id="valor_contrato"
+                                            class="form-control" inputmode="decimal" value="<?= number_format(
                                                 (float) $contrato['valor_contrato'],
                                                 3,
                                                 ',',
                                                 '.'
-                                            ) ?>"
-                                            required
-                                        >
+                                            ) ?>" required>
 
                                     </div>
 
@@ -267,27 +226,19 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 <div class="col-12">
 
-                                    <label
-                                        for="objeto_contrato"
-                                        class="form-label"
-                                    >
+                                    <label for="objeto_contrato" class="form-label">
 
                                         Objeto del Contrato
 
                                         <span class="text-danger">*</span>
 
                                     </label>
+                                    
 
-
-                                    <textarea
-                                        name="objeto_contrato"
-                                        id="objeto_contrato"
-                                        class="form-control"
-                                        rows="4"
-                                        maxlength="2000"
-                                        style="resize: vertical;"
-                                        required
-                                    ><?= htmlspecialchars(
+                                    <textarea name="objeto_contrato" id="objeto_contrato" class="form-control" rows="7"
+                                        style="resize: vertical; min-height: 60px;" maxlength="2000"
+                                        placeholder="Describa el objeto, propósito o finalidad del contrato..."
+                                        required><?= htmlspecialchars(
                                         $contrato['objeto_contrato']
                                     ) ?></textarea>
 
@@ -322,21 +273,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="form-check mb-2">
 
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            name="tiene_iva"
-                                            id="tiene_iva"
-                                            value="1"
-                                            <?= (int) $contrato['tiene_iva'] === 1
+                                        <input class="form-check-input" type="checkbox" name="tiene_iva" id="tiene_iva"
+                                            value="1" <?= (int) $contrato['tiene_iva'] === 1
                                                 ? 'checked'
-                                                : '' ?>
-                                        >
+                                                : '' ?>>
 
-                                        <label
-                                            class="form-check-label fs-6"
-                                            for="tiene_iva"
-                                        >
+                                        <label class="form-check-label fs-6" for="tiene_iva">
 
                                             Tiene IVA
 
@@ -345,48 +287,32 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     </div>
 
 
-                                    <div
-                                        id="contenedor_iva"
-                                        style="<?= (int) $contrato['tiene_iva'] === 1
+                                    <div id="contenedor_iva" style="<?= (int) $contrato['tiene_iva'] === 1
                                             ? 'display: block;'
-                                            : 'display: none;' ?>"
-                                    >
+                                            : 'display: none;' ?>">
 
-                                        <label
-                                            for="valor_iva"
-                                            class="form-label"
-                                        >
+                                        <label for="valor_iva" class="form-label">
 
                                             Valor IVA
 
                                         </label>
 
 
-                                        <div
-                                            class="input-group"
-                                            style="max-width: 400px;"
-                                        >
+                                        <div class="input-group" style="max-width: 400px;">
 
                                             <span class="input-group-text">
                                                 $
                                             </span>
 
-                                            <input
-                                                type="text"
-                                                name="valor_iva"
-                                                id="valor_iva"
-                                                class="form-control"
-                                                inputmode="decimal"
-                                                placeholder="Ej. 9.500.000"
-                                                value="<?= !empty($contrato['valor_iva'])
+                                            <input type="text" name="valor_iva" id="valor_iva" class="form-control"
+                                                inputmode="decimal" placeholder="Ej. 9.500.000" value="<?= !empty($contrato['valor_iva'])
                                                     ? number_format(
                                                         (float) $contrato['valor_iva'],
                                                         3,
                                                         ',',
                                                         '.'
                                                     )
-                                                    : '' ?>"
-                                            >
+                                                    : '' ?>">
 
                                         </div>
 
@@ -403,21 +329,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="form-check mb-2">
 
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            name="tiene_impoconsumo"
-                                            id="tiene_impoconsumo"
-                                            value="1"
-                                            <?= (int) $contrato['tiene_impoconsumo'] === 1
+                                        <input class="form-check-input" type="checkbox" name="tiene_impoconsumo"
+                                            id="tiene_impoconsumo" value="1" <?= (int) $contrato['tiene_impoconsumo'] === 1
                                                 ? 'checked'
-                                                : '' ?>
-                                        >
+                                                : '' ?>>
 
-                                        <label
-                                            class="form-check-label fs-6"
-                                            for="tiene_impoconsumo"
-                                        >
+                                        <label class="form-check-label fs-6" for="tiene_impoconsumo">
 
                                             Tiene Impoconsumo
 
@@ -426,39 +343,25 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     </div>
 
 
-                                    <div
-                                        id="contenedor_impoconsumo"
-                                        style="<?= (int) $contrato['tiene_impoconsumo'] === 1
+                                    <div id="contenedor_impoconsumo" style="<?= (int) $contrato['tiene_impoconsumo'] === 1
                                             ? 'display: block;'
-                                            : 'display: none;' ?>"
-                                    >
+                                            : 'display: none;' ?>">
 
-                                        <label
-                                            for="valor_impoconsumo"
-                                            class="form-label"
-                                        >
+                                        <label for="valor_impoconsumo" class="form-label">
 
                                             Valor Impoconsumo
 
                                         </label>
 
 
-                                        <div
-                                            class="input-group"
-                                            style="max-width: 400px;"
-                                        >
+                                        <div class="input-group" style="max-width: 400px;">
 
                                             <span class="input-group-text">
                                                 $
                                             </span>
 
-                                            <input
-                                                type="text"
-                                                name="valor_impoconsumo"
-                                                id="valor_impoconsumo"
-                                                class="form-control"
-                                                inputmode="decimal"
-                                                placeholder="Ej. 500.000"
+                                            <input type="text" name="valor_impoconsumo" id="valor_impoconsumo"
+                                                class="form-control" inputmode="decimal" placeholder="Ej. 500.000"
                                                 value="<?= !empty($contrato['valor_impoconsumo'])
                                                     ? number_format(
                                                         (float) $contrato['valor_impoconsumo'],
@@ -466,8 +369,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                         ',',
                                                         '.'
                                                     )
-                                                    : '' ?>"
-                                            >
+                                                    : '' ?>">
 
                                         </div>
 
@@ -484,21 +386,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                     <div class="form-check mb-2">
 
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            name="tiene_retencion"
-                                            id="tiene_retencion"
-                                            value="1"
-                                            <?= (int) $contrato['tiene_retencion'] === 1
+                                        <input class="form-check-input" type="checkbox" name="tiene_retencion"
+                                            id="tiene_retencion" value="1" <?= (int) $contrato['tiene_retencion'] === 1
                                                 ? 'checked'
-                                                : '' ?>
-                                        >
+                                                : '' ?>>
 
-                                        <label
-                                            class="form-check-label fs-6"
-                                            for="tiene_retencion"
-                                        >
+                                        <label class="form-check-label fs-6" for="tiene_retencion">
 
                                             Tiene Retención
 
@@ -507,39 +400,25 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     </div>
 
 
-                                    <div
-                                        id="contenedor_retencion"
-                                        style="<?= (int) $contrato['tiene_retencion'] === 1
+                                    <div id="contenedor_retencion" style="<?= (int) $contrato['tiene_retencion'] === 1
                                             ? 'display: block;'
-                                            : 'display: none;' ?>"
-                                    >
+                                            : 'display: none;' ?>">
 
-                                        <label
-                                            for="valor_retencion"
-                                            class="form-label"
-                                        >
+                                        <label for="valor_retencion" class="form-label">
 
                                             Valor Retención
 
                                         </label>
 
 
-                                        <div
-                                            class="input-group"
-                                            style="max-width: 400px;"
-                                        >
+                                        <div class="input-group" style="max-width: 400px;">
 
                                             <span class="input-group-text">
                                                 $
                                             </span>
 
-                                            <input
-                                                type="text"
-                                                name="valor_retencion"
-                                                id="valor_retencion"
-                                                class="form-control"
-                                                inputmode="decimal"
-                                                placeholder="Ej. 1.000.000"
+                                            <input type="text" name="valor_retencion" id="valor_retencion"
+                                                class="form-control" inputmode="decimal" placeholder="Ej. 1.000.000"
                                                 value="<?= !empty($contrato['valor_retencion'])
                                                     ? number_format(
                                                         (float) $contrato['valor_retencion'],
@@ -547,8 +426,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                         ',',
                                                         '.'
                                                     )
-                                                    : '' ?>"
-                                            >
+                                                    : '' ?>">
 
                                         </div>
 
@@ -567,10 +445,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <div class="mt-4 d-flex gap-2">
 
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                >
+                                <button type="submit" class="btn btn-primary">
 
                                     <i class="bi bi-save"></i>
 
@@ -579,10 +454,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </button>
 
 
-                                <a
-                                    href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
-                                    class="btn btn-secondary"
-                                >
+                                <a href="/inventario/facturacion/ver/<?= $contrato['id'] ?>" class="btn btn-secondary">
 
                                     Cancelar
 
@@ -606,7 +478,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
     </div>
 
 
-<?php
+    <?php
 
 include __DIR__ . '/../../includes/footer.php';
 
@@ -615,260 +487,258 @@ include __DIR__ . '/../../includes/scripts.php';
 ?>
 
 
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-
-
-    //==================================================
-    // CAMPOS
-    //==================================================
-
-    const formulario =
-        document.getElementById('formContrato');
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
 
-    const valorContrato =
-        document.getElementById('valor_contrato');
+        //==================================================
+        // CAMPOS
+        //==================================================
+
+        const formulario =
+            document.getElementById('formContrato');
 
 
-    const tieneIva =
-        document.getElementById('tiene_iva');
-
-    const valorIva =
-        document.getElementById('valor_iva');
-
-    const contenedorIva =
-        document.getElementById('contenedor_iva');
+        const valorContrato =
+            document.getElementById('valor_contrato');
 
 
-    const tieneImpoconsumo =
-        document.getElementById('tiene_impoconsumo');
+        const tieneIva =
+            document.getElementById('tiene_iva');
 
-    const valorImpoconsumo =
-        document.getElementById('valor_impoconsumo');
+        const valorIva =
+            document.getElementById('valor_iva');
 
-    const contenedorImpoconsumo =
-        document.getElementById('contenedor_impoconsumo');
-
-
-    const tieneRetencion =
-        document.getElementById('tiene_retencion');
-
-    const valorRetencion =
-        document.getElementById('valor_retencion');
-
-    const contenedorRetencion =
-        document.getElementById('contenedor_retencion');
+        const contenedorIva =
+            document.getElementById('contenedor_iva');
 
 
-    //==================================================
-    // MOSTRAR / OCULTAR IVA
-    //==================================================
+        const tieneImpoconsumo =
+            document.getElementById('tiene_impoconsumo');
 
-    tieneIva.addEventListener('change', function () {
+        const valorImpoconsumo =
+            document.getElementById('valor_impoconsumo');
 
-        if (this.checked) {
+        const contenedorImpoconsumo =
+            document.getElementById('contenedor_impoconsumo');
 
-            contenedorIva.style.display = 'block';
 
-        } else {
+        const tieneRetencion =
+            document.getElementById('tiene_retencion');
 
-            contenedorIva.style.display = 'none';
+        const valorRetencion =
+            document.getElementById('valor_retencion');
 
-            valorIva.value = '';
+        const contenedorRetencion =
+            document.getElementById('contenedor_retencion');
+
+
+        //==================================================
+        // MOSTRAR / OCULTAR IVA
+        //==================================================
+
+        tieneIva.addEventListener('change', function() {
+
+            if (this.checked) {
+
+                contenedorIva.style.display = 'block';
+
+            } else {
+
+                contenedorIva.style.display = 'none';
+
+                valorIva.value = '';
+
+            }
+
+        });
+
+
+        //==================================================
+        // MOSTRAR / OCULTAR IMPOCONSUMO
+        //==================================================
+
+        tieneImpoconsumo.addEventListener('change', function() {
+
+            if (this.checked) {
+
+                contenedorImpoconsumo.style.display = 'block';
+
+            } else {
+
+                contenedorImpoconsumo.style.display = 'none';
+
+                valorImpoconsumo.value = '';
+
+            }
+
+        });
+
+
+        //==================================================
+        // MOSTRAR / OCULTAR RETENCIÓN
+        //==================================================
+
+        tieneRetencion.addEventListener('change', function() {
+
+            if (this.checked) {
+
+                contenedorRetencion.style.display = 'block';
+
+            } else {
+
+                contenedorRetencion.style.display = 'none';
+
+                valorRetencion.value = '';
+
+            }
+
+        });
+
+
+        //==================================================
+        // FORMATEAR DINERO
+        //==================================================
+        function formatearValor(campo) {
+
+            campo.addEventListener('input', function() {
+
+                let valor = this.value;
+
+                // Permitir únicamente números y coma
+                valor = valor.replace(/[^\d,]/g, '');
+
+                const partes = valor.split(',');
+
+                let parteEntera = partes[0];
+
+                let parteDecimal =
+                    partes.length > 1 ?
+                    partes[1].substring(0, 3) :
+                    null;
+
+                // Quitar ceros iniciales
+                if (parteEntera !== '') {
+
+                    parteEntera =
+                        parteEntera.replace(/^0+(?=\d)/, '');
+
+                }
+
+                // Formatear miles
+                if (parteEntera !== '') {
+
+                    parteEntera =
+                        Number(parteEntera)
+                        .toLocaleString('es-CO');
+
+                }
+
+                // Mantener coma decimal
+                if (parteDecimal !== null) {
+
+                    this.value =
+                        parteEntera + ',' + parteDecimal;
+
+                } else {
+
+                    this.value = parteEntera;
+
+                }
+
+            });
 
         }
+
+        formatearValor(valorContrato);
+        formatearValor(valorIva);
+        formatearValor(valorImpoconsumo);
+        formatearValor(valorRetencion);
+
+
+        //==================================================
+        // VALIDAR FORMULARIO
+        //==================================================
+
+        formulario.addEventListener('submit', function(e) {
+
+
+            // VALOR CONTRATO
+
+            if (valorContrato.value.trim() === '') {
+
+                e.preventDefault();
+
+                alert(
+                    'Debe ingresar el valor del contrato.'
+                );
+
+                valorContrato.focus();
+
+                return false;
+            }
+
+
+            // IVA
+
+            if (
+                tieneIva.checked &&
+                valorIva.value.trim() === ''
+            ) {
+
+                e.preventDefault();
+
+                alert(
+                    'Debe ingresar el valor del IVA.'
+                );
+
+                valorIva.focus();
+
+                return false;
+            }
+
+
+            // IMPOCONSUMO
+
+            if (
+                tieneImpoconsumo.checked &&
+                valorImpoconsumo.value.trim() === ''
+            ) {
+
+                e.preventDefault();
+
+                alert(
+                    'Debe ingresar el valor del Impoconsumo.'
+                );
+
+                valorImpoconsumo.focus();
+
+                return false;
+            }
+
+
+            // RETENCIÓN
+
+            if (
+                tieneRetencion.checked &&
+                valorRetencion.value.trim() === ''
+            ) {
+
+                e.preventDefault();
+
+                alert(
+                    'Debe ingresar el valor de la Retención.'
+                );
+
+                valorRetencion.focus();
+
+                return false;
+            }
+
+
+            return true;
+
+        });
 
     });
-
-
-    //==================================================
-    // MOSTRAR / OCULTAR IMPOCONSUMO
-    //==================================================
-
-    tieneImpoconsumo.addEventListener('change', function () {
-
-        if (this.checked) {
-
-            contenedorImpoconsumo.style.display = 'block';
-
-        } else {
-
-            contenedorImpoconsumo.style.display = 'none';
-
-            valorImpoconsumo.value = '';
-
-        }
-
-    });
-
-
-    //==================================================
-    // MOSTRAR / OCULTAR RETENCIÓN
-    //==================================================
-
-    tieneRetencion.addEventListener('change', function () {
-
-        if (this.checked) {
-
-            contenedorRetencion.style.display = 'block';
-
-        } else {
-
-            contenedorRetencion.style.display = 'none';
-
-            valorRetencion.value = '';
-
-        }
-
-    });
-
-
-    //==================================================
-    // FORMATEAR DINERO
-    //==================================================
-function formatearValor(campo) {
-
-    campo.addEventListener('input', function () {
-
-        let valor = this.value;
-
-        // Permitir únicamente números y coma
-        valor = valor.replace(/[^\d,]/g, '');
-
-        const partes = valor.split(',');
-
-        let parteEntera = partes[0];
-
-        let parteDecimal =
-            partes.length > 1
-                ? partes[1].substring(0, 3)
-                : null;
-
-        // Quitar ceros iniciales
-        if (parteEntera !== '') {
-
-            parteEntera =
-                parteEntera.replace(/^0+(?=\d)/, '');
-
-        }
-
-        // Formatear miles
-        if (parteEntera !== '') {
-
-            parteEntera =
-                Number(parteEntera)
-                    .toLocaleString('es-CO');
-
-        }
-
-        // Mantener coma decimal
-        if (parteDecimal !== null) {
-
-            this.value =
-                parteEntera + ',' + parteDecimal;
-
-        } else {
-
-            this.value = parteEntera;
-
-        }
-
-    });
-
-}
-
-    formatearValor(valorContrato);
-    formatearValor(valorIva);
-    formatearValor(valorImpoconsumo);
-    formatearValor(valorRetencion);
-
-
-    //==================================================
-    // VALIDAR FORMULARIO
-    //==================================================
-
-    formulario.addEventListener('submit', function (e) {
-
-
-        // VALOR CONTRATO
-
-        if (valorContrato.value.trim() === '') {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor del contrato.'
-            );
-
-            valorContrato.focus();
-
-            return false;
-        }
-
-
-        // IVA
-
-        if (
-            tieneIva.checked &&
-            valorIva.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor del IVA.'
-            );
-
-            valorIva.focus();
-
-            return false;
-        }
-
-
-        // IMPOCONSUMO
-
-        if (
-            tieneImpoconsumo.checked &&
-            valorImpoconsumo.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor del Impoconsumo.'
-            );
-
-            valorImpoconsumo.focus();
-
-            return false;
-        }
-
-
-        // RETENCIÓN
-
-        if (
-            tieneRetencion.checked &&
-            valorRetencion.value.trim() === ''
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                'Debe ingresar el valor de la Retención.'
-            );
-
-            valorRetencion.focus();
-
-            return false;
-        }
-
-
-        return true;
-
-    });
-
-});
-
-</script>
+    </script>

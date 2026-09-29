@@ -145,11 +145,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         <span class="text-danger">*</span>
                                     </label>
 
-                                    <textarea name="objeto_contrato" id="objeto_contrato" class="form-control" rows="4"
-                                        style="resize: vertical;" maxlength="2000"
-                                        placeholder="Describa el objeto, propósito o finalidad del contrato..."
-                                        required></textarea>
-
+                                   <textarea name="objeto_contrato" id="objeto_contrato" class="form-control" rows="7"
+    style="resize: vertical; min-height: 60px;"
+    maxlength="2000"
+    placeholder="Describa el objeto, propósito o finalidad del contrato..."
+    required></textarea>
                                 </div>
 
                             </div>
