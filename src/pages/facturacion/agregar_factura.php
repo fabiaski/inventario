@@ -94,7 +94,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-                            <a href="ver.php?id=<?= $contratoId ?>" class="btn btn-secondary">
+                           <a href="/inventario/facturacion/ver/<?= $contratoId ?>" class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
 
@@ -113,11 +113,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         ==================================================-->
 
                         <form
-                            action="guardar_factura.php"
-                            method="POST"
-                            enctype="multipart/form-data"
-                            id="formFactura"
-                        >
+    action="/inventario/facturacion/guardar-factura"
+    method="POST"
+    enctype="multipart/form-data"
+    id="formFactura"
+>
 
                             <input
                                 type="hidden"
@@ -496,9 +496,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <div class="d-flex justify-content-end gap-2">
 
                                 <a
-                                    href="ver.php?id=<?= $contratoId ?>"
-                                    class="btn btn-secondary"
-                                >
+    href="/inventario/facturacion/ver/<?= $contratoId ?>"
+    class="btn btn-secondary"
+>
 
                                     <i class="bi bi-x-circle"></i>
 

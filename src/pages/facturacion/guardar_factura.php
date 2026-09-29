@@ -418,7 +418,7 @@ if (
 //==================================================
 
 header(
-    "Location: ver.php?id=" .
+    "Location: /inventario/facturacion/ver/" .
     $contratoId
 );
 

@@ -77,8 +77,8 @@ if ($tieneIva) {
 
 
     if ($valorIva === '' || !is_numeric($valorIva)) {
+header("Location: /inventario/facturacion-agregar?error=iva");
 
-header("Location: agregar-fact.php?error=iva");
 exit;
     }
 
@@ -116,8 +116,7 @@ if ($tieneImpoconsumo) {
 
     if ($valorImpoconsumo === '' || !is_numeric($valorImpoconsumo)) {
 
-header("Location: agregar-fact.php?error=impoconsumo");
-exit;
+header("Location: /inventario/facturacion-agregar?error=impoconsumo");exit;
     }
 
 
@@ -154,7 +153,7 @@ if ($tieneRetencion) {
 
     if ($valorRetencion === '' || !is_numeric($valorRetencion)) {
 
-header("Location: agregar-fact.php?error=retencion");
+header("Location: /inventario/facturacion-agregar?error=retencion");
 exit;
     }
 
@@ -280,9 +279,10 @@ $stmt->close();
 //==================================================
 // REDIRECCIONAR
 //==================================================
-
 header(
-    "Location: ver.php?id=" . $contratoId
+    "Location: /inventario/facturacion/ver/" . $contratoId
 );
+
+
 
 exit;

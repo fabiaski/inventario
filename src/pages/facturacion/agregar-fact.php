@@ -67,7 +67,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
-                            <a href="factura.php" class="btn btn-secondary">
+                            <a href="/inventario/facturacion" class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
                                 Volver
@@ -81,8 +81,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                         <!-- FORMULARIO -->
-                        <form action="guardar.php" method="POST" id="formContrato">
-
+                        <form action="/inventario/guardar" method="POST" id="formContrato">
+                            
                             <div class="row g-3">
 
 
