@@ -64,7 +64,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
-                            <a href="agregar-fact.php" class="btn btn-secondary">
+                            <a href="/inventario/facturacion-agregar" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Nuevo Contrato
                             </a>
@@ -176,36 +176,34 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- VER -->
 
-                                                <a href="ver.php?id=<?= $contrato['id'] ?>" class="btn btn-info btn-sm"
-                                                    title="Ver contrato">
+                                                <a href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
+                                                    class="btn btn-info btn-sm" title="Ver contrato">
 
                                                     <i class="bi bi-eye"></i>
-
                                                 </a>
 
 
                                                 <!-- EDITAR -->
 
-                                                <a href="editar.php?id=<?= $contrato['id'] ?>"
+                                                <a href="/inventario/facturacion/editar/<?= $contrato['id'] ?>"
                                                     class="btn btn-warning btn-sm" title="Editar contrato">
 
                                                     <i class="bi bi-pencil"></i>
-
                                                 </a>
 
 
                                                 <!-- ELIMINAR -->
 
-                                                <a href="eliminar.php?id=<?= $contrato['id'] ?>"
-                                                    class="btn btn-danger btn-sm" title="Eliminar contrato" onclick="
-                                                return confirm(
-                                                    '¿Está seguro de eliminar este contrato? También se eliminarán sus facturas y soportes asociados.'
-                                                );
-                                            ">
+                                                <a href="/inventario/facturacion/eliminar?id=<?= $contrato['id'] ?>"
+                                                    class="btn btn-danger btn-sm" title="Eliminar contrato"
+                                                    onclick="return confirm('¿Está seguro de eliminar este contrato? También se eliminarán sus facturas y soportes asociados.');">
 
                                                     <i class="bi bi-trash"></i>
-
                                                 </a>
+
+
+
+
 
 
                                             </div>
@@ -248,10 +246,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                     </div>
                 </div>
             </div>
-      
 
 
-    <?php
+
+            <?php
 require_once __DIR__ . '/../../includes/footer.php';
 require_once __DIR__ . '/../../includes/scripts.php';
 

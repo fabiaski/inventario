@@ -359,8 +359,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div class="d-flex gap-2">
 
-                                <a href="facturacion.php"
-                                    class="btn btn-secondary">
+                                <a href="/inventario/facturacion" class="btn btn-secondary">
 
                                     <i class="bi bi-arrow-left"></i>
 
@@ -369,7 +368,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </a>
 
 
-                                <a href="agregar_factura.php?id=<?= $contratoId ?>"
+                                <a href="/inventario/facturacion/agregar-factura/<?= $contratoId ?>"
                                     class="btn btn-success">
 
                                     <i class="bi bi-plus-circle"></i>
@@ -1171,12 +1170,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                         ?>
 
 
-                                                        <a href="../uploads/soportes_facturas/<?= rawurlencode(
-                                                                $soporte['archivo']
-                                                            ) ?>"
-                                                            target="_blank"
-                                                            class="text-decoration-none"
-                                                            title="Abrir soporte">
+                                                        <a href="/inventario/uploads/soportes_facturas/<?= rawurlencode(
+    $soporte['archivo']
+) ?>" target="_blank" class="text-decoration-none" title="Abrir soporte">
 
 
                                                             <?php if (
@@ -1228,9 +1224,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         <!-- EDITAR -->
 
-                                                        <a href="editar_factura.php?id=<?= $factura['id'] ?>"
-                                                            class="btn btn-warning btn-sm"
-                                                            title="Editar factura">
+                                                        <a href="/inventario/facturacion/editar-factura/<?= $factura['id'] ?>"
+                                                            class="btn btn-warning btn-sm" title="Editar factura">
 
                                                             <i class="bi bi-pencil"></i>
 
@@ -1239,9 +1234,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         <!-- ELIMINAR -->
 
-                                                        <a href="eliminar_factura.php?id=<?= $factura['id'] ?>"
-                                                            class="btn btn-danger btn-sm"
-                                                            title="Eliminar factura"
+                                                        <a href="/inventario/facturacion/eliminar-factura?id=<?= $factura['id'] ?>"
+                                                            class="btn btn-danger btn-sm" title="Eliminar factura"
                                                             onclick="return confirm('¿Está seguro de eliminar esta factura?');">
 
                                                             <i class="bi bi-trash"></i>

@@ -31,7 +31,11 @@ RewriteRule ^cotizaciones/actualizar/?$ src/pages/cotizaciones/actualizar.php [L
 RewriteRule ^facturacion/?$ src/pages/facturacion/facturacion.php [L]
 RewriteRule ^facturacion-agregar/?$ src/pages/facturacion/agregar-fact.php [L]
 RewriteRule ^facturacion/ver/([0-9]+)/?$ src/pages/facturacion/ver.php?id=$1 [L]
-
+RewriteRule ^facturacion/editar/([0-9]+)/?$ src/pages/facturacion/editar.php?id=$1 [L]
+RewriteRule ^facturacion/eliminar/?$ src/pages/facturacion/eliminar.php [L]
+RewriteRule ^facturacion/agregar-factura/([0-9]+)/?$ src/pages/facturacion/agregar_factura.php?id=$1 [L]
+RewriteRule ^facturacion/editar-factura/([0-9]+)/?$ src/pages/facturacion/editar_factura.php?id=$1 [L]
+RewriteRule ^facturacion/eliminar-factura/?$ src/pages/facturacion/eliminar_factura.php [L]
 
 # ==========================================================
 # CALENDARIO
