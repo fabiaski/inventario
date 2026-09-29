@@ -554,20 +554,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <form method="GET" class="d-flex gap-2">
 
-                                <input
-                                    type="number"
-                                    name="anio"
-                                    value="<?= $anio ?>"
-                                    min="2000"
-                                    max="2100"
-                                    class="form-control"
-                                    style="width: 110px;"
-                                >
+                                <input type="number" name="anio" value="<?= $anio ?>" min="2000" max="2100"
+                                    class="form-control" style="width: 110px;">
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                >
+                                <button type="submit" class="btn btn-primary">
 
                                     <i class="bi bi-search"></i>
 
@@ -602,270 +592,268 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <?php foreach ($datosCuatrimestres as $numero => $datos): ?>
 
 
-                                <div class="col-xl-4 col-lg-6">
+                            <div class="col-xl-4 col-lg-6">
 
-                                    <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm">
 
 
-                                        <!-- CABECERA -->
+                                    <!-- CABECERA -->
 
-                                        <div class="card-header bg-light">
+                                    <div class="card-header bg-light">
 
-                                            <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex justify-content-between align-items-center">
 
-                                                <div>
+                                            <div>
 
-                                                    <strong>
+                                                <strong>
 
-                                                        <?= htmlspecialchars(
+                                                    <?= htmlspecialchars(
                                                             $datos['nombre']
                                                         ) ?>
 
-                                                    </strong>
+                                                </strong>
 
-                                                    <div class="text-muted small">
+                                                <div class="text-muted small">
 
-                                                        <?= $anio ?>
-
-                                                    </div>
+                                                    <?= $anio ?>
 
                                                 </div>
 
-
-                                                <span class="badge bg-primary">
-
-                                                    <?= $datos['cantidad_contratos'] ?>
-
-                                                    contratos
-
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <!-- CONTENIDO -->
-
-                                        <div class="card-body">
-
-
-                                            <!-- VALOR CONTRATOS -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Valor contratos
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['valor_contratos']) ?>
-                                                </strong>
-
                                             </div>
 
 
-                                            <!-- IVA CONTRATOS -->
+                                            <span class="badge bg-primary">
 
-                                            <div class="d-flex justify-content-between mb-3">
+                                                <?= $datos['cantidad_contratos'] ?>
 
-                                                <span class="text-muted">
-                                                    IVA contratos
-                                                </span>
+                                                contratos
 
-                                                <strong>
-                                                    <?= dinero($datos['iva_contratos']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- IMPOCONSUMO CONTRATOS -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Impoconsumo contratos
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['impoconsumo_contratos']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- RETENCIÓN CONTRATOS -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Retención contratos
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['retencion_contratos']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <hr>
-
-
-                                            <!-- VALOR FACTURAS -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Valor facturas
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['valor_facturas']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- IVA FACTURADO -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    IVA facturado
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['iva_facturado']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- IMPOCONSUMO FACTURADO -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Impoconsumo facturado
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['impoconsumo_facturado']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- RETENCIÓN FACTURADA -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Retención facturada
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['retencion_facturada']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <hr>
-
-
-                                            <!-- SALDO IVA -->
-
-                                            <div class="d-flex justify-content-between mb-2">
-
-                                                <span class="text-muted">
-                                                    Saldo IVA
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['saldo_iva']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- SALDO IMPOCONSUMO -->
-
-                                            <div class="d-flex justify-content-between mb-2">
-
-                                                <span class="text-muted">
-                                                    Saldo Impoconsumo
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['saldo_impoconsumo']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- SALDO RETENCIÓN -->
-
-                                            <div class="d-flex justify-content-between mb-3">
-
-                                                <span class="text-muted">
-                                                    Saldo Retención
-                                                </span>
-
-                                                <strong>
-                                                    <?= dinero($datos['saldo_retencion']) ?>
-                                                </strong>
-
-                                            </div>
-
-
-                                            <hr>
-
-
-                                            <!-- SALDO DIAN -->
-
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                                                <span>
-
-                                                    <strong>
-                                                        Saldo DIAN
-                                                    </strong>
-
-                                                </span>
-
-                                                <strong>
-
-                                                    <?= dinero(
-                                                        $datos['saldo_dian']
-                                                    ) ?>
-
-                                                </strong>
-
-                                            </div>
-
-
-                                            <!-- BOTÓN -->
-
-                                            <a
-                                                href="ver_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $numero ?>"
-                                                class="btn btn-primary w-100"
-                                            >
-
-                                                <i class="bi bi-eye"></i>
-
-                                                Ver cuatrimestre
-
-                                            </a>
-
+                                            </span>
 
                                         </div>
 
                                     </div>
 
+
+                                    <!-- CONTENIDO -->
+
+                                    <div class="card-body">
+
+
+                                        <!-- VALOR CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Valor contratos
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['valor_contratos']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IVA CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                IVA contratos
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['iva_contratos']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IMPOCONSUMO CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Impoconsumo contratos
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['impoconsumo_contratos']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- RETENCIÓN CONTRATOS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Retención contratos
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['retencion_contratos']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <hr>
+
+
+                                        <!-- VALOR FACTURAS -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Valor facturas
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['valor_facturas']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IVA FACTURADO -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                IVA facturado
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['iva_facturado']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- IMPOCONSUMO FACTURADO -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Impoconsumo facturado
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['impoconsumo_facturado']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- RETENCIÓN FACTURADA -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Retención facturada
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['retencion_facturada']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <hr>
+
+
+                                        <!-- SALDO IVA -->
+
+                                        <div class="d-flex justify-content-between mb-2">
+
+                                            <span class="text-muted">
+                                                Saldo IVA
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['saldo_iva']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- SALDO IMPOCONSUMO -->
+
+                                        <div class="d-flex justify-content-between mb-2">
+
+                                            <span class="text-muted">
+                                                Saldo Impoconsumo
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['saldo_impoconsumo']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- SALDO RETENCIÓN -->
+
+                                        <div class="d-flex justify-content-between mb-3">
+
+                                            <span class="text-muted">
+                                                Saldo Retención
+                                            </span>
+
+                                            <strong>
+                                                <?= dinero($datos['saldo_retencion']) ?>
+                                            </strong>
+
+                                        </div>
+
+
+                                        <hr>
+
+
+                                        <!-- SALDO DIAN -->
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                            <span>
+
+                                                <strong>
+                                                    Saldo DIAN
+                                                </strong>
+
+                                            </span>
+
+                                            <strong>
+
+                                                <?= dinero(
+                                                        $datos['saldo_dian']
+                                                    ) ?>
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <!-- BOTÓN -->
+
+                                        <a href="/inventario/reportes/cuatrimestre?anio=<?= $anio ?>&cuatrimestre=<?= $numero ?>"
+                                            class="btn btn-primary w-100">
+
+                                            <i class="bi bi-eye"></i>
+
+                                            Ver cuatrimestre
+
+                                        </a>
+
+
+                                    </div>
+
                                 </div>
+
+                            </div>
 
 
                             <?php endforeach; ?>
@@ -881,10 +869,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
         </div>
 
-   
 
 
-<?php
+
+        <?php
 
 include __DIR__ . '/../../includes/footer.php';
 

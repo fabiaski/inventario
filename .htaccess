@@ -75,8 +75,8 @@ RewriteRule ^procesos/finalizados/?$ src/pages/procesos/finalizados.php [L]
 # ==========================================================
 
 RewriteRule ^reportes/?$ src/pages/reportes/cuatrimestres.php [L]
-RewriteRule ^reportes/cuatrimestre/([0-9]+)/?$ src/pages/reportes/ver_cuatrimestre.php?id=$1 [L]
-
+RewriteRule ^reportes/cuatrimestre/?$ src/pages/reportes/ver_cuatrimestre.php [L]
+RewriteRule ^reportes/exportar_cuatrimestre\.php/?$ src/pages/reportes/exportar_cuatrimestre.php [L]
 
 # ==========================================================
 # SMMLV

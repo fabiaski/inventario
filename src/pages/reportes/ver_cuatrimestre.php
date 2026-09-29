@@ -535,9 +535,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <div class="d-flex gap-2">
 
                                 <a
-                                    href="cuatrimestres.php?anio=<?= $anio ?>"
-                                    class="btn btn-secondary"
-                                >
+    href="/inventario/reportes?anio=<?= $anio ?>"
+    class="btn btn-secondary"
+>
 
                                     <i class="bi bi-arrow-left"></i>
 
@@ -547,11 +547,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                                 <a
-                                    href="exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
-                                    class="btn btn-danger"
-                                    target="_blank"
-                                >
-
+    href="/inventario/reportes/exportar_cuatrimestre.php?anio=<?= $anio ?>&cuatrimestre=<?= $cuatrimestre ?>"
+    class="btn btn-danger"
+    target="_blank"
+>
                                     <i class="bi bi-file-earmark-pdf"></i>
 
                                     Exportar PDF
