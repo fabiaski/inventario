@@ -8,9 +8,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 //==================================================
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
     exit('Acceso no permitido.');
-
 }
 
 
@@ -20,34 +18,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $facturaId = (int) ($_POST['factura_id'] ?? 0);
 
-$proveedor = trim(
-    $_POST['proveedor'] ?? ''
-);
+$proveedor = trim($_POST['proveedor'] ?? '');
 
-$numeroFactura = trim(
-    $_POST['numero_factura'] ?? ''
-);
+$numeroFactura = trim($_POST['numero_factura'] ?? '');
 
-$valor = trim(
-    $_POST['valor'] ?? ''
-);
+$valor = trim($_POST['valor'] ?? '');
 
-$observacion = trim(
-    $_POST['observacion'] ?? ''
-);
+$observacion = trim($_POST['observacion'] ?? '');
 
 
 //==================================================
 // INFORMACIÓN TRIBUTARIA
 //==================================================
 
-$tieneIva =
-    isset($_POST['tiene_iva'])
-    ? 1
-    : 0;
+$tieneIva = isset($_POST['tiene_iva']) ? 1 : 0;
 
 $valorIva = null;
-
 
 $tieneImpoconsumo =
     isset($_POST['tiene_impoconsumo'])
@@ -55,7 +41,6 @@ $tieneImpoconsumo =
     : 0;
 
 $valorImpoconsumo = null;
-
 
 $tieneRetencion =
     isset($_POST['tiene_retencion'])
@@ -66,66 +51,68 @@ $valorRetencion = null;
 
 
 //==================================================
+// FUNCIÓN PARA CONVERTIR DINERO COLOMBIANO
+// 79.500,00 → 79500.00
+//==================================================
+
+function convertirDecimal($valor)
+{
+    $valor = trim($valor);
+
+    if ($valor === '') {
+        return null;
+    }
+
+    // Quitar puntos de miles
+    $valor = str_replace('.', '', $valor);
+
+    // Cambiar coma decimal por punto
+    $valor = str_replace(',', '.', $valor);
+
+    if (!is_numeric($valor)) {
+        return null;
+    }
+
+    return number_format(
+        (float) $valor,
+        2,
+        '.',
+        ''
+    );
+}
+
+
+//==================================================
 // VALIDAR FACTURA
 //==================================================
 
 if ($facturaId <= 0) {
-
     exit('Factura no válida.');
-
 }
 
 
 if ($proveedor === '') {
-
     exit('El proveedor es obligatorio.');
-
 }
 
 
 if ($numeroFactura === '') {
-
-    exit(
-        'El número de factura es obligatorio.'
-    );
-
+    exit('El número de factura es obligatorio.');
 }
 
 
 //==================================================
-// LIMPIAR VALOR
+// CONVERTIR VALOR FACTURA
 //==================================================
 
-$valor =
-    str_replace(
-        ['.', ','],
-        '',
-        $valor
-    );
+$valor = convertirDecimal($valor);
 
-
-if (
-    $valor === ''
-    || !is_numeric($valor)
-) {
-
-    exit(
-        'El valor no es válido.'
-    );
-
+if ($valor === null) {
+    exit('El valor no es válido.');
 }
 
-
-$valor =
-    (float) $valor;
-
-
-if ($valor < 0) {
-
-    exit(
-        'El valor no puede ser negativo.'
-    );
-
+if ((float) $valor < 0) {
+    exit('El valor no puede ser negativo.');
 }
 
 
@@ -135,44 +122,21 @@ if ($valor < 0) {
 
 if ($tieneIva) {
 
-    $valorIva =
-        trim(
-            $_POST['valor_iva'] ?? ''
-        );
+    $valorIva = convertirDecimal(
+        $_POST['valor_iva'] ?? ''
+    );
 
-
-    $valorIva =
-        str_replace(
-            ['.', ','],
-            '',
-            $valorIva
-        );
-
-
-    if (
-        $valorIva === ''
-        || !is_numeric($valorIva)
-    ) {
-
+    if ($valorIva === null) {
         exit(
             'Debe ingresar un valor válido para el IVA.'
         );
-
     }
 
-
-    $valorIva =
-        (float) $valorIva;
-
-
-    if ($valorIva < 0) {
-
+    if ((float) $valorIva < 0) {
         exit(
             'El valor del IVA no puede ser negativo.'
         );
-
     }
-
 }
 
 
@@ -182,44 +146,21 @@ if ($tieneIva) {
 
 if ($tieneImpoconsumo) {
 
-    $valorImpoconsumo =
-        trim(
-            $_POST['valor_impoconsumo'] ?? ''
-        );
+    $valorImpoconsumo = convertirDecimal(
+        $_POST['valor_impoconsumo'] ?? ''
+    );
 
-
-    $valorImpoconsumo =
-        str_replace(
-            ['.', ','],
-            '',
-            $valorImpoconsumo
-        );
-
-
-    if (
-        $valorImpoconsumo === ''
-        || !is_numeric($valorImpoconsumo)
-    ) {
-
+    if ($valorImpoconsumo === null) {
         exit(
             'Debe ingresar un valor válido para el Impoconsumo.'
         );
-
     }
 
-
-    $valorImpoconsumo =
-        (float) $valorImpoconsumo;
-
-
-    if ($valorImpoconsumo < 0) {
-
+    if ((float) $valorImpoconsumo < 0) {
         exit(
             'El valor del Impoconsumo no puede ser negativo.'
         );
-
     }
-
 }
 
 
@@ -229,44 +170,21 @@ if ($tieneImpoconsumo) {
 
 if ($tieneRetencion) {
 
-    $valorRetencion =
-        trim(
-            $_POST['valor_retencion'] ?? ''
-        );
+    $valorRetencion = convertirDecimal(
+        $_POST['valor_retencion'] ?? ''
+    );
 
-
-    $valorRetencion =
-        str_replace(
-            ['.', ','],
-            '',
-            $valorRetencion
-        );
-
-
-    if (
-        $valorRetencion === ''
-        || !is_numeric($valorRetencion)
-    ) {
-
+    if ($valorRetencion === null) {
         exit(
             'Debe ingresar un valor válido para la Retención.'
         );
-
     }
 
-
-    $valorRetencion =
-        (float) $valorRetencion;
-
-
-    if ($valorRetencion < 0) {
-
+    if ((float) $valorRetencion < 0) {
         exit(
             'El valor de la Retención no puede ser negativo.'
         );
-
     }
-
 }
 
 
@@ -283,17 +201,13 @@ $sqlFactura = "
 ";
 
 
-$stmtFactura =
-    $conexion->prepare($sqlFactura);
-
+$stmtFactura = $conexion->prepare($sqlFactura);
 
 if (!$stmtFactura) {
-
     exit(
         'Error preparando consulta: '
         . $conexion->error
     );
-
 }
 
 
@@ -305,29 +219,19 @@ $stmtFactura->bind_param(
 
 $stmtFactura->execute();
 
+$resultado = $stmtFactura->get_result();
 
-$resultado =
-    $stmtFactura->get_result();
-
-
-$factura =
-    $resultado->fetch_assoc();
-
+$factura = $resultado->fetch_assoc();
 
 $stmtFactura->close();
 
 
 if (!$factura) {
-
-    exit(
-        'La factura no existe.'
-    );
-
+    exit('La factura no existe.');
 }
 
 
-$contratoId =
-    (int) $factura['contrato_id'];
+$contratoId = (int) $factura['contrato_id'];
 
 
 //==================================================
@@ -351,19 +255,16 @@ $sqlActualizar = "
 ";
 
 
-$stmtActualizar =
-    $conexion->prepare(
-        $sqlActualizar
-    );
+$stmtActualizar = $conexion->prepare(
+    $sqlActualizar
+);
 
 
 if (!$stmtActualizar) {
-
     exit(
         'Error preparando actualización: '
         . $conexion->error
     );
-
 }
 
 
@@ -393,8 +294,7 @@ $stmtActualizar->bind_param(
 
 if (!$stmtActualizar->execute()) {
 
-    $error =
-        $stmtActualizar->error;
+    $error = $stmtActualizar->error;
 
     $stmtActualizar->close();
 
@@ -402,7 +302,6 @@ if (!$stmtActualizar->execute()) {
         'Error actualizando factura: '
         . $error
     );
-
 }
 
 
@@ -414,7 +313,7 @@ $stmtActualizar->close();
 //==================================================
 
 header(
-    "Location: ver.php?id="
+    "Location: /inventario/facturacion/ver/"
     . $contratoId
 );
 

@@ -172,31 +172,7 @@ RESULTADO: ALERTA ENVIADA CORRECTAMENTE
 
 
 ALTER TABLE contratos
-MODIFY valor_contrato DECIMAL(15,3) NOT NULL DEFAULT 0.000,
-MODIFY valor_iva DECIMAL(15,3) DEFAULT NULL,
-MODIFY valor_impoconsumo DECIMAL(15,3) DEFAULT NULL,
-MODIFY valor_retencion DECIMAL(15,3) DEFAULT NULL;
-
-ALTER TABLE facturas
-MODIFY valor DECIMAL(15,3) NOT NULL DEFAULT 0.000,
-MODIFY valor_iva DECIMAL(15,3) DEFAULT NULL,
-MODIFY valor_impoconsumo DECIMAL(15,3) DEFAULT NULL,
-MODIFY valor_retencion DECIMAL(15,3) DEFAULT NULL;
-
-UPDATE favores_personas
-SET tipo = 'prestamo'
-WHERE tipo = 'me_debe';
-
-UPDATE favores_personas
-SET tipo = 'a_pagar'
-WHERE tipo = 'le_debo';
-
-ALTER TABLE favores_personas
-MODIFY COLUMN tipo ENUM('prestamo','a_pagar') NOT NULL;
-
-
-ALTER TABLE favores_movimientos
-ADD COLUMN tipo ENUM('cargo', 'abono') NOT NULL DEFAULT 'cargo' AFTER valor;
-
-ALTER TABLE favores_movimientos
-DROP COLUMN estado;
+MODIFY valor_contrato DECIMAL(15,2) NOT NULL,
+MODIFY valor_iva DECIMAL(15,2) DEFAULT 0.00,
+MODIFY valor_impoconsumo DECIMAL(15,2) DEFAULT 0.00,
+MODIFY valor_retencion DECIMAL(15,2) DEFAULT 0.00;

@@ -148,9 +148,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-                            <a
-                             href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
-class="btn btn-secondary">
+                            <a href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
+                                class="btn btn-secondary">
 
                                 <i class="bi bi-arrow-left"></i>
 
@@ -168,17 +167,9 @@ class="btn btn-secondary">
                         FORMULARIO
                         ==================================================-->
 
-                        <form
-                            action="/inventario/facturacion/actualizar-factura"
-                            method="POST"
-                            id="formFactura"
-                        >
+                        <form action="/inventario/facturacion/actualizar-factura" method="POST" id="formFactura">
 
-                            <input
-                                type="hidden"
-                                name="factura_id"
-                                value="<?= $factura['id'] ?>"
-                            >
+                            <input type="hidden" name="factura_id" value="<?= $factura['id'] ?>">
 
 
                             <div class="row g-3">
@@ -190,10 +181,7 @@ class="btn btn-secondary">
 
                                 <div class="col-md-6">
 
-                                    <label
-                                        for="proveedor"
-                                        class="form-label"
-                                    >
+                                    <label for="proveedor" class="form-label">
 
                                         Proveedor
 
@@ -201,15 +189,8 @@ class="btn btn-secondary">
 
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="proveedor"
-                                        id="proveedor"
-                                        class="form-control"
-                                        maxlength="150"
-                                        value="<?= htmlspecialchars($factura['proveedor']) ?>"
-                                        required
-                                    >
+                                    <input type="text" name="proveedor" id="proveedor" class="form-control"
+                                        maxlength="150" value="<?= htmlspecialchars($factura['proveedor']) ?>" required>
 
                                 </div>
 
@@ -220,10 +201,7 @@ class="btn btn-secondary">
 
                                 <div class="col-md-6">
 
-                                    <label
-                                        for="numero_factura"
-                                        class="form-label"
-                                    >
+                                    <label for="numero_factura" class="form-label">
 
                                         N° de Factura
 
@@ -231,15 +209,9 @@ class="btn btn-secondary">
 
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="numero_factura"
-                                        id="numero_factura"
-                                        class="form-control"
-                                        maxlength="100"
-                                        value="<?= htmlspecialchars($factura['numero_factura']) ?>"
-                                        required
-                                    >
+                                    <input type="text" name="numero_factura" id="numero_factura" class="form-control"
+                                        maxlength="100" value="<?= htmlspecialchars($factura['numero_factura']) ?>"
+                                        required>
 
                                 </div>
 
@@ -250,10 +222,7 @@ class="btn btn-secondary">
 
                                 <div class="col-md-6">
 
-                                    <label
-                                        for="valor"
-                                        class="form-label"
-                                    >
+                                    <label for="valor" class="form-label">
 
                                         Valor de la Factura
 
@@ -267,15 +236,10 @@ class="btn btn-secondary">
                                             $
                                         </span>
 
-                                        <input
-                                            type="text"
-                                            name="valor"
-                                            id="valor"
-                                            class="form-control"
+                                        <input type="text" name="valor" id="valor" class="form-control"
                                             inputmode="decimal"
-value="<?= number_format((float) $factura['valor'], 3, ',', '.') ?>"
-                                            required
-                                        >
+                                            value="<?= number_format((float) $factura['valor'], 2, ',', '.') ?>"
+                                            required>
 
                                     </div>
 
@@ -308,19 +272,11 @@ value="<?= number_format((float) $factura['valor'], 3, ',', '.') ?>"
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_iva"
-                                                id="tiene_iva"
-                                                value="1"
-                                                <?= (int) $factura['tiene_iva'] === 1 ? 'checked' : '' ?>
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_iva"
+                                                id="tiene_iva" value="1"
+                                                <?= (int) $factura['tiene_iva'] === 1 ? 'checked' : '' ?>>
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_iva"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_iva">
 
                                                 Tiene IVA
 
@@ -329,38 +285,24 @@ value="<?= number_format((float) $factura['valor'], 3, ',', '.') ?>"
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_iva"
-                                            style="<?= (int) $factura['tiene_iva'] === 1 ? 'display: block;' : 'display: none;' ?>"
-                                        >
+                                        <div id="contenedor_iva"
+                                            style="<?= (int) $factura['tiene_iva'] === 1 ? 'display: block;' : 'display: none;' ?>">
 
-                                            <label
-                                                for="valor_iva"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_iva" class="form-label">
 
                                                 Valor IVA
 
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_iva"
-                                                    id="valor_iva"
-                                                    class="form-control"
-                                                    inputmode="decimal"
-placeholder="Ej. 285.000,125"
-value="<?= $factura['valor_iva'] !== null
-    ? number_format((float) $factura['valor_iva'], 3, ',', '.')
+                                                <input type="text" name="valor_iva" id="valor_iva" class="form-control"
+                                                    inputmode="decimal" placeholder="Ej. 285.000,15" value="<?= $factura['valor_iva'] !== null
+    ? number_format((float) $factura['valor_iva'], 2, ',', '.')
     : '' ?>">
 
                                             </div>
@@ -378,19 +320,11 @@ value="<?= $factura['valor_iva'] !== null
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_impoconsumo"
-                                                id="tiene_impoconsumo"
-                                                value="1"
-                                                <?= (int) $factura['tiene_impoconsumo'] === 1 ? 'checked' : '' ?>
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_impoconsumo"
+                                                id="tiene_impoconsumo" value="1"
+                                                <?= (int) $factura['tiene_impoconsumo'] === 1 ? 'checked' : '' ?>>
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_impoconsumo"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_impoconsumo">
 
                                                 Tiene Impoconsumo
 
@@ -399,39 +333,25 @@ value="<?= $factura['valor_iva'] !== null
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_impoconsumo"
-                                            style="<?= (int) $factura['tiene_impoconsumo'] === 1 ? 'display: block;' : 'display: none;' ?>"
-                                        >
+                                        <div id="contenedor_impoconsumo"
+                                            style="<?= (int) $factura['tiene_impoconsumo'] === 1 ? 'display: block;' : 'display: none;' ?>">
 
-                                            <label
-                                                for="valor_impoconsumo"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_impoconsumo" class="form-label">
 
                                                 Valor Impoconsumo
 
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_impoconsumo"
-                                                    id="valor_impoconsumo"
-                                                    class="form-control"
-                                                
-                                                inputmode="decimal"
-placeholder="Ej. 100.000,125"
-value="<?= $factura['valor_impoconsumo'] !== null
-    ? number_format((float) $factura['valor_impoconsumo'], 3, ',', '.')
+                                                <input type="text" name="valor_impoconsumo" id="valor_impoconsumo"
+                                                    class="form-control" inputmode="decimal"
+                                                    placeholder="Ej. 100.000,12" value="<?= $factura['valor_impoconsumo'] !== null
+    ? number_format((float) $factura['valor_impoconsumo'], 2, ',', '.')
     : '' ?>">
 
                                             </div>
@@ -449,19 +369,11 @@ value="<?= $factura['valor_impoconsumo'] !== null
 
                                         <div class="form-check mb-2">
 
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="tiene_retencion"
-                                                id="tiene_retencion"
-                                                value="1"
-                                                <?= (int) $factura['tiene_retencion'] === 1 ? 'checked' : '' ?>
-                                            >
+                                            <input class="form-check-input" type="checkbox" name="tiene_retencion"
+                                                id="tiene_retencion" value="1"
+                                                <?= (int) $factura['tiene_retencion'] === 1 ? 'checked' : '' ?>>
 
-                                            <label
-                                                class="form-check-label fs-6"
-                                                for="tiene_retencion"
-                                            >
+                                            <label class="form-check-label fs-6" for="tiene_retencion">
 
                                                 Tiene Retención
 
@@ -470,38 +382,25 @@ value="<?= $factura['valor_impoconsumo'] !== null
                                         </div>
 
 
-                                        <div
-                                            id="contenedor_retencion"
-                                            style="<?= (int) $factura['tiene_retencion'] === 1 ? 'display: block;' : 'display: none;' ?>"
-                                        >
+                                        <div id="contenedor_retencion"
+                                            style="<?= (int) $factura['tiene_retencion'] === 1 ? 'display: block;' : 'display: none;' ?>">
 
-                                            <label
-                                                for="valor_retencion"
-                                                class="form-label"
-                                            >
+                                            <label for="valor_retencion" class="form-label">
 
                                                 Valor Retención
 
                                             </label>
 
-                                            <div
-                                                class="input-group"
-                                                style="max-width: 400px;"
-                                            >
+                                            <div class="input-group" style="max-width: 400px;">
 
                                                 <span class="input-group-text">
                                                     $
                                                 </span>
 
-                                                <input
-                                                    type="text"
-                                                    name="valor_retencion"
-                                                    id="valor_retencion"
-                                                    class="form-control"
-                                                inputmode="decimal"
-placeholder="Ej. 50.000,125"
-value="<?= $factura['valor_retencion'] !== null
-    ? number_format((float) $factura['valor_retencion'], 3, ',', '.')
+                                                <input type="text" name="valor_retencion" id="valor_retencion"
+                                                    class="form-control" inputmode="decimal"
+                                                    placeholder="Ej. 50.000,15" value="<?= $factura['valor_retencion'] !== null
+    ? number_format((float) $factura['valor_retencion'], 2, ',', '.')
     : '' ?>">
 
                                             </div>
@@ -520,21 +419,14 @@ value="<?= $factura['valor_retencion'] !== null
 
                                 <div class="col-12">
 
-                                    <label
-                                        for="observacion"
-                                        class="form-label"
-                                    >
+                                    <label for="observacion" class="form-label">
 
                                         Observación
 
                                     </label>
 
-                                    <textarea
-                                        name="observacion"
-                                        id="observacion"
-                                        class="form-control"
-                                        rows="3"
-                                    ><?= htmlspecialchars($factura['observacion'] ?? '') ?></textarea>
+                                    <textarea name="observacion" id="observacion" class="form-control"
+                                        rows="3"><?= htmlspecialchars($factura['observacion'] ?? '') ?></textarea>
 
                                 </div>
 
@@ -547,10 +439,8 @@ value="<?= $factura['valor_retencion'] !== null
 
                             <div class="d-flex justify-content-end gap-2">
 
-                                <a
-                                    href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
-                                    class="btn btn-secondary"
-                                >
+                                <a href="/inventario/facturacion/ver/<?= $factura['contrato_id'] ?>"
+                                    class="btn btn-secondary">
 
                                     <i class="bi bi-x-circle"></i>
 
@@ -559,10 +449,7 @@ value="<?= $factura['valor_retencion'] !== null
                                 </a>
 
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                >
+                                <button type="submit" class="btn btn-primary">
 
                                     <i class="bi bi-save"></i>
 
@@ -604,42 +491,42 @@ value="<?= $factura['valor_retencion'] !== null
                                 <?php if (!empty($soportes)): ?>
 
 
-                                    <div class="table-responsive">
+                                <div class="table-responsive">
 
-                                        <table class="table table-bordered table-hover align-middle mb-0">
+                                    <table class="table table-bordered table-hover align-middle mb-0">
 
-                                            <thead class="table-light">
+                                        <thead class="table-light">
 
-                                                <tr>
+                                            <tr>
 
-                                                    <th>
-                                                        Archivo
-                                                    </th>
+                                                <th>
+                                                    Archivo
+                                                </th>
 
-                                                    <th>
-                                                        Tipo
-                                                    </th>
+                                                <th>
+                                                    Tipo
+                                                </th>
 
-                                                    <th style="width: 180px;">
-                                                        Acciones
-                                                    </th>
+                                                <th style="width: 180px;">
+                                                    Acciones
+                                                </th>
 
-                                                </tr>
+                                            </tr>
 
-                                            </thead>
-
-
-                                            <tbody>
+                                        </thead>
 
 
-                                                <?php foreach ($soportes as $soporte): ?>
+                                        <tbody>
 
 
-                                                    <tr>
+                                            <?php foreach ($soportes as $soporte): ?>
 
-                                                        <td>
 
-                                                            <?php
+                                            <tr>
+
+                                                <td>
+
+                                                    <?php
 
                                                             $nombreArchivo =
                                                                 $soporte['archivo'];
@@ -655,11 +542,11 @@ value="<?= $factura['valor_retencion'] !== null
                                                             ?>
 
 
-                                                            <?php if ($extension === 'pdf'): ?>
+                                                    <?php if ($extension === 'pdf'): ?>
 
-                                                                <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
 
-                                                            <?php elseif (
+                                                    <?php elseif (
                                                                 in_array(
                                                                     $extension,
                                                                     [
@@ -671,85 +558,79 @@ value="<?= $factura['valor_retencion'] !== null
                                                                 )
                                                             ): ?>
 
-                                                                <i class="bi bi-file-earmark-image text-primary"></i>
+                                                    <i class="bi bi-file-earmark-image text-primary"></i>
 
-                                                            <?php else: ?>
+                                                    <?php else: ?>
 
-                                                                <i class="bi bi-file-earmark"></i>
+                                                    <i class="bi bi-file-earmark"></i>
 
-                                                            <?php endif; ?>
-
-
-                                                            <?= htmlspecialchars($nombreArchivo) ?>
-
-                                                        </td>
+                                                    <?php endif; ?>
 
 
-                                                        <td>
+                                                    <?= htmlspecialchars($nombreArchivo) ?>
 
-                                                            <?= htmlspecialchars(
+                                                </td>
+
+
+                                                <td>
+
+                                                    <?= htmlspecialchars(
                                                                 $soporte['tipo_archivo']
                                                             ) ?>
 
-                                                        </td>
+                                                </td>
 
 
-                                                        <td>
+                                                <td>
 
-                                                            <div class="d-flex gap-1">
-
-
-                                                                <a
-                                                                    href="/inventario/uploads/soportes_facturas/<?= rawurlencode($nombreArchivo) ?>"
-                                                                    target="_blank"
-                                                                    class="btn btn-info btn-sm"
-                                                                    title="Ver archivo"
-                                                                >
-
-                                                                    <i class="bi bi-eye"></i>
-
-                                                                </a>
+                                                    <div class="d-flex gap-1">
 
 
-                                                                <a
-                                                                    href="/inventario/facturacion/eliminar-soporte?id=<?= $soporte['id'] ?>"
-                                                                    class="btn btn-danger btn-sm"
-                                                                    title="Eliminar soporte"
-                                                                    onclick="return confirm('¿Está seguro de eliminar este soporte?');"
-                                                                >
+                                                        <a href="/inventario/uploads/soportes_facturas/<?= rawurlencode($nombreArchivo) ?>"
+                                                            target="_blank" class="btn btn-info btn-sm"
+                                                            title="Ver archivo">
 
-                                                                    <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-eye"></i>
 
-                                                                </a>
+                                                        </a>
 
 
-                                                            </div>
+                                                        <a href="/inventario/facturacion/eliminar-soporte?id=<?= $soporte['id'] ?>"
+                                                            class="btn btn-danger btn-sm" title="Eliminar soporte"
+                                                            onclick="return confirm('¿Está seguro de eliminar este soporte?');">
 
-                                                        </td>
+                                                            <i class="bi bi-trash"></i>
 
-                                                    </tr>
-
-
-                                                <?php endforeach; ?>
+                                                        </a>
 
 
-                                            </tbody>
+                                                    </div>
 
-                                        </table>
+                                                </td>
 
-                                    </div>
+                                            </tr>
+
+
+                                            <?php endforeach; ?>
+
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
 
 
                                 <?php else: ?>
 
 
-                                    <div class="text-muted">
+                                <div class="text-muted">
 
-                                        <i class="bi bi-info-circle"></i>
+                                    <i class="bi bi-info-circle"></i>
 
-                                        Esta factura todavía no tiene soportes.
+                                    Esta factura todavía no tiene soportes.
 
-                                    </div>
+                                </div>
 
 
                                 <?php endif; ?>
@@ -762,23 +643,13 @@ value="<?= $factura['valor_retencion'] !== null
                                 <hr class="my-4">
 
 
-                                <form
-    action="/inventario/facturacion/agregar-soporte"
-                                    method="POST"
-                                    enctype="multipart/form-data"
-                                >
+                                <form action="/inventario/facturacion/agregar-soporte" method="POST"
+                                    enctype="multipart/form-data">
 
-                                    <input
-                                        type="hidden"
-                                        name="factura_id"
-                                        value="<?= $factura['id'] ?>"
-                                    >
+                                    <input type="hidden" name="factura_id" value="<?= $factura['id'] ?>">
 
 
-                                    <label
-                                        for="soporte"
-                                        class="form-label"
-                                    >
+                                    <label for="soporte" class="form-label">
 
                                         Agregar nuevo soporte
 
@@ -789,13 +660,8 @@ value="<?= $factura['valor_retencion'] !== null
 
                                         <div class="col-md-9">
 
-                                            <input
-    type="file"
-    name="soporte"
-    class="form-control"
-    accept=".pdf,.jpg,.jpeg,.png"
-    required
->
+                                            <input type="file" name="soporte" class="form-control"
+                                                accept=".pdf,.jpg,.jpeg,.png" required>
 
                                             <div class="form-text">
 
@@ -810,10 +676,7 @@ value="<?= $factura['valor_retencion'] !== null
 
                                         <div class="col-md-3">
 
-                                            <button
-                                                type="submit"
-                                                class="btn btn-success w-100"
-                                            >
+                                            <button type="submit" class="btn btn-success w-100">
 
                                                 <i class="bi bi-upload"></i>
 
@@ -842,7 +705,7 @@ value="<?= $factura['valor_retencion'] !== null
 
 
 
-<?php
+        <?php
 
 include __DIR__ . '/../../includes/footer.php';
 
@@ -851,252 +714,250 @@ include __DIR__ . '/../../includes/scripts.php';
 ?>
 
 
-<script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-document.addEventListener('DOMContentLoaded', function () {
+            const formulario =
+                document.getElementById('formFactura');
 
-    const formulario =
-        document.getElementById('formFactura');
 
+            const valor =
+                document.getElementById('valor');
 
-    const valor =
-        document.getElementById('valor');
 
+            const tieneIva =
+                document.getElementById('tiene_iva');
 
-    const tieneIva =
-        document.getElementById('tiene_iva');
+            const valorIva =
+                document.getElementById('valor_iva');
 
-    const valorIva =
-        document.getElementById('valor_iva');
+            const contenedorIva =
+                document.getElementById('contenedor_iva');
 
-    const contenedorIva =
-        document.getElementById('contenedor_iva');
 
+            const tieneImpoconsumo =
+                document.getElementById('tiene_impoconsumo');
 
-    const tieneImpoconsumo =
-        document.getElementById('tiene_impoconsumo');
+            const valorImpoconsumo =
+                document.getElementById('valor_impoconsumo');
 
-    const valorImpoconsumo =
-        document.getElementById('valor_impoconsumo');
+            const contenedorImpoconsumo =
+                document.getElementById('contenedor_impoconsumo');
 
-    const contenedorImpoconsumo =
-        document.getElementById('contenedor_impoconsumo');
 
+            const tieneRetencion =
+                document.getElementById('tiene_retencion');
 
-    const tieneRetencion =
-        document.getElementById('tiene_retencion');
+            const valorRetencion =
+                document.getElementById('valor_retencion');
 
-    const valorRetencion =
-        document.getElementById('valor_retencion');
+            const contenedorRetencion =
+                document.getElementById('contenedor_retencion');
 
-    const contenedorRetencion =
-        document.getElementById('contenedor_retencion');
 
+            //==================================================
+            // IVA
+            //==================================================
 
-    //==================================================
-    // IVA
-    //==================================================
+            tieneIva.addEventListener('change', function() {
 
-    tieneIva.addEventListener('change', function () {
+                if (this.checked) {
 
-        if (this.checked) {
+                    contenedorIva.style.display = 'block';
 
-            contenedorIva.style.display = 'block';
+                } else {
 
-        } else {
+                    contenedorIva.style.display = 'none';
 
-            contenedorIva.style.display = 'none';
+                    valorIva.value = '';
 
-            valorIva.value = '';
+                }
 
-        }
+            });
 
-    });
 
+            //==================================================
+            // IMPOCONSUMO
+            //==================================================
 
-    //==================================================
-    // IMPOCONSUMO
-    //==================================================
+            tieneImpoconsumo.addEventListener('change', function() {
 
-    tieneImpoconsumo.addEventListener('change', function () {
+                if (this.checked) {
 
-        if (this.checked) {
+                    contenedorImpoconsumo.style.display = 'block';
 
-            contenedorImpoconsumo.style.display = 'block';
+                } else {
 
-        } else {
+                    contenedorImpoconsumo.style.display = 'none';
 
-            contenedorImpoconsumo.style.display = 'none';
+                    valorImpoconsumo.value = '';
 
-            valorImpoconsumo.value = '';
+                }
 
-        }
+            });
 
-    });
 
+            //==================================================
+            // RETENCIÓN
+            //==================================================
 
-    //==================================================
-    // RETENCIÓN
-    //==================================================
+            tieneRetencion.addEventListener('change', function() {
 
-    tieneRetencion.addEventListener('change', function () {
+                if (this.checked) {
 
-        if (this.checked) {
+                    contenedorRetencion.style.display = 'block';
 
-            contenedorRetencion.style.display = 'block';
+                } else {
 
-        } else {
+                    contenedorRetencion.style.display = 'none';
 
-            contenedorRetencion.style.display = 'none';
+                    valorRetencion.value = '';
 
-            valorRetencion.value = '';
+                }
 
-        }
+            });
 
-    });
 
+            //==================================================
+            // FORMATEAR VALORES
+            //==================================================
 
-    //==================================================
-    // FORMATEAR VALORES
-    //==================================================
+            function formatearValor(campo) {
 
-  function formatearValor(campo) {
+                campo.addEventListener('input', function() {
 
-    campo.addEventListener('input', function () {
+                    let valor = this.value;
 
-        let valor = this.value;
+                    // Permitir números y coma decimal
+                    valor = valor.replace(/[^\d,]/g, '');
 
-        // Permitir números y coma decimal
-        valor = valor.replace(/[^\d,]/g, '');
+                    // Separar parte entera y decimal
+                    const partes = valor.split(',');
 
-        // Separar parte entera y decimal
-        const partes = valor.split(',');
+                    let parteEntera = partes[0];
 
-        let parteEntera = partes[0];
+                    let parteDecimal =
+                        partes.length > 1 ?
+                        partes[1].substring(0, 2) :
+                        null;
 
-        let parteDecimal =
-            partes.length > 1
-                ? partes[1].substring(0, 3)
-                : null;
+                    // Quitar ceros innecesarios
+                    if (parteEntera !== '') {
 
-        // Quitar ceros innecesarios
-        if (parteEntera !== '') {
+                        parteEntera =
+                            parteEntera.replace(/^0+(?=\d)/, '');
 
-            parteEntera =
-                parteEntera.replace(/^0+(?=\d)/, '');
+                    }
 
-        }
+                    // Formatear miles
+                    if (parteEntera !== '') {
 
-        // Formatear miles
-        if (parteEntera !== '') {
+                        parteEntera =
+                            Number(parteEntera)
+                            .toLocaleString('es-CO');
 
-            parteEntera =
-                Number(parteEntera)
-                    .toLocaleString('es-CO');
+                    }
 
-        }
+                    // Reconstruir valor
+                    if (parteDecimal !== null) {
 
-        // Reconstruir valor
-        if (parteDecimal !== null) {
+                        this.value =
+                            parteEntera + ',' + parteDecimal;
 
-            this.value =
-                parteEntera + ',' + parteDecimal;
+                    } else {
 
-        } else {
+                        this.value =
+                            parteEntera;
 
-            this.value =
-                parteEntera;
+                    }
 
-        }
+                });
 
-    });
+            }
 
-}
+            formatearValor(valor);
 
-    formatearValor(valor);
+            formatearValor(valorIva);
 
-    formatearValor(valorIva);
+            formatearValor(valorImpoconsumo);
 
-    formatearValor(valorImpoconsumo);
+            formatearValor(valorRetencion);
 
-    formatearValor(valorRetencion);
 
+            //==================================================
+            // VALIDAR FORMULARIO
+            //==================================================
 
-    //==================================================
-    // VALIDAR FORMULARIO
-    //==================================================
+            formulario.addEventListener('submit', function(e) {
 
-    formulario.addEventListener('submit', function (e) {
+                if (valor.value.trim() === '') {
 
-        if (valor.value.trim() === '') {
+                    e.preventDefault();
 
-            e.preventDefault();
+                    alert(
+                        'Debe ingresar el valor de la factura.'
+                    );
 
-            alert(
-                'Debe ingresar el valor de la factura.'
-            );
+                    valor.focus();
 
-            valor.focus();
+                    return false;
+                }
 
-            return false;
-        }
 
+                if (
+                    tieneIva.checked &&
+                    valorIva.value.trim() === ''
+                ) {
 
-        if (
-            tieneIva.checked &&
-            valorIva.value.trim() === ''
-        ) {
+                    e.preventDefault();
 
-            e.preventDefault();
+                    alert(
+                        'Debe ingresar el valor del IVA.'
+                    );
 
-            alert(
-                'Debe ingresar el valor del IVA.'
-            );
+                    valorIva.focus();
 
-            valorIva.focus();
+                    return false;
+                }
 
-            return false;
-        }
 
+                if (
+                    tieneImpoconsumo.checked &&
+                    valorImpoconsumo.value.trim() === ''
+                ) {
 
-        if (
-            tieneImpoconsumo.checked &&
-            valorImpoconsumo.value.trim() === ''
-        ) {
+                    e.preventDefault();
 
-            e.preventDefault();
+                    alert(
+                        'Debe ingresar el valor del Impoconsumo.'
+                    );
 
-            alert(
-                'Debe ingresar el valor del Impoconsumo.'
-            );
+                    valorImpoconsumo.focus();
 
-            valorImpoconsumo.focus();
+                    return false;
+                }
 
-            return false;
-        }
 
+                if (
+                    tieneRetencion.checked &&
+                    valorRetencion.value.trim() === ''
+                ) {
 
-        if (
-            tieneRetencion.checked &&
-            valorRetencion.value.trim() === ''
-        ) {
+                    e.preventDefault();
 
-            e.preventDefault();
+                    alert(
+                        'Debe ingresar el valor de la Retención.'
+                    );
 
-            alert(
-                'Debe ingresar el valor de la Retención.'
-            );
+                    valorRetencion.focus();
 
-            valorRetencion.focus();
+                    return false;
+                }
 
-            return false;
-        }
 
+                return true;
 
-        return true;
+            });
 
-    });
-
-});
-
-</script>
+        });
+        </script>
