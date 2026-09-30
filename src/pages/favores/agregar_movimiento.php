@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 $personaId = (int) ($_GET['id'] ?? $_POST['persona_id'] ?? 0);
 
 if ($personaId <= 0) {
-header('Location: /inventario/favores');
+    header('Location: /inventario/favores');
     exit;
 }
 
@@ -42,6 +42,7 @@ if (!$persona) {
     exit;
 }
 
+
 // ==================================================
 // GUARDAR MOVIMIENTO
 // ==================================================
@@ -54,7 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $valor = trim($_POST['valor'] ?? '');
     $fecha = $_POST['fecha'] ?? date('Y-m-d');
 
-    // Quitar puntos y comas por si el usuario los escribe
+    // Si está marcado "Abonar", es un abono.
+    // Si no está marcado, es un cargo.
+    $abono = isset($_POST['abono']) ? 1 : 0;
+    $tipo = $abono ? 'abono' : 'cargo';
+
+
+    // ==================================================
+    // LIMPIAR VALOR
+    // ==================================================
+
+    // Quitar puntos y comas
     $valor = str_replace(['.', ','], '', $valor);
 
     // Convertir a entero
@@ -80,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         // ==================================================
-        // INSERTAR
+        // INSERTAR MOVIMIENTO
         // ==================================================
 
         $sql = "
@@ -89,10 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 persona_id,
                 descripcion,
                 valor,
-                fecha,
-                estado
+                tipo,
+                fecha
             )
-            VALUES (?, ?, ?, ?, 'pendiente')
+            VALUES (?, ?, ?, ?, ?)
         ";
 
         $stmt = $conexion->prepare($sql);
@@ -100,18 +111,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt) {
 
             $stmt->bind_param(
-                "isis",
+                "isiss",
                 $personaId,
                 $descripcion,
                 $valor,
+                $tipo,
                 $fecha
             );
 
             if ($stmt->execute()) {
 
+                // Volver a los movimientos de la persona
                 header(
-    "Location: /inventario/favores/ver/" . $personaId
-);
+                    "Location: /inventario/favores/persona/ver?id=" . $personaId . "&mensaje=guardado"
+                );
 
                 exit;
 
@@ -129,194 +142,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once __DIR__ . '/../../includes/header.php';
-require_once __DIR__ . '/../../includes/navbar.php';
-require_once __DIR__ . '/../../includes/sidebar.php';
-
 ?>
-
-
-<div class="main-panel">
-
-    <div class="content-wrapper">
-        <div class="row">
-
-            <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-
-
-                    <div class="card-body">
-                        <div class="panel-header d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h5 class=" mb-2 card-title">
-                                    <i class="bi bi-receipt"></i>
-
-                                    <?= htmlspecialchars($persona['nombre']) ?>
-
-                                    -
-
-                                    <?php if ($persona['tipo'] === 'me_debe'): ?>
-
-                                    <span class="badge badge-success">
-                                        Me debe</span>
-
-                                    <?php else: ?>
-                                    <span class="badge badge-warning">
-
-                                        Le debo</span>
-
-                                    <?php endif; ?>
-
-                                </h5>
-
-                            </div>
-                            
-
-                        </div>
-
-<hr>
-                        <!-- ==========================================
-                 ERROR
-            ========================================== -->
-
-                        <?php if ($error !== ''): ?>
-
-                        <div class="alert alert-danger">
-
-                            <?= htmlspecialchars($error) ?>
-
-                        </div>
-
-                        <?php endif; ?>
-
-
-                        <!-- ==========================================
-                 FORMULARIO
-            ========================================== -->
-
-                        <div class="row">
-
-                            <div class="col-md-8 col-lg-6">
-
-                                    
-                                <div class="card">
-
-                                    <div class="card-body">
-
-                                        <h4 class="card-title">
-                                            Registrar movimiento
-                                        </h4>
-
-
-                                        <form method="POST" action="<?= BASE_URL ?>favores/movimiento/agregar/<?= $personaId ?>">
-<input type="hidden" name="persona_id" value="<?= $personaId ?>">
-
-                                            <!-- DESCRIPCIÓN -->
-
-                                            <div class="form-group">
-
-                                                <label for="descripcion">
-                                                    Descripción
-                                                </label>
-
-                                                <input type="text" name="descripcion" id="descripcion"
-                                                    class="form-control" maxlength="255" placeholder="Ej: Préstamo"
-                                                    required value="<?= htmlspecialchars(
-                                            $_POST['descripcion'] ?? ''
-                                        ) ?>">
-
-                                            </div>
-
-
-                                            <!-- VALOR -->
-
-                                            <div class="form-group">
-
-                                                <label for="valor">
-                                                    Valor
-                                                </label>
-
-                                                <input type="text" name="valor" id="valor" class="form-control"
-                                                    placeholder="Ej: 50.000" inputmode="numeric" required value="<?= htmlspecialchars(
-                                            $_POST['valor'] ?? ''
-                                        ) ?>">
-
-                                                <small class="text-muted">
-                                                    Ingrese el valor sin decimales.
-                                                </small>
-
-                                            </div>
-
-
-                                            <!-- FECHA -->
-
-                                            <div class="form-group">
-
-                                                <label for="fecha">
-                                                    Fecha
-                                                </label>
-
-                                                <input type="date" name="fecha" id="fecha" class="form-control" required
-                                                    value="<?= htmlspecialchars(
-                                            $_POST['fecha'] ?? date('Y-m-d')
-                                        ) ?>">
-
-                                            </div>
-
-
-                                            <!-- BOTONES -->
-
-                                            <div class="mt-4">
-
-                                                <button type="submit" class="btn btn-primary">
-                                                    Guardar
-                                                </button>
-
-                                                <a
-    href="<?= BASE_URL ?>favores/ver/<?= $personaId ?>"
-    class="btn btn-secondary"
->
-    Cancelar
-</a>
-
-                                            </div>
-
-                                        </form>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-
-
-
-        <?php
-require_once __DIR__ . '/../../includes/footer.php';
-require_once __DIR__ . '/../../includes/scripts.php';
-
-
-?>
-
-        <script>
-        document.getElementById('valor').addEventListener('input', function() {
-
-            let valor = this.value.replace(/\D/g, '');
-
-            if (valor !== '') {
-                this.value = Number(valor).toLocaleString('es-CO');
-            }
-
-        });
-        </script>

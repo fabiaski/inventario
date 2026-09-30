@@ -145,11 +145,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         <span class="text-danger">*</span>
                                     </label>
 
-                                   <textarea name="objeto_contrato" id="objeto_contrato" class="form-control" rows="7"
-    style="resize: vertical; min-height: 60px;"
-    maxlength="2000"
-    placeholder="Describa el objeto, propósito o finalidad del contrato..."
-    required></textarea>
+                                    <textarea name="objeto_contrato" id="objeto_contrato" class="form-control" rows="7"
+                                        style="resize: vertical; min-height: 60px;" maxlength="2000"
+                                        placeholder="Describa el objeto, propósito o finalidad del contrato..."
+                                        required></textarea>
                                 </div>
 
                             </div>
@@ -164,7 +163,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </h5>
 
 
-                            <div class="row g-3 px-5">
+                            <div class="row g-2 px-5">
 
 
                                 <!-- IVA -->
@@ -302,9 +301,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <!-- BOTONES -->
                             <div class="d-flex justify-content-end gap-2">
 
-                               <a
-    href="/inventario/facturacion"
-    class="btn btn-secondary">
+                                <a href="/inventario/facturacion" class="btn btn-secondary">
 
                                     <i class="bi bi-x-circle"></i>
                                     Cancelar

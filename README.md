@@ -193,3 +193,10 @@ WHERE tipo = 'le_debo';
 
 ALTER TABLE favores_personas
 MODIFY COLUMN tipo ENUM('prestamo','a_pagar') NOT NULL;
+
+
+ALTER TABLE favores_movimientos
+ADD COLUMN tipo ENUM('cargo', 'abono') NOT NULL DEFAULT 'cargo' AFTER valor;
+
+ALTER TABLE favores_movimientos
+DROP COLUMN estado;

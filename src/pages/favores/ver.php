@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../config/conexion.php';
 
+
 // ==================================================
 // VALIDAR ID
 // ==================================================
@@ -9,7 +10,8 @@ require_once __DIR__ . '/../../config/conexion.php';
 $personaId = (int) ($_GET['id'] ?? 0);
 
 if ($personaId <= 0) {
-    header('Location: /inventario/favores');
+
+    header('Location: ' . BASE_URL . 'favores');
     exit;
 }
 
@@ -19,7 +21,7 @@ if ($personaId <= 0) {
 // ==================================================
 
 $sqlPersona = "
-    SELECT 
+    SELECT
         id,
         nombre,
         tipo
@@ -29,16 +31,24 @@ $sqlPersona = "
 ";
 
 $stmtPersona = $conexion->prepare($sqlPersona);
-$stmtPersona->bind_param("i", $personaId);
+
+$stmtPersona->bind_param(
+    "i",
+    $personaId
+);
+
 $stmtPersona->execute();
 
 $resultadoPersona = $stmtPersona->get_result();
+
 $persona = $resultadoPersona->fetch_assoc();
 
 $stmtPersona->close();
 
+
 if (!$persona) {
-    header('Location: index.php');
+
+    header('Location: ' . BASE_URL . 'favores');
     exit;
 }
 
@@ -52,41 +62,59 @@ $sqlMovimientos = "
         id,
         descripcion,
         valor,
-        fecha,
-        estado
+        tipo,
+        fecha
     FROM favores_movimientos
     WHERE persona_id = ?
     ORDER BY fecha DESC, id DESC
 ";
 
 $stmtMovimientos = $conexion->prepare($sqlMovimientos);
-$stmtMovimientos->bind_param("i", $personaId);
+
+$stmtMovimientos->bind_param(
+    "i",
+    $personaId
+);
+
 $stmtMovimientos->execute();
 
 $movimientos = $stmtMovimientos->get_result();
 
 
 // ==================================================
-// CALCULAR TOTAL PENDIENTE
+// CALCULAR TOTAL
 // ==================================================
 
 $sqlTotal = "
     SELECT
-        COALESCE(SUM(valor), 0) AS total
+        COALESCE(
+            SUM(
+                CASE
+                    WHEN tipo = 'cargo' THEN valor
+                    WHEN tipo = 'abono' THEN -valor
+                    ELSE 0
+                END
+            ),
+            0
+        ) AS total
     FROM favores_movimientos
     WHERE persona_id = ?
-    AND estado = 'pendiente'
 ";
 
 $stmtTotal = $conexion->prepare($sqlTotal);
-$stmtTotal->bind_param("i", $personaId);
+
+$stmtTotal->bind_param(
+    "i",
+    $personaId
+);
+
 $stmtTotal->execute();
 
 $resultadoTotal = $stmtTotal->get_result();
+
 $total = $resultadoTotal->fetch_assoc()['total'];
 
 $stmtTotal->close();
-
 
 
 require_once __DIR__ . '/../../includes/header.php';
@@ -98,13 +126,65 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 <div class="main-panel">
 
     <div class="content-wrapper">
+
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
+
                 <div class="card">
 
-
                     <div class="card-body">
+                        <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] === 'actualizado'): ?>
+
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Movimiento actualizado correctamente.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <?php endif; ?>
+
+                        <?php if (isset($_GET['error'])): ?>
+
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+                            <?php
+
+        switch ($_GET['error']) {
+
+            case 'descripcion':
+                echo 'La descripción es obligatoria.';
+                break;
+
+            case 'valor':
+                echo 'El valor debe ser mayor que cero.';
+                break;
+
+            case 'fecha':
+                echo 'La fecha es obligatoria.';
+                break;
+
+            case 'actualizar':
+                echo 'No fue posible actualizar el movimiento.';
+                break;
+
+            default:
+                echo 'Ocurrió un error.';
+                break;
+        }
+
+        ?>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">
+                            </button>
+
+                        </div>
+
+                        <?php endif; ?>
+
+                        <!-- ==================================================
+                             ENCABEZADO
+                        ================================================== -->
+
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
                             <div>
@@ -114,6 +194,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <?= htmlspecialchars($persona['nombre']) ?>
 
                                 </h2>
+
 
                                 <?php if ($persona['tipo'] === 'prestamo'): ?>
 
@@ -131,52 +212,66 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
+
                             <div>
 
-                                <a href="<?= BASE_URL ?>favores" class="btn btn-secondary">
+                                <a href="/inventario/favores" class="btn btn-secondary">
+
                                     Volver
+
                                 </a>
 
-                                <a href="<?= BASE_URL ?>favores/pdf/<?= $personaId ?>" class="btn btn-danger"
+
+                                <a href="/inventario/favores/pdf/<?= $personaId ?>" class="btn btn-danger"
                                     target="_blank">
+
                                     <i class="mdi mdi-file-pdf"></i>
+
                                     Generar PDF
+
                                 </a>
+
+
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#modalMovimiento">
+
                                     <i class="mdi mdi-plus"></i>
+
                                     Nuevo movimiento
+
                                 </button>
 
                             </div>
 
-
-
                         </div>
 
 
+                        <!-- ==================================================
+                             TOTAL
+                        ================================================== -->
 
                         <div class="row mb-4 mt-3">
 
                             <div class="col-md-6 col-lg-4">
-
 
                                 <div class="card" style="border: 1px solid #dee2e6; border-radius: 8px;">
 
                                     <div class="card-body">
 
                                         <p class="card-text mb-1">
+
                                             Total pendiente
+
                                         </p>
 
                                         <h2 class="mb-0">
 
                                             $<?= number_format(
-                                    $total,
-                                    0,
-                                    ',',
-                                    '.'
-                                ) ?>
+                                                $total,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) ?>
 
                                         </h2>
 
@@ -189,18 +284,23 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         </div>
 
 
-                        <!-- ==========================================
-                 MOVIMIENTOS
-            ========================================== -->
+                        <!-- ==================================================
+                             MOVIMIENTOS
+                        ================================================== -->
 
                         <div class="card">
 
                             <div class="card-body">
 
-                                <h4 class="card-title ">
+                                <h4 class="card-title">
+
                                     Movimientos
+
                                 </h4>
+
                                 <hr>
+
+
                                 <?php if ($movimientos->num_rows > 0): ?>
 
                                 <div class="table-responsive">
@@ -224,10 +324,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 </th>
 
                                                 <th>
-                                                    Estado
-                                                </th>
-
-                                                <th>
                                                     Acciones
                                                 </th>
 
@@ -235,87 +331,89 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         </thead>
 
+
                                         <tbody>
 
                                             <?php while ($movimiento = $movimientos->fetch_assoc()): ?>
 
                                             <tr>
 
+                                                <!-- FECHA -->
+
                                                 <td>
 
                                                     <?= date(
-                                                    'd/m/Y',
-                                                    strtotime($movimiento['fecha'])
-                                                ) ?>
+                                                                'd/m/Y',
+                                                                strtotime($movimiento['fecha'])
+                                                            ) ?>
 
                                                 </td>
+
+
+                                                <!-- DESCRIPCIÓN -->
 
                                                 <td>
 
                                                     <?= htmlspecialchars(
-                                                    $movimiento['descripcion']
-                                                ) ?>
+                                                                $movimiento['descripcion']
+                                                            ) ?>
 
                                                 </td>
 
-                                                <td>
 
-                                                    $<?= number_format(
-                                                    $movimiento['valor'],
-                                                    0,
-                                                    ',',
-                                                    '.'
-                                                ) ?>
-
-                                                </td>
+                                                <!-- VALOR -->
 
                                                 <td>
 
-                                                    <?php if ($movimiento['estado'] === 'pendiente'): ?>
+                                                    <?php if ($movimiento['tipo'] === 'abono'): ?>
 
-                                                    <span class="badge badge-danger">
-                                                        Pendiente
-                                                    </span>
+                                                    -$<?= number_format(
+                                                                    $movimiento['valor'],
+                                                                    0,
+                                                                    ',',
+                                                                    '.'
+                                                                ) ?>
 
                                                     <?php else: ?>
 
-                                                    <span class="badge badge-success">
-                                                        Pagado
-                                                    </span>
+                                                    $<?= number_format(
+                                                                    $movimiento['valor'],
+                                                                    0,
+                                                                    ',',
+                                                                    '.'
+                                                                ) ?>
 
                                                     <?php endif; ?>
 
                                                 </td>
+
+
+                                                <!-- ACCIONES -->
 
                                                 <td>
 
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary btn-editar-movimiento"
                                                         title="Editar" data-id="<?= $movimiento['id'] ?>"
-                                                        data-descripcion="<?= htmlspecialchars($movimiento['descripcion'], ENT_QUOTES) ?>"
-                                                        data-valor="<?= $movimiento['valor'] ?>"
-                                                        data-fecha="<?= $movimiento['fecha'] ?>"
-                                                        data-estado="<?= $movimiento['estado'] ?>">
+                                                        data-descripcion="<?= htmlspecialchars(
+                                                                    $movimiento['descripcion'],
+                                                                    ENT_QUOTES
+                                                                ) ?>" data-valor="<?= $movimiento['valor'] ?>"
+                                                        data-tipo="<?= $movimiento['tipo'] ?>"
+                                                        data-fecha="<?= $movimiento['fecha'] ?>">
+
                                                         <i class="mdi mdi-pencil"></i>
+
                                                     </button>
 
-                                                    <?php if ($movimiento['estado'] === 'pendiente'): ?>
 
-                                                    <a href="<?= BASE_URL ?>favores/movimiento/pagar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
-                                                        class="btn btn-sm btn-success"
-                                                        onclick="return confirm('¿Marcar este movimiento como pagado?')"
-                                                        title="Marcar como pagado">
-                                                        <i class="mdi mdi-check"></i>
-                                                    </a>
-
-                                                    <?php endif; ?>
-
-
-                                                    <a href="<?= BASE_URL ?>favores/movimiento/eliminar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
+                                                    <a href="/inventario/favores/movimiento/eliminar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
                                                         class="btn btn-sm btn-danger"
                                                         onclick="return confirm('¿Está seguro de eliminar este movimiento?')"
                                                         title="Eliminar">
+
                                                         <i class="mdi mdi-delete"></i>
+
                                                     </a>
 
                                                 </td>
@@ -346,23 +444,43 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     </div>
 
+
+                    <!-- ==================================================
+                         SCRIPT DEL MODAL
+                    ================================================== -->
+
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
 
-                        const modalElemento = document.getElementById('modalMovimiento');
+                        const modalElemento =
+                            document.getElementById('modalMovimiento');
 
-                        const modal = new bootstrap.Modal(modalElemento);
+                        const modal =
+                            new bootstrap.Modal(modalElemento);
 
-                        const form = document.getElementById('formMovimiento');
+                        const form =
+                            document.getElementById('formMovimiento');
 
-                        const idMovimiento = document.getElementById('idMovimiento');
-                        const descripcion = document.getElementById('descripcionMovimiento');
-                        const valor = document.getElementById('valorMovimiento');
-                        const fecha = document.getElementById('fechaMovimiento');
+                        const idMovimiento =
+                            document.getElementById('idMovimiento');
 
-                        const titulo = document.getElementById('tituloModalMovimiento');
+                        const descripcion =
+                            document.getElementById('descripcionMovimiento');
 
-                        const btnEliminar = document.getElementById('btnEliminarMovimiento');
+                        const valor =
+                            document.getElementById('valorMovimiento');
+
+                        const abono =
+                            document.getElementById('abonoMovimiento');
+
+                        const fecha =
+                            document.getElementById('fechaMovimiento');
+
+                        const titulo =
+                            document.getElementById('tituloModalMovimiento');
+
+                        const btnEliminar =
+                            document.getElementById('btnEliminarMovimiento');
 
 
                         // ==================================================
@@ -371,10 +489,14 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         valor.addEventListener('input', function() {
 
-                            let numero = this.value.replace(/\D/g, '');
+                            let numero =
+                                this.value.replace(/\D/g, '');
 
                             if (numero !== '') {
-                                this.value = Number(numero).toLocaleString('es-CO');
+
+                                this.value =
+                                    Number(numero).toLocaleString('es-CO');
+
                             }
 
                         });
@@ -388,7 +510,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             .querySelector('[data-bs-target="#modalMovimiento"]')
                             .addEventListener('click', function() {
 
-                                form.action = '<?= BASE_URL ?>favores/movimiento/agregar/<?= $personaId ?>';
+                                form.action =
+                                    '/inventario/favores/movimiento/agregar/<?= $personaId ?>';
 
                                 idMovimiento.value = '';
 
@@ -396,9 +519,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 valor.value = '';
 
-                                fecha.value = '<?= date('Y-m-d') ?>';
+                                abono.checked = false;
 
-                                titulo.innerText = 'Nuevo movimiento';
+                                fecha.value =
+                                    '<?= date('Y-m-d') ?>';
+
+                                titulo.innerText =
+                                    'Nuevo movimiento';
 
                                 btnEliminar.classList.add('d-none');
 
@@ -415,21 +542,43 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 boton.addEventListener('click', function() {
 
-                                    const id = this.dataset.id;
-                                    const descripcionDato = this.dataset.descripcion;
-                                    const valorDato = this.dataset.valor;
-                                    const fechaDato = this.dataset.fecha;
+                                    const id =
+                                        this.dataset.id;
 
-                                    form.action = '<?= BASE_URL ?>favores/movimiento/editar';
-                                    idMovimiento.value = id;
+                                    const descripcionDato =
+                                        this.dataset.descripcion;
 
-                                    descripcion.value = descripcionDato;
+                                    const valorDato =
+                                        this.dataset.valor;
 
-                                    valor.value = Number(valorDato).toLocaleString('es-CO');
+                                    const tipoDato =
+                                        this.dataset.tipo;
 
-                                    fecha.value = fechaDato;
+                                    const fechaDato =
+                                        this.dataset.fecha;
 
-                                    titulo.innerText = 'Editar movimiento';
+
+                                    form.action =
+                                        '/inventario/favores/movimiento/editar';
+
+                                    idMovimiento.value =
+                                        id;
+
+                                    descripcion.value =
+                                        descripcionDato;
+
+                                    valor.value =
+                                        Number(valorDato)
+                                        .toLocaleString('es-CO');
+
+                                    fecha.value =
+                                        fechaDato;
+
+                                    abono.checked =
+                                        tipoDato === 'abono';
+
+                                    titulo.innerText =
+                                        'Editar movimiento';
 
                                     btnEliminar.classList.remove('d-none');
 
@@ -446,16 +595,22 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         btnEliminar.addEventListener('click', function() {
 
-                            const id = idMovimiento.value;
+                            const id =
+                                idMovimiento.value;
 
                             if (!id) {
                                 return;
                             }
 
-                            if (confirm('¿Está seguro de eliminar este movimiento?')) {
+
+                            if (
+                                confirm(
+                                    '¿Está seguro de eliminar este movimiento?'
+                                )
+                            ) {
 
                                 window.location.href =
-                                    '<?= BASE_URL ?>favores/movimiento/eliminar?id=' +
+                                    '/inventario/favores/movimiento/eliminar?id=' +
                                     id +
                                     '&persona_id=<?= $personaId ?>';
 
@@ -464,193 +619,311 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         });
 
                     });
-                    </script>
-                    <!-- MODAL MOVIMIENTO -->
+                    </script><script>
+document.addEventListener('DOMContentLoaded', function() {
 
-                    <div class="modal fade" id="modalMovimiento" tabindex="-1">
+    const modalElemento =
+        document.getElementById('modalMovimiento');
 
-                        <div class="modal-dialog">
+    const modal =
+        new bootstrap.Modal(modalElemento);
 
-                            <div class="modal-content">
+    const form =
+        document.getElementById('formMovimiento');
 
-                                <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
+    const idMovimiento =
+        document.getElementById('idMovimiento');
 
-                                    <input type="hidden" name="persona_id" value="<?= $personaId ?>">
-                                    <input type="hidden" name="id" id="idMovimiento">
+    const descripcion =
+        document.getElementById('descripcionMovimiento');
 
-                                    <div class="modal-header">
+    const valor =
+        document.getElementById('valorMovimiento');
 
-                                        <h5 class="modal-title" id="tituloModalMovimiento">
-                                            Nuevo movimiento
-                                        </h5>
+    const abono =
+        document.getElementById('abonoMovimiento');
 
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal">
-                                        </button>
+    const fecha =
+        document.getElementById('fechaMovimiento');
 
-                                    </div>
+    const titulo =
+        document.getElementById('tituloModalMovimiento');
 
-                                    <div class="modal-body">
 
-                                        <div class="mb-3">
+    // ==================================================
+    // FORMATO DEL VALOR
+    // ==================================================
 
-                                            <label class="form-label">
-                                                Descripción
-                                            </label>
+    valor.addEventListener('input', function() {
 
-                                            <input type="text" name="descripcion" id="descripcionMovimiento"
-                                                class="form-control" maxlength="255" placeholder="Ej: Préstamo"
-                                                required>
+        let numero =
+            this.value.replace(/\D/g, '');
 
-                                        </div>
+        if (numero !== '') {
 
-                                        <div class="mb-3">
+            this.value =
+                Number(numero).toLocaleString('es-CO');
 
-                                            <label class="form-label">
-                                                Valor
-                                            </label>
+        }
 
-                                            <input type="text" name="valor" id="valorMovimiento" class="form-control"
-                                                placeholder="Ej: 50.000" inputmode="numeric" required>
+    });
 
-                                            <small class="text-muted">
-                                                Ingrese el valor sin decimales.
-                                            </small>
 
-                                        </div>
+    // ==================================================
+    // NUEVO MOVIMIENTO
+    // ==================================================
 
-                                        <div class="mb-3">
+    document
+        .querySelector('[data-bs-target="#modalMovimiento"]')
+        .addEventListener('click', function() {
 
-                                            <label class="form-label">
-                                                Fecha
-                                            </label>
+            form.action =
+                '/inventario/favores/movimiento/agregar/<?= $personaId ?>';
 
-                                            <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
-                                                required>
+            idMovimiento.value = '';
 
-                                        </div>
+            descripcion.value = '';
 
-                                    </div>
+            valor.value = '';
 
-                                    <div class="modal-footer">
+            abono.checked = false;
 
-                                        <button type="button" class="btn btn-danger d-none" id="btnEliminarMovimiento">
-                                            <i class="mdi mdi-delete"></i>
-                                            Eliminar
-                                        </button>
+            fecha.value =
+                '<?= date('Y-m-d') ?>';
 
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Cancelar
-                                        </button>
+            titulo.innerText =
+                'Nuevo movimiento';
 
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-save"></i>
-                                            Guardar
-                                        </button>
+        });
 
-                                    </div>
 
-                                </form>
+    // ==================================================
+    // EDITAR MOVIMIENTO
+    // ==================================================
 
-                            </div>
+    document
+        .querySelectorAll('.btn-editar-movimiento')
+        .forEach(function(boton) {
 
-                        </div>
+            boton.addEventListener('click', function() {
 
-                    </div>
+                const id =
+                    this.dataset.id;
+
+                const descripcionDato =
+                    this.dataset.descripcion;
+
+                const valorDato =
+                    this.dataset.valor;
+
+                const tipoDato =
+                    this.dataset.tipo;
+
+                const fechaDato =
+                    this.dataset.fecha;
+
+
+                form.action =
+                    '/inventario/favores/movimiento/editar';
+
+                idMovimiento.value =
+                    id;
+
+                descripcion.value =
+                    descripcionDato;
+
+                valor.value =
+                    Number(valorDato)
+                    .toLocaleString('es-CO');
+
+                fecha.value =
+                    fechaDato;
+
+                abono.checked =
+                    tipoDato === 'abono';
+
+                titulo.innerText =
+                    'Editar movimiento';
+
+                modal.show();
+
+            });
+
+        });
+
+});
+</script>
+
 
                     <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
 
                 </div>
 
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
-                <!-- MODAL NUEVO MOVIMIENTO -->
+<!-- ==================================================
+     MODAL MOVIMIENTO
+================================================== -->
 
-                <div class="modal fade" id="modalMovimiento" tabindex="-1">
+<div class="modal fade" id="modalMovimiento" tabindex="-1">
 
-                    <div class="modal-dialog">
+    <div class="modal-dialog">
 
-                        <div class="modal-content">
+        <div class="modal-content">
 
-                            <form action="agregar_movimiento.php" method="POST" id="formMovimiento">
+            <form action="/inventario/favores/movimiento/agregar/<?= $personaId ?>" method="POST" id="formMovimiento">
 
-                                <input type="hidden" name="persona_id" value="<?= $personaId ?>">
 
-                                <div class="modal-header">
+                <input type="hidden" name="persona_id" value="<?= $personaId ?>">
 
-                                    <h5 class="modal-title">
-                                        Nuevo movimiento
-                                    </h5>
 
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                                    </button>
+                <input type="hidden" name="id" id="idMovimiento">
 
-                                </div>
 
-                                <div class="modal-body">
+                <!-- ==================================================
+                     HEADER
+                ================================================== -->
 
-                                    <div class="mb-3">
+                <div class="modal-header">
 
-                                        <label for="fechaMovimiento" class="form-label">
-                                            Fecha
-                                        </label>
+                    <h5 class="modal-title" id="tituloModalMovimiento">
 
-                                        <input type="date" name="fecha" id="fechaMovimiento" class="form-control"
-                                            value="<?= date('Y-m-d') ?>" required>
+                        Nuevo movimiento
 
-                                    </div>
+                    </h5>
 
-                                    
 
-                                    <div class="mb-3">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-                                        <label for="valorMovimiento" class="form-label">
-                                            Valor
-                                        </label>
+                    </button>
 
-                                        <input type="text" name="valor" id="valorMovimiento" class="form-control"
-                                            placeholder="Ej: 50.000" inputmode="numeric" required>
+                </div>
 
-                                        <small class="text-muted">
-                                            Ingrese el valor sin decimales.
-                                        </small>
 
-                                    </div>
+                <!-- ==================================================
+                     BODY
+                ================================================== -->
 
-                                    <div class="mb-3">
+                <div class="modal-body">
 
-                                        <label for="descripcionMovimiento" class="form-label">
-                                            Descripción
-                                        </label>
 
-                                        <input type="text" name="descripcion" id="descripcionMovimiento"
-                                            class="form-control" maxlength="255" placeholder="Ej: Préstamo" required>
+                    <!-- DESCRIPCIÓN -->
 
-                                    </div>
+                    <div class="mb-3">
 
-                                </div>
+                        <label class="form-label">
 
-                                <div class="modal-footer">
+                            Descripción
 
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        Cancelar
-                                    </button>
+                        </label>
 
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-save"></i>
-                                        Guardar
-                                    </button>
 
-                                </div>
+                        <input type="text" name="descripcion" id="descripcionMovimiento" class="form-control"
+                            maxlength="255" placeholder="Ej: Préstamo" required>
 
-                            </form>
+                    </div>
 
-                        </div>
+
+                    <!-- VALOR -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Valor
+
+                        </label>
+
+
+                        <input type="text" name="valor" id="valorMovimiento" class="form-control"
+                            placeholder="Ej: 50.000" inputmode="numeric" required>
+
+
+                        <small class="text-muted">
+
+                            Ingrese el valor sin decimales.
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- ABONO -->
+
+                   <div class="mb-3">
+    <div class="form-check" style="margin-left: 25px;">
+        <input type="checkbox"
+            name="abono"
+            id="abonoMovimiento"
+            class="form-check-input">
+
+        <label for="abonoMovimiento"
+            class="form-check-label"
+            style="font-size: 16px; margin-left: 2px;">
+            Abonar
+        </label>
+    </div>
+</div>
+
+
+                    <!-- FECHA -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Fecha
+
+                        </label>
+
+
+                        <input type="date" name="fecha" id="fechaMovimiento" class="form-control" required>
 
                     </div>
 
                 </div>
 
-            </div>
+
+                <!-- ==================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+    <button type="button"
+        class="btn btn-secondary"
+        data-bs-dismiss="modal">
+
+        Cancelar
+
+    </button>
 
 
-            <?php require_once __DIR__ . '/../../includes/scripts.php'; ?>
+    <button type="submit"
+        class="btn btn-primary">
+
+        <i class="bi bi-save"></i>
+
+        Guardar
+
+    </button>
+
+</div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<?php require_once __DIR__ . '/../../includes/scripts.php'; ?>
