@@ -33,7 +33,7 @@ require_once __DIR__ . '/../config/config.php';
     <!-- inject:css -->
     <link rel="stylesheet" href="/inventario/src/assets/css/style.css">
     <!-- endinject -->
-    <link rel="shortcut icon" href="/inventario/src/assets/images/favicon.png" />
+    <link rel="shortcut icon" href="/inventario/src/assets/images/LOGO.png" />
   </head>
 
   C:\xampp\htdocs\inventario\src\assets\css
