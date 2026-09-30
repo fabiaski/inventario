@@ -459,12 +459,14 @@ $dompdf->render();
 // NOMBRE DEL ARCHIVO
 // ==================================================
 
-$nombreArchivo = 'favores_' .
+$nombreArchivo =
     preg_replace(
         '/[^a-zA-Z0-9_-]/',
         '_',
         $persona['nombre']
     ) .
+    '_' .
+    date('d-m-Y') .
     '.pdf';
 
 

@@ -352,7 +352,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- DESCRIPCIÓN -->
 
-                                                <td>
+                                                <td
+                                                    style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
 
                                                     <?= htmlspecialchars(
                                                                 $movimiento['descripcion']
@@ -619,140 +620,141 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         });
 
                     });
-                    </script><script>
-document.addEventListener('DOMContentLoaded', function() {
+                    </script>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
 
-    const modalElemento =
-        document.getElementById('modalMovimiento');
+                        const modalElemento =
+                            document.getElementById('modalMovimiento');
 
-    const modal =
-        new bootstrap.Modal(modalElemento);
+                        const modal =
+                            new bootstrap.Modal(modalElemento);
 
-    const form =
-        document.getElementById('formMovimiento');
+                        const form =
+                            document.getElementById('formMovimiento');
 
-    const idMovimiento =
-        document.getElementById('idMovimiento');
+                        const idMovimiento =
+                            document.getElementById('idMovimiento');
 
-    const descripcion =
-        document.getElementById('descripcionMovimiento');
+                        const descripcion =
+                            document.getElementById('descripcionMovimiento');
 
-    const valor =
-        document.getElementById('valorMovimiento');
+                        const valor =
+                            document.getElementById('valorMovimiento');
 
-    const abono =
-        document.getElementById('abonoMovimiento');
+                        const abono =
+                            document.getElementById('abonoMovimiento');
 
-    const fecha =
-        document.getElementById('fechaMovimiento');
+                        const fecha =
+                            document.getElementById('fechaMovimiento');
 
-    const titulo =
-        document.getElementById('tituloModalMovimiento');
-
-
-    // ==================================================
-    // FORMATO DEL VALOR
-    // ==================================================
-
-    valor.addEventListener('input', function() {
-
-        let numero =
-            this.value.replace(/\D/g, '');
-
-        if (numero !== '') {
-
-            this.value =
-                Number(numero).toLocaleString('es-CO');
-
-        }
-
-    });
+                        const titulo =
+                            document.getElementById('tituloModalMovimiento');
 
 
-    // ==================================================
-    // NUEVO MOVIMIENTO
-    // ==================================================
+                        // ==================================================
+                        // FORMATO DEL VALOR
+                        // ==================================================
 
-    document
-        .querySelector('[data-bs-target="#modalMovimiento"]')
-        .addEventListener('click', function() {
+                        valor.addEventListener('input', function() {
 
-            form.action =
-                '/inventario/favores/movimiento/agregar/<?= $personaId ?>';
+                            let numero =
+                                this.value.replace(/\D/g, '');
 
-            idMovimiento.value = '';
+                            if (numero !== '') {
 
-            descripcion.value = '';
+                                this.value =
+                                    Number(numero).toLocaleString('es-CO');
 
-            valor.value = '';
+                            }
 
-            abono.checked = false;
-
-            fecha.value =
-                '<?= date('Y-m-d') ?>';
-
-            titulo.innerText =
-                'Nuevo movimiento';
-
-        });
+                        });
 
 
-    // ==================================================
-    // EDITAR MOVIMIENTO
-    // ==================================================
+                        // ==================================================
+                        // NUEVO MOVIMIENTO
+                        // ==================================================
 
-    document
-        .querySelectorAll('.btn-editar-movimiento')
-        .forEach(function(boton) {
+                        document
+                            .querySelector('[data-bs-target="#modalMovimiento"]')
+                            .addEventListener('click', function() {
 
-            boton.addEventListener('click', function() {
+                                form.action =
+                                    '/inventario/favores/movimiento/agregar/<?= $personaId ?>';
 
-                const id =
-                    this.dataset.id;
+                                idMovimiento.value = '';
 
-                const descripcionDato =
-                    this.dataset.descripcion;
+                                descripcion.value = '';
 
-                const valorDato =
-                    this.dataset.valor;
+                                valor.value = '';
 
-                const tipoDato =
-                    this.dataset.tipo;
+                                abono.checked = false;
 
-                const fechaDato =
-                    this.dataset.fecha;
+                                fecha.value =
+                                    '<?= date('Y-m-d') ?>';
+
+                                titulo.innerText =
+                                    'Nuevo movimiento';
+
+                            });
 
 
-                form.action =
-                    '/inventario/favores/movimiento/editar';
+                        // ==================================================
+                        // EDITAR MOVIMIENTO
+                        // ==================================================
 
-                idMovimiento.value =
-                    id;
+                        document
+                            .querySelectorAll('.btn-editar-movimiento')
+                            .forEach(function(boton) {
 
-                descripcion.value =
-                    descripcionDato;
+                                boton.addEventListener('click', function() {
 
-                valor.value =
-                    Number(valorDato)
-                    .toLocaleString('es-CO');
+                                    const id =
+                                        this.dataset.id;
 
-                fecha.value =
-                    fechaDato;
+                                    const descripcionDato =
+                                        this.dataset.descripcion;
 
-                abono.checked =
-                    tipoDato === 'abono';
+                                    const valorDato =
+                                        this.dataset.valor;
 
-                titulo.innerText =
-                    'Editar movimiento';
+                                    const tipoDato =
+                                        this.dataset.tipo;
 
-                modal.show();
+                                    const fechaDato =
+                                        this.dataset.fecha;
 
-            });
 
-        });
+                                    form.action =
+                                        '/inventario/favores/movimiento/editar';
 
-});
-</script>
+                                    idMovimiento.value =
+                                        id;
+
+                                    descripcion.value =
+                                        descripcionDato;
+
+                                    valor.value =
+                                        Number(valorDato)
+                                        .toLocaleString('es-CO');
+
+                                    fecha.value =
+                                        fechaDato;
+
+                                    abono.checked =
+                                        tipoDato === 'abono';
+
+                                    titulo.innerText =
+                                        'Editar movimiento';
+
+                                    modal.show();
+
+                                });
+
+                            });
+
+                    });
+                    </script>
 
 
                     <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
@@ -857,20 +859,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- ABONO -->
 
-                   <div class="mb-3">
-    <div class="form-check" style="margin-left: 25px;">
-        <input type="checkbox"
-            name="abono"
-            id="abonoMovimiento"
-            class="form-check-input">
+                    <div class="mb-3">
+                        <div class="form-check" style="margin-left: 25px;">
+                            <input type="checkbox" name="abono" id="abonoMovimiento" class="form-check-input">
 
-        <label for="abonoMovimiento"
-            class="form-check-label"
-            style="font-size: 16px; margin-left: 2px;">
-            Abonar
-        </label>
-    </div>
-</div>
+                            <label for="abonoMovimiento" class="form-check-label"
+                                style="font-size: 16px; margin-left: 2px;">
+                                Abonar
+                            </label>
+                        </div>
+                    </div>
 
 
                     <!-- FECHA -->
@@ -897,25 +895,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 <div class="modal-footer">
 
-    <button type="button"
-        class="btn btn-secondary"
-        data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 
-        Cancelar
+                        Cancelar
 
-    </button>
+                    </button>
 
 
-    <button type="submit"
-        class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary">
 
-        <i class="bi bi-save"></i>
+                        <i class="bi bi-save"></i>
 
-        Guardar
+                        Guardar
 
-    </button>
+                    </button>
 
-</div>
+                </div>
 
             </form>
 
