@@ -15,7 +15,7 @@ if ($id <= 0) {
 
     echo json_encode([
         'success' => false,
-        'error' => 'Persona no válida.'
+        'error' => 'ID de persona no válido.'
     ]);
 
     exit;
@@ -35,7 +35,6 @@ $stmt = $conexion->prepare("
       AND estado = 'activo'
 ");
 
-
 if (!$stmt) {
 
     echo json_encode([
@@ -50,30 +49,39 @@ if (!$stmt) {
 $stmt->bind_param('i', $id);
 
 
-if ($stmt->execute()) {
-
-    if ($stmt->affected_rows > 0) {
-
-        echo json_encode([
-            'success' => true,
-            'mensaje' => 'La persona fue finalizada correctamente.'
-        ]);
-
-    } else {
-
-        echo json_encode([
-            'success' => false,
-            'error' => 'La persona no existe o ya fue finalizada.'
-        ]);
-    }
-
-} else {
+if (!$stmt->execute()) {
 
     echo json_encode([
         'success' => false,
         'error' => 'No se pudo finalizar la persona: ' . $stmt->error
     ]);
+
+    $stmt->close();
+
+    exit;
+}
+
+
+// ==================================================
+// VERIFICAR RESULTADO
+// ==================================================
+
+if ($stmt->affected_rows > 0) {
+
+    echo json_encode([
+        'success' => true,
+        'mensaje' => 'La persona fue finalizada correctamente.'
+    ]);
+
+} else {
+
+    echo json_encode([
+        'success' => false,
+        'error' => 'La persona no existe o ya está finalizada.'
+    ]);
 }
 
 
 $stmt->close();
+
+exit;

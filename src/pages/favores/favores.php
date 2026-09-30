@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 // ==================================================
-// CONSULTAR PERSONAS
+// CONSULTAR PERSONAS ACTIVAS
 // ==================================================
 
 $sql = "
@@ -206,9 +206,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                     <div class="card-body">
 
 
-                        <!--==================================================
+                        <!-- ==================================================
                         ENCABEZADO
-                        ==================================================-->
+                        ================================================== -->
 
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
@@ -219,12 +219,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <i class="bi bi-receipt"></i>
 
                                     Favores
+
                                 </h2>
 
                                 <p class="text-muted mb-0">
 
                                     Administra las personas y sus movimientos de favores.
-
 
                                 </p>
 
@@ -233,13 +233,24 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             <div class="d-flex gap-2">
 
-                                <a href="/inventario/favores/finalizados" class="btn btn-secondary">
+                                <a
+                                    href="/inventario/favores/finalizados"
+                                    class="btn btn-secondary"
+                                >
+
                                     <i class="mdi mdi-archive"></i>
+
                                     Finalizados
+
                                 </a>
 
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#modalPersona">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalPersona"
+                                >
 
                                     <i class="mdi mdi-plus"></i>
 
@@ -247,9 +258,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </button>
 
-
                             </div>
-
 
                         </div>
 
@@ -258,133 +267,179 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
                         <!-- ==================================================
-                             LISTADO DE PERSONAS
+                        LISTADO DE PERSONAS
                         ================================================== -->
 
                         <div class="row">
 
                             <?php if ($resultado && $resultado->num_rows > 0): ?>
 
-                            <?php while ($persona = $resultado->fetch_assoc()): ?>
+                                <?php while ($persona = $resultado->fetch_assoc()): ?>
 
-                            <div class="col-md-6 col-lg-4 mb-4 tarjeta-persona" data-nombre="<?= htmlspecialchars(
-        strtolower($persona['nombre']),
-        ENT_QUOTES
-    ) ?>">
+                                    <div
+                                        class="col-md-6 col-lg-4 mb-4 tarjeta-persona"
+                                        data-nombre="<?= htmlspecialchars(
+                                            strtolower($persona['nombre']),
+                                            ENT_QUOTES
+                                        ) ?>"
+                                    >
 
-                                <div class="card" style="border: 1px solid #dee2e6; border-radius: 8px;">
+                                        <div
+                                            class="card"
+                                            style="border: 1px solid #dee2e6; border-radius: 8px;"
+                                        >
 
-                                    <div class="card-body">
+                                            <div class="card-body">
 
-                                        <!-- NOMBRE -->
 
-                                        <h4 class="card-title">
+                                                <!-- NOMBRE -->
 
-                                            <?= htmlspecialchars(
+                                                <h4 class="card-title">
+
+                                                    <?= htmlspecialchars(
                                                         $persona['nombre']
                                                     ) ?>
 
-                                        </h4>
+                                                </h4>
 
 
-                                        <!-- TIPO -->
+                                                <!-- TIPO -->
 
-                                        <p class="mb-2">
+                                                <p class="mb-2">
 
-                                            <?php if ($persona['tipo'] === 'prestamo'): ?>
+                                                    <?php if ($persona['tipo'] === 'prestamo'): ?>
 
-                                            <span class="badge badge-success">
+                                                        <span class="badge badge-success">
 
-                                                Préstamo
+                                                            Préstamo
 
-                                            </span>
+                                                        </span>
 
-                                            <?php else: ?>
+                                                    <?php else: ?>
 
-                                            <span class="badge badge-warning">
+                                                        <span class="badge badge-warning">
 
-                                                A pagar
+                                                            A pagar
 
-                                            </span>
+                                                        </span>
 
-                                            <?php endif; ?>
+                                                    <?php endif; ?>
 
-                                        </p>
+                                                </p>
 
 
-                                        <!-- TOTAL -->
+                                                <!-- TOTAL -->
 
-                                        <h3 class="mb-3">
+                                                <h3 class="mb-3">
 
-                                            $<?= number_format(
+                                                    $<?= number_format(
                                                         $persona['total_pendiente'],
                                                         0,
                                                         ',',
                                                         '.'
                                                     ) ?>
 
-                                        </h3>
+                                                </h3>
 
 
-                                        <!-- ACCIONES -->
+                                                <!-- ==================================================
+                                                ACCIONES
+                                                ================================================== -->
 
-                                        <div class="d-flex gap-2 flex-wrap">
+                                                <div class="d-flex gap-2 flex-wrap">
 
-                                            <a href="/inventario/favores/persona/ver?id=<?= $persona['id'] ?>"
-                                                class="btn btn-primary btn-sm">
 
-                                                Ver movimientos
+                                                    <!-- VER MOVIMIENTOS -->
 
-                                            </a>
+                                                    <a
+                                                        href="/inventario/favores/persona/ver?id=<?= $persona['id'] ?>"
+                                                        class="btn btn-primary btn-sm"
+                                                    >
 
-                                            <button type="button" class="btn btn-secondary btn-sm btn-editar-persona"
-                                                title="Editar" data-id="<?= $persona['id'] ?>"
-                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
-                                                data-tipo="<?= htmlspecialchars($persona['tipo'], ENT_QUOTES) ?>">
+                                                        Ver movimientos
 
-                                                <i class="mdi mdi-pencil"></i>
+                                                    </a>
 
-                                            </button>
 
-                                            <button type="button" class="btn btn-success btn-sm btn-finalizar-persona"
-                                                data-id="<?= $persona['id'] ?>"
-                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
-                                                title="Finalizar">
+                                                    <!-- EDITAR -->
 
-                                                <i class="mdi mdi-check"></i>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-secondary btn-sm btn-editar-persona"
+                                                        title="Editar"
+                                                        data-id="<?= $persona['id'] ?>"
+                                                        data-nombre="<?= htmlspecialchars(
+                                                            $persona['nombre'],
+                                                            ENT_QUOTES
+                                                        ) ?>"
+                                                        data-tipo="<?= htmlspecialchars(
+                                                            $persona['tipo'],
+                                                            ENT_QUOTES
+                                                        ) ?>"
+                                                    >
 
-                                            </button>
+                                                        <i class="mdi mdi-pencil"></i>
 
-                                            <button type="button" class="btn btn-danger btn-sm btn-eliminar-persona"
-                                                data-id="<?= $persona['id'] ?>"
-                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
-                                                title="Eliminar">
+                                                    </button>
 
-                                                <i class="mdi mdi-delete"></i>
 
-                                            </button>
+                                                    <!-- FINALIZAR -->
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-success btn-sm btn-finalizar-persona"
+                                                        data-id="<?= $persona['id'] ?>"
+                                                        data-nombre="<?= htmlspecialchars(
+                                                            $persona['nombre'],
+                                                            ENT_QUOTES
+                                                        ) ?>"
+                                                        title="Finalizar"
+                                                    >
+
+                                                        <i class="mdi mdi-check"></i>
+
+                                                    </button>
+
+
+                                                    <!-- ELIMINAR -->
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-danger btn-sm btn-eliminar-persona"
+                                                        data-id="<?= $persona['id'] ?>"
+                                                        data-nombre="<?= htmlspecialchars(
+                                                            $persona['nombre'],
+                                                            ENT_QUOTES
+                                                        ) ?>"
+                                                        title="Eliminar"
+                                                    >
+
+                                                        <i class="mdi mdi-delete"></i>
+
+                                                    </button>
+
+
+                                                </div>
+
+                                            </div>
 
                                         </div>
 
                                     </div>
 
-                                </div>
-
-                            </div>
-
-                            <?php endwhile; ?>
+                                <?php endwhile; ?>
 
                             <?php else: ?>
 
-                            <div class="col-12">
+                                <div class="col-12">
 
-                                <div class="alert alert-info">
+                                    <div class="alert alert-info">
 
-                                    No hay personas registradas.
+                                        No hay personas registradas.
+
+                                    </div>
 
                                 </div>
-
-                            </div>
 
                             <?php endif; ?>
 
@@ -398,438 +453,543 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
         </div>
 
-
-
-
-        <!-- /.main-panel -->
-
-
-
-        <!-- ==================================================
-     MODAL PERSONA
-================================================== -->
-
-        <div class="modal fade" id="modalPersona" tabindex="-1">
-
-            <div class="modal-dialog">
-
-                <div class="modal-content">
-
-                    <form action="/inventario/favores" method="POST" id="formPersona">
-
-                        <input type="hidden" name="id" id="idPersona">
-
-
-                        <!-- HEADER -->
-
-                        <div class="modal-header">
-
-                            <h5 class="modal-title" id="tituloModalPersona">
-
-                                Nueva persona
-
-                            </h5>
-
-                            <button type="button" class="btn-close" data-bs-dismiss="modal">
-
-                            </button>
-
-                        </div>
-
-
-                        <!-- BODY -->
-
-                        <div class="modal-body">
-
-                            <!-- NOMBRE -->
-
-                            <div class="mb-3">
-
-                                <label for="nombrePersona" class="form-label">
-
-                                    Nombre
-
-                                </label>
-
-                                <input type="text" name="nombre" id="nombrePersona" class="form-control" maxlength="150"
-                                    required>
-
-                            </div>
-
-
-                            <!-- TIPO -->
-
-                            <div class="mb-3">
-
-                                <label for="tipoPersona" class="form-label">
-
-                                    Tipo
-
-                                </label>
-
-                                <select name="tipo" id="tipoPersona" class="form-control" style="color: #212529;"
-                                    required>
-
-                                    <option value="">
-                                        Seleccione una opción
-                                    </option>
-
-                                    <option value="prestamo">
-                                        Préstamo
-                                    </option>
-
-                                    <option value="a_pagar">
-                                        A pagar
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- FOOTER -->
-
-                        <div class="modal-footer">
-
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
-                                Cancelar
-
-                            </button>
-
-                            <button type="submit" class="btn btn-primary">
-
-                                <i class="bi bi-save"></i>
-
-                                Guardar
-
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const modalElemento =
-                document.getElementById('modalPersona');
-
-            const modal =
-                new bootstrap.Modal(modalElemento);
-
-            const form =
-                document.getElementById('formPersona');
-
-            const idPersona =
-                document.getElementById('idPersona');
-
-            const nombre =
-                document.getElementById('nombrePersona');
-
-            const tipo =
-                document.getElementById('tipoPersona');
-
-            const titulo =
-                document.getElementById('tituloModalPersona');
-
-
-            // ==================================================
-            // NUEVA PERSONA
-            // ==================================================
-
-            document
-                .querySelector('[data-bs-target="#modalPersona"]')
-                .addEventListener('click', function() {
-
-                    form.action =
-                        '/inventario/favores';
-
-                    idPersona.value = '';
-
-                    nombre.value = '';
-
-                    tipo.value = '';
-
-                    titulo.innerText =
-                        'Nueva persona';
-
-                });
-
-
-            // ==================================================
-            // EDITAR PERSONA
-            // ==================================================
-
-            document
-                .querySelectorAll('.btn-editar-persona')
-                .forEach(function(boton) {
-
-                    boton.addEventListener('click', function() {
-
-                        form.action =
-                            '/inventario/favores';
-
-                        idPersona.value =
-                            this.dataset.id;
-
-                        nombre.value =
-                            this.dataset.nombre;
-
-                        // CARGAR AUTOMÁTICAMENTE EL TIPO ACTUAL
-                        tipo.value =
-                            this.dataset.tipo;
-
-                        titulo.innerText =
-                            'Editar persona';
-
-                        modal.show();
-
-                    });
-
-                });
-
-
-            // ==================================================
-            // GUARDAR / EDITAR
-            // ==================================================
-
-            form.addEventListener('submit', function(e) {
-
-                e.preventDefault();
-
-                const datos =
-                    new FormData(form);
-
-                fetch(
-                        form.action, {
-                            method: 'POST',
-                            body: datos
-                        }
-                    )
-
-                    .then(function(response) {
-
-                        return response.json();
-
-                    })
-
-                    .then(function(data) {
-
-                        if (data.success) {
-
-                            modal.hide();
-
-                            window.location.reload();
-
-                        } else {
-
-                            alert(
-                                data.error ||
-                                'No se pudo guardar la información.'
-                            );
-
-                        }
-
-                    })
-
-                    .catch(function(error) {
-
-                        console.error(error);
-
-                        alert(
-                            'Ocurrió un error al guardar.'
-                        );
-
-                    });
-
-            });
-
-        });
-
-        // ==================================================
-        // BUSCAR POR PERSONA
-        // ==================================================
-
-        const buscarPersona =
-            document.getElementById('buscarPersona');
-
-        const tarjetasPersona =
-            document.querySelectorAll('.tarjeta-persona');
-
-        buscarPersona.addEventListener('input', function() {
-
-            const busqueda =
-                this.value.toLowerCase().trim();
-
-            tarjetasPersona.forEach(function(tarjeta) {
-
-                const persona =
-                    tarjeta.dataset.nombre;
-
-                tarjeta.style.display =
-                    persona.includes(busqueda) ?
-                    '' :
-                    'none';
-
-            });
-
-        });
-
-
-        // ==================================================
-        // FINALIZAR PERSONA
-        // ==================================================
-
-        document
-            .querySelectorAll('.btn-finalizar-persona')
-            .forEach(function(boton) {
-
-                boton.addEventListener('click', function() {
-
-                    const id = this.dataset.id;
-                    const nombre = this.dataset.nombre;
-
-                    const confirmar = confirm(
-                        '¿Desea finalizar a ' + nombre + '?\n\n' +
-                        'La persona dejará de aparecer en la lista de activos, ' +
-                        'pero sus movimientos se conservarán.'
-                    );
-
-                    if (!confirmar) {
-                        return;
-                    }
-
-                    const datos = new FormData();
-
-                    datos.append('id', id);
-
-                    fetch('/inventario/favores/finalizar/', {
-                            method: 'POST',
-                            body: datos
-                        })
-                        .then(function(response) {
-
-                            return response.json();
-
-                        })
-                        .then(function(data) {
-
-                            if (data.success) {
-
-                                alert(
-                                    data.mensaje ||
-                                    'Persona finalizada correctamente.'
-                                );
-
-                                window.location.reload();
-
-                            } else {
-
-                                alert(
-                                    data.error ||
-                                    'No se pudo finalizar la persona.'
-                                );
-                            }
-
-                        })
-                        .catch(function(error) {
-
-                            console.error(error);
-
-                            alert(
-                                'Ocurrió un error al finalizar la persona.'
-                            );
-
-                        });
-
-                });
-
-            });
-
-
-        // ==================================================
-        // ELIMINAR PERSONA
-        // ==================================================
-
-        document
-            .querySelectorAll('.btn-eliminar-persona')
-            .forEach(function(boton) {
-
-                boton.addEventListener('click', function() {
-
-                    const id = this.dataset.id;
-                    const nombre = this.dataset.nombre;
-
-                    const confirmar = confirm(
-                        '¿Está seguro de eliminar a ' + nombre + '?\n\n' +
-                        'ATENCIÓN: se eliminará la persona y TODOS sus movimientos.\n\n' +
-                        'Esta acción no se puede deshacer.'
-                    );
-
-                    if (!confirmar) {
-                        return;
-                    }
-
-                    const datos = new FormData();
-
-                    datos.append('id', id);
-
-                    fetch('/inventario/favores/eliminar/', {
-                            method: 'POST',
-                            body: datos
-                        })
-                        .then(function(response) {
-
-                            return response.json();
-
-                        })
-                        .then(function(data) {
-
-                            if (data.success) {
-
-                                alert(
-                                    data.mensaje ||
-                                    'Persona eliminada correctamente.'
-                                );
-
-                                window.location.reload();
-
-                            } else {
-
-                                alert(
-                                    data.error ||
-                                    'No se pudo eliminar la persona.'
-                                );
-                            }
-
-                        })
-                        .catch(function(error) {
-
-                            console.error(error);
-
-                            alert(
-                                'Ocurrió un error al eliminar la persona.'
-                            );
-
-                        });
-
-                });
-
-            });
-        </script>
-
-        <?php
+<?php
 
 require_once __DIR__ . '/../../includes/footer.php';
 require_once __DIR__ . '/../../includes/scripts.php';
 
 ?>
+
+
+<!-- ==================================================
+MODAL PERSONA
+================================================== -->
+
+<div class="modal fade" id="modalPersona" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form
+                action="/inventario/favores"
+                method="POST"
+                id="formPersona"
+            >
+
+                <input
+                    type="hidden"
+                    name="id"
+                    id="idPersona"
+                >
+
+
+                <!-- HEADER -->
+
+                <div class="modal-header">
+
+                    <h5
+                        class="modal-title"
+                        id="tituloModalPersona"
+                    >
+
+                        Nueva persona
+
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+
+                </div>
+
+
+                <!-- BODY -->
+
+                <div class="modal-body">
+
+
+                    <!-- NOMBRE -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="nombrePersona"
+                            class="form-label"
+                        >
+
+                            Nombre
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nombre"
+                            id="nombrePersona"
+                            class="form-control"
+                            maxlength="150"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TIPO -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="tipoPersona"
+                            class="form-label"
+                        >
+
+                            Tipo
+
+                        </label>
+
+                        <select
+                            name="tipo"
+                            id="tipoPersona"
+                            class="form-control"
+                            style="color: #212529;"
+                            required
+                        >
+
+                            <option value="">
+
+                                Seleccione una opción
+
+                            </option>
+
+                            <option value="prestamo">
+
+                                Préstamo
+
+                            </option>
+
+                            <option value="a_pagar">
+
+                                A pagar
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-save"></i>
+
+                        Guardar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+JAVASCRIPT
+================================================== -->
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+
+    // ==================================================
+    // MODAL
+    // ==================================================
+
+    const modalElemento =
+        document.getElementById('modalPersona');
+
+    const modal =
+        new bootstrap.Modal(modalElemento);
+
+    const form =
+        document.getElementById('formPersona');
+
+    const idPersona =
+        document.getElementById('idPersona');
+
+    const nombre =
+        document.getElementById('nombrePersona');
+
+    const tipo =
+        document.getElementById('tipoPersona');
+
+    const titulo =
+        document.getElementById('tituloModalPersona');
+
+
+    // ==================================================
+    // NUEVA PERSONA
+    // ==================================================
+
+    const botonNuevaPersona =
+        document.querySelector('[data-bs-target="#modalPersona"]');
+
+    if (botonNuevaPersona) {
+
+        botonNuevaPersona.addEventListener('click', function () {
+
+            form.action =
+                '/inventario/favores';
+
+            idPersona.value =
+                '';
+
+            nombre.value =
+                '';
+
+            tipo.value =
+                '';
+
+            titulo.innerText =
+                'Nueva persona';
+
+        });
+
+    }
+
+
+    // ==================================================
+    // EDITAR PERSONA
+    // ==================================================
+
+    document
+        .querySelectorAll('.btn-editar-persona')
+        .forEach(function (boton) {
+
+            boton.addEventListener('click', function () {
+
+                form.action =
+                    '/inventario/favores';
+
+                idPersona.value =
+                    this.dataset.id;
+
+                nombre.value =
+                    this.dataset.nombre;
+
+                tipo.value =
+                    this.dataset.tipo;
+
+                titulo.innerText =
+                    'Editar persona';
+
+                modal.show();
+
+            });
+
+        });
+
+
+    // ==================================================
+    // GUARDAR / EDITAR
+    // ==================================================
+
+    form.addEventListener('submit', function (e) {
+
+        e.preventDefault();
+
+        const datos =
+            new FormData(form);
+
+
+        fetch(form.action, {
+            method: 'POST',
+            body: datos
+        })
+
+        .then(function (response) {
+
+            return response.json();
+
+        })
+
+        .then(function (data) {
+
+            if (data.success) {
+
+                modal.hide();
+
+                window.location.reload();
+
+            } else {
+
+                alert(
+                    data.error ||
+                    'No se pudo guardar la información.'
+                );
+
+            }
+
+        })
+
+        .catch(function (error) {
+
+            console.error(error);
+
+            alert(
+                'Ocurrió un error al guardar.'
+            );
+
+        });
+
+    });
+
+
+    // ==================================================
+    // FINALIZAR PERSONA
+    // ==================================================
+
+    document
+        .querySelectorAll('.btn-finalizar-persona')
+        .forEach(function (boton) {
+
+            boton.addEventListener('click', function () {
+
+                const id =
+                    this.dataset.id;
+
+                const nombrePersona =
+                    this.dataset.nombre;
+
+
+                const confirmar =
+                    confirm(
+                        '¿Desea finalizar a ' +
+                        nombrePersona +
+                        '?\n\n' +
+
+                        'La persona dejará de aparecer ' +
+                        'en la lista de activos, pero sus ' +
+                        'movimientos se conservarán.'
+                    );
+
+
+                if (!confirmar) {
+
+                    return;
+
+                }
+
+
+                const datos =
+                    new FormData();
+
+                datos.append(
+                    'id',
+                    id
+                );
+
+
+                fetch(
+                    '/inventario/favores/finalizar/',
+                    {
+                        method: 'POST',
+                        body: datos
+                    }
+                )
+
+                .then(function (response) {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            'HTTP ' +
+                            response.status
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(function (data) {
+
+                    if (data.success) {
+
+                        alert(
+                            data.mensaje ||
+                            'Persona finalizada correctamente.'
+                        );
+
+                        window.location.reload();
+
+                    } else {
+
+                        alert(
+                            data.error ||
+                            'No se pudo finalizar la persona.'
+                        );
+
+                    }
+
+                })
+
+                .catch(function (error) {
+
+                    console.error(
+                        'Error finalizar:',
+                        error
+                    );
+
+                    alert(
+                        'Ocurrió un error al finalizar la persona.'
+                    );
+
+                });
+
+            });
+
+        });
+
+
+    // ==================================================
+    // ELIMINAR PERSONA
+    // ==================================================
+
+    document
+        .querySelectorAll('.btn-eliminar-persona')
+        .forEach(function (boton) {
+
+            boton.addEventListener('click', function () {
+
+                const id =
+                    this.dataset.id;
+
+                const nombrePersona =
+                    this.dataset.nombre;
+
+
+                const confirmar =
+                    confirm(
+                        '¿Está seguro de eliminar a ' +
+                        nombrePersona +
+                        '?\n\n' +
+
+                        'ATENCIÓN: se eliminará la persona ' +
+                        'y TODOS sus movimientos.\n\n' +
+
+                        'Esta acción no se puede deshacer.'
+                    );
+
+
+                if (!confirmar) {
+
+                    return;
+
+                }
+
+
+                const datos =
+                    new FormData();
+
+                datos.append(
+                    'id',
+                    id
+                );
+
+
+                fetch(
+                    '/inventario/favores/eliminar/',
+                    {
+                        method: 'POST',
+                        body: datos
+                    }
+                )
+
+                .then(function (response) {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            'HTTP ' +
+                            response.status
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(function (data) {
+
+                    if (data.success) {
+
+                        alert(
+                            data.mensaje ||
+                            'Persona eliminada correctamente.'
+                        );
+
+                        window.location.reload();
+
+                    } else {
+
+                        alert(
+                            data.error ||
+                            'No se pudo eliminar la persona.'
+                        );
+
+                    }
+
+                })
+
+                .catch(function (error) {
+
+                    console.error(
+                        'Error eliminar:',
+                        error
+                    );
+
+                    alert(
+                        'Ocurrió un error al eliminar la persona.'
+                    );
+
+                });
+
+            });
+
+        });
+
+});
+
+</script>
+
+
