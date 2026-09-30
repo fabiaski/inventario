@@ -1,3 +1,4 @@
+
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
@@ -52,10 +53,11 @@ if (!$persona) {
 
 $sqlMovimientos = "
     SELECT
+        id,
         descripcion,
         valor,
-        fecha,
-        estado
+        tipo,
+        fecha
     FROM favores_movimientos
     WHERE persona_id = ?
     ORDER BY fecha ASC, id ASC
@@ -74,25 +76,38 @@ $movimientos = $stmtMovimientos->get_result();
 
 $sqlTotales = "
     SELECT
-        COALESCE(SUM(valor), 0) AS total,
+
         COALESCE(
             SUM(
                 CASE
-                    WHEN estado = 'pendiente' THEN valor
+                    WHEN tipo = 'cargo' THEN valor
                     ELSE 0
                 END
             ),
             0
-        ) AS pendiente,
+        ) AS total_cargos,
+
         COALESCE(
             SUM(
                 CASE
-                    WHEN estado = 'pagado' THEN valor
+                    WHEN tipo = 'abono' THEN valor
                     ELSE 0
                 END
             ),
             0
-        ) AS pagado
+        ) AS total_abonos,
+
+        COALESCE(
+            SUM(
+                CASE
+                    WHEN tipo = 'cargo' THEN valor
+                    WHEN tipo = 'abono' THEN -valor
+                    ELSE 0
+                END
+            ),
+            0
+        ) AS total_pendiente
+
     FROM favores_movimientos
     WHERE persona_id = ?
 ";
@@ -107,12 +122,14 @@ $stmtTotales->close();
 
 
 // ==================================================
-// TIPO
+// TIPO DE PERSONA
 // ==================================================
 
-$tipo = ($persona['tipo'] === 'me_debe')
-    ? 'Me debe'
-    : 'Le debo';
+if ($persona['tipo'] === 'prestamo') {
+    $tipoPersona = 'Préstamo';
+} else {
+    $tipoPersona = 'A pagar';
+}
 
 
 // ==================================================
@@ -178,16 +195,17 @@ $html = '
         text-align: right;
     }
 
-    .estado {
+    .tipo-movimiento {
         text-align: center;
     }
 
-    .pendiente {
+    .cargo {
         font-weight: bold;
     }
 
-    .pagado {
+    .abono {
         font-weight: bold;
+        color: #dc3545;
     }
 
     .totales {
@@ -229,7 +247,7 @@ $html = '
     <p>
         <strong>Tipo:</strong>
         <span class="tipo">
-            ' . $tipo . '
+            ' . $tipoPersona . '
         </span>
     </p>
 
@@ -251,11 +269,11 @@ $html = '
             </th>
 
             <th>
-                Valor
+                Tipo
             </th>
 
             <th>
-                Estado
+                Valor
             </th>
 
         </tr>
@@ -267,7 +285,7 @@ $html = '
 
 
 // ==================================================
-// MOVIMIENTOS
+// MOSTRAR MOVIMIENTOS
 // ==================================================
 
 while ($movimiento = $movimientos->fetch_assoc()) {
@@ -277,16 +295,32 @@ while ($movimiento = $movimientos->fetch_assoc()) {
         strtotime($movimiento['fecha'])
     );
 
-    $valor = number_format(
-        $movimiento['valor'],
-        0,
-        ',',
-        '.'
-    );
+    $valorNumerico = (int) $movimiento['valor'];
 
-    $estado = ucfirst(
-        $movimiento['estado']
-    );
+    if ($movimiento['tipo'] === 'abono') {
+
+        $valor = '-$' . number_format(
+            $valorNumerico,
+            0,
+            ',',
+            '.'
+        );
+
+        $claseValor = 'abono';
+        $tipoMovimiento = 'Abono';
+
+    } else {
+
+        $valor = '$' . number_format(
+            $valorNumerico,
+            0,
+            ',',
+            '.'
+        );
+
+        $claseValor = 'cargo';
+        $tipoMovimiento = 'Cargo';
+    }
 
     $html .= '
 
@@ -297,15 +331,17 @@ while ($movimiento = $movimientos->fetch_assoc()) {
             </td>
 
             <td>
-                ' . htmlspecialchars($movimiento['descripcion']) . '
+                ' . htmlspecialchars(
+                    $movimiento['descripcion']
+                ) . '
             </td>
 
-            <td class="numero">
-                $' . $valor . '
+            <td class="tipo-movimiento">
+                ' . $tipoMovimiento . '
             </td>
 
-            <td class="estado">
-                ' . $estado . '
+            <td class="numero ' . $claseValor . '">
+                ' . $valor . '
             </td>
 
         </tr>
@@ -321,17 +357,21 @@ $html .= '
 </table>
 
 
+<!-- ==================================================
+     TOTALES
+================================================== -->
+
 <table class="totales">
 
     <tr>
 
         <td>
-            <strong>Total movimientos</strong>
+            <strong>Total cargos</strong>
         </td>
 
         <td class="numero">
             $' . number_format(
-                $totales['total'],
+                $totales['total_cargos'],
                 0,
                 ',',
                 '.'
@@ -339,16 +379,17 @@ $html .= '
         </td>
 
     </tr>
+
 
     <tr>
 
         <td>
-            <strong>Total pagado</strong>
+            <strong>Total abonos</strong>
         </td>
 
-        <td class="numero">
-            $' . number_format(
-                $totales['pagado'],
+        <td class="numero abono">
+            -$' . number_format(
+                $totales['total_abonos'],
                 0,
                 ',',
                 '.'
@@ -356,6 +397,7 @@ $html .= '
         </td>
 
     </tr>
+
 
     <tr>
 
@@ -365,7 +407,7 @@ $html .= '
 
         <td class="numero total-final">
             $' . number_format(
-                $totales['pendiente'],
+                $totales['total_pendiente'],
                 0,
                 ',',
                 '.'
@@ -414,7 +456,7 @@ $dompdf->render();
 
 
 // ==================================================
-// DESCARGAR PDF
+// NOMBRE DEL ARCHIVO
 // ==================================================
 
 $nombreArchivo = 'favores_' .
@@ -424,6 +466,11 @@ $nombreArchivo = 'favores_' .
         $persona['nombre']
     ) .
     '.pdf';
+
+
+// ==================================================
+// DESCARGAR PDF
+// ==================================================
 
 $dompdf->stream(
     $nombreArchivo,
