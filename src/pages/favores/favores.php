@@ -11,8 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header('Content-Type: application/json; charset=utf-8');
 
+    $id = (int) ($_POST['id'] ?? 0);
     $nombre = trim($_POST['nombre'] ?? '');
     $tipo = $_POST['tipo'] ?? '';
+
+    // ==================================================
+    // VALIDAR NOMBRE
+    // ==================================================
 
     if ($nombre === '') {
 
@@ -25,6 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
+    // ==================================================
+    // VALIDAR TIPO
+    // ==================================================
+
     if (!in_array($tipo, ['prestamo', 'a_pagar'], true)) {
 
         echo json_encode([
@@ -36,11 +45,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
+    // ==================================================
+    // EDITAR PERSONA
+    // ==================================================
+
+    if ($id > 0) {
+
+        $stmt = $conexion->prepare("
+            UPDATE favores_personas
+            SET
+                nombre = ?,
+                tipo = ?
+            WHERE id = ?
+        ");
+
+        if (!$stmt) {
+
+            echo json_encode([
+                'success' => false,
+                'error' => 'Error al preparar la actualización: ' . $conexion->error
+            ]);
+
+            exit;
+        }
+
+        $stmt->bind_param(
+            'ssi',
+            $nombre,
+            $tipo,
+            $id
+        );
+
+        if ($stmt->execute()) {
+
+            echo json_encode([
+                'success' => true,
+                'accion' => 'editar'
+            ]);
+
+        } else {
+
+            echo json_encode([
+                'success' => false,
+                'error' => 'No se pudo actualizar la persona: ' . $stmt->error
+            ]);
+        }
+
+        $stmt->close();
+
+        exit;
+    }
+
+
+    // ==================================================
+    // NUEVA PERSONA
+    // ==================================================
+
     $stmt = $conexion->prepare("
-        INSERT INTO favores_personas (nombre, tipo)
+        INSERT INTO favores_personas
+        (
+            nombre,
+            tipo
+        )
         VALUES (?, ?)
     ");
-
 
     if (!$stmt) {
 
@@ -52,18 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-
     $stmt->bind_param(
         'ss',
         $nombre,
         $tipo
     );
 
-
     if ($stmt->execute()) {
 
         echo json_encode([
-            'success' => true
+            'success' => true,
+            'accion' => 'agregar'
         ]);
 
     } else {
@@ -73,7 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'error' => 'Error al guardar: ' . $stmt->error
         ]);
     }
-
 
     $stmt->close();
 
@@ -86,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ==================================================
 
 $sql = "
-    SELECT 
+    SELECT
         p.id,
         p.nombre,
         p.tipo,
@@ -116,7 +182,6 @@ $sql = "
         p.nombre ASC
 ";
 
-
 $resultado = $conexion->query($sql);
 
 
@@ -139,7 +204,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     <div class="card-body">
 
-
                         <!-- ==================================================
                              ENCABEZADO
                         ================================================== -->
@@ -156,19 +220,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </h2>
 
-
                                 <p class="text-muted mb-0">
 
                                     Administra las personas y sus movimientos de favores.
 
                                 </p>
+                                <div class="mt-2" style="max-width: 350px;">
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-magnify"></i>
+                                        </span>
+
+                                        <input type="text" id="buscarPersona" class="form-control"
+                                            placeholder="Buscar persona..." autocomplete="off">
+
+                                    </div>
+
+                                </div>
 
                             </div>
 
 
-                            <button type="button"
-                                class="btn btn-primary"
-                                data-bs-toggle="modal"
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#modalPersona">
 
                                 <i class="mdi mdi-plus"></i>
@@ -189,134 +264,117 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <div class="row">
 
-
                             <?php if ($resultado && $resultado->num_rows > 0): ?>
 
+                            <?php while ($persona = $resultado->fetch_assoc()): ?>
 
-                                <?php while ($persona = $resultado->fetch_assoc()): ?>
+                            <div class="col-md-6 col-lg-4 mb-4 tarjeta-persona" data-nombre="<?= htmlspecialchars(
+        strtolower($persona['nombre']),
+        ENT_QUOTES
+    ) ?>">
 
+                                <div class="card" style="border: 1px solid #dee2e6; border-radius: 8px;">
 
-                                    <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card-body">
 
-                                        <div class="card"
-                                            style="border: 1px solid #dee2e6; border-radius: 8px;">
+                                        <!-- NOMBRE -->
 
-                                            <div class="card-body">
+                                        <h4 class="card-title">
 
-
-                                                <!-- NOMBRE -->
-
-                                                <h4 class="card-title">
-
-                                                    <?= htmlspecialchars(
+                                            <?= htmlspecialchars(
                                                         $persona['nombre']
                                                     ) ?>
 
-                                                </h4>
+                                        </h4>
 
 
-                                                <!-- TIPO -->
+                                        <!-- TIPO -->
 
-                                                <p class="mb-2">
+                                        <p class="mb-2">
 
-                                                    <?php if ($persona['tipo'] === 'prestamo'): ?>
+                                            <?php if ($persona['tipo'] === 'prestamo'): ?>
 
-                                                        <span class="badge badge-success">
+                                            <span class="badge badge-success">
 
-                                                            Préstamo
+                                                Préstamo
 
-                                                        </span>
+                                            </span>
 
-                                                    <?php else: ?>
+                                            <?php else: ?>
 
-                                                        <span class="badge badge-warning">
+                                            <span class="badge badge-warning">
 
-                                                            A pagar
+                                                A pagar
 
-                                                        </span>
+                                            </span>
 
-                                                    <?php endif; ?>
+                                            <?php endif; ?>
 
-                                                </p>
+                                        </p>
 
 
-                                                <!-- TOTAL -->
+                                        <!-- TOTAL -->
 
-                                                <h3 class="mb-3">
+                                        <h3 class="mb-3">
 
-                                                    $<?= number_format(
+                                            $<?= number_format(
                                                         $persona['total_pendiente'],
                                                         0,
                                                         ',',
                                                         '.'
                                                     ) ?>
 
-                                                </h3>
+                                        </h3>
 
 
-                                                <!-- ACCIONES -->
+                                        <!-- ACCIONES -->
 
-                                                <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2">
+
+                                            <a href="/inventario/favores/persona/ver?id=<?= $persona['id'] ?>"
+                                                class="btn btn-primary btn-sm">
+
+                                                Ver movimientos
+
+                                            </a>
 
 
-                                                    <a href="/inventario/favores/persona/ver?id=<?= $persona['id'] ?>"
-                                                        class="btn btn-primary btn-sm">
-
-                                                        Ver movimientos
-
-                                                    </a>
-
-
-                                                    <button type="button"
-                                                        class="btn btn-secondary btn-sm btn-editar-persona"
-                                                        title="Editar"
-
-                                                        data-id="<?= $persona['id'] ?>"
-
-                                                        data-nombre="<?= htmlspecialchars(
+                                            <button type="button" class="btn btn-secondary btn-sm btn-editar-persona"
+                                                title="Editar" data-id="<?= $persona['id'] ?>" data-nombre="<?= htmlspecialchars(
                                                             $persona['nombre'],
                                                             ENT_QUOTES
-                                                        ) ?>"
-
-                                                        data-tipo="<?= htmlspecialchars(
+                                                        ) ?>" data-tipo="<?= htmlspecialchars(
                                                             $persona['tipo'],
                                                             ENT_QUOTES
                                                         ) ?>">
 
-                                                        <i class="mdi mdi-pencil"></i>
+                                                <i class="mdi mdi-pencil"></i>
 
-                                                    </button>
-
-
-                                                </div>
-
-
-                                            </div>
+                                            </button>
 
                                         </div>
 
                                     </div>
 
+                                </div>
 
-                                <?php endwhile; ?>
+                            </div>
 
+                            <?php endwhile; ?>
 
                             <?php else: ?>
 
+                            <div class="col-12">
 
-                                <div class="col-12">
+                                <div class="alert alert-info">
 
-                                    <div class="alert alert-info">
-
-                                        No hay personas registradas.
-
-                                    </div>
+                                    No hay personas registradas.
 
                                 </div>
 
+                            </div>
 
                             <?php endif; ?>
-
 
                         </div>
 
@@ -326,296 +384,230 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
             </div>
 
-
-            <?php
-
-            require_once __DIR__ . '/../../includes/footer.php';
-            require_once __DIR__ . '/../../includes/scripts.php';
-
-            ?>
+        </div>
 
 
-            <!-- ==================================================
-                 MODAL PERSONA
-            ================================================== -->
-
-            <div class="modal fade"
-                id="modalPersona"
-                tabindex="-1">
-
-                <div class="modal-dialog">
-
-                    <div class="modal-content">
 
 
-                        <form action="/inventario/favores/agregar"
-                            method="POST"
-                            id="formPersona">
+        <!-- /.main-panel -->
 
 
-                            <input type="hidden"
-                                name="id"
-                                id="idPersona">
+     
+        <!-- ==================================================
+     MODAL PERSONA
+================================================== -->
+
+        <div class="modal fade" id="modalPersona" tabindex="-1">
+
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                    <form action="/inventario/favores" method="POST" id="formPersona">
+
+                        <input type="hidden" name="id" id="idPersona">
 
 
-                            <!-- HEADER -->
+                        <!-- HEADER -->
 
-                            <div class="modal-header">
+                        <div class="modal-header">
 
-                                <h5 class="modal-title"
-                                    id="tituloModalPersona">
+                            <h5 class="modal-title" id="tituloModalPersona">
 
-                                    Nueva persona
+                                Nueva persona
 
-                                </h5>
+                            </h5>
 
+                            <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-                                <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal">
+                            </button>
 
-                                </button>
-
-                            </div>
+                        </div>
 
 
-                            <!-- BODY -->
+                        <!-- BODY -->
 
-                            <div class="modal-body">
+                        <div class="modal-body">
 
+                            <!-- NOMBRE -->
 
-                                <!-- NOMBRE -->
+                            <div class="mb-3">
 
-                                <div class="mb-3">
+                                <label for="nombrePersona" class="form-label">
 
-                                    <label for="nombrePersona"
-                                        class="form-label">
+                                    Nombre
 
-                                        Nombre
+                                </label>
 
-                                    </label>
-
-
-                                    <input type="text"
-                                        name="nombre"
-                                        id="nombrePersona"
-                                        class="form-control"
-                                        maxlength="150"
-                                        required>
-
-                                </div>
-
-
-                                <!-- TIPO -->
-
-                                <div class="mb-3">
-
-                                    <label for="tipoPersona"
-                                        class="form-label">
-
-                                        Tipo
-
-                                    </label>
-
-
-                                    <select name="tipo"
-                                        id="tipoPersona"
-                                        class="form-control"
-                                        style="color: #212529;"
-                                        required>
-
-
-                                        <option value="">
-
-                                            Seleccione una opción
-
-                                        </option>
-
-
-                                        <option value="prestamo">
-
-                                            Préstamo
-
-                                        </option>
-
-
-                                        <option value="a_pagar">
-
-                                            A pagar
-
-                                        </option>
-
-
-                                    </select>
-
-                                </div>
+                                <input type="text" name="nombre" id="nombrePersona" class="form-control" maxlength="150"
+                                    required>
 
                             </div>
 
 
-                            <!-- FOOTER -->
+                            <!-- TIPO -->
 
-                            <div class="modal-footer">
+                            <div class="mb-3">
 
+                                <label for="tipoPersona" class="form-label">
 
-                                <button type="button"
-                                    class="btn btn-secondary"
-                                    data-bs-dismiss="modal">
+                                    Tipo
 
-                                    Cancelar
+                                </label>
 
-                                </button>
+                                <select name="tipo" id="tipoPersona" class="form-control" style="color: #212529;"
+                                    required>
 
+                                    <option value="">
+                                        Seleccione una opción
+                                    </option>
 
-                                <button type="submit"
-                                    class="btn btn-primary">
+                                    <option value="prestamo">
+                                        Préstamo
+                                    </option>
 
-                                    <i class="bi bi-save"></i>
+                                    <option value="a_pagar">
+                                        A pagar
+                                    </option>
 
-                                    Guardar
-
-                                </button>
-
+                                </select>
 
                             </div>
 
+                        </div>
 
-                        </form>
 
-                    </div>
+                        <!-- FOOTER -->
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                                Cancelar
+
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+
+                                <i class="bi bi-save"></i>
+
+                                Guardar
+
+                            </button>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
             </div>
 
-
-            <!-- ==================================================
-                 JAVASCRIPT
-            ================================================== -->
-
-            <script>
-
-            document.addEventListener('DOMContentLoaded', function() {
+        </div>
 
 
-                const modalElemento =
-                    document.getElementById('modalPersona');
+        <!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const modalElemento =
+                document.getElementById('modalPersona');
+
+            const modal =
+                new bootstrap.Modal(modalElemento);
+
+            const form =
+                document.getElementById('formPersona');
+
+            const idPersona =
+                document.getElementById('idPersona');
+
+            const nombre =
+                document.getElementById('nombrePersona');
+
+            const tipo =
+                document.getElementById('tipoPersona');
+
+            const titulo =
+                document.getElementById('tituloModalPersona');
 
 
-                const modal =
-                    new bootstrap.Modal(modalElemento);
+            // ==================================================
+            // NUEVA PERSONA
+            // ==================================================
+
+            document
+                .querySelector('[data-bs-target="#modalPersona"]')
+                .addEventListener('click', function() {
+
+                    form.action =
+                        '/inventario/favores';
+
+                    idPersona.value = '';
+
+                    nombre.value = '';
+
+                    tipo.value = '';
+
+                    titulo.innerText =
+                        'Nueva persona';
+
+                });
 
 
-                const form =
-                    document.getElementById('formPersona');
+            // ==================================================
+            // EDITAR PERSONA
+            // ==================================================
 
+            document
+                .querySelectorAll('.btn-editar-persona')
+                .forEach(function(boton) {
 
-                const idPersona =
-                    document.getElementById('idPersona');
-
-
-                const nombre =
-                    document.getElementById('nombrePersona');
-
-
-                const tipo =
-                    document.getElementById('tipoPersona');
-
-
-                const titulo =
-                    document.getElementById('tituloModalPersona');
-
-
-
-                // ==================================================
-                // NUEVA PERSONA
-                // ==================================================
-
-                document
-                    .querySelector('[data-bs-target="#modalPersona"]')
-                    .addEventListener('click', function() {
-
+                    boton.addEventListener('click', function() {
 
                         form.action =
-                            '/inventario/favores/agregar';
+                            '/inventario/favores';
 
+                        idPersona.value =
+                            this.dataset.id;
 
-                        idPersona.value = '';
+                        nombre.value =
+                            this.dataset.nombre;
 
-                        nombre.value = '';
-
-                        tipo.value = '';
-
+                        // CARGAR AUTOMÁTICAMENTE EL TIPO ACTUAL
+                        tipo.value =
+                            this.dataset.tipo;
 
                         titulo.innerText =
-                            'Nueva persona';
+                            'Editar persona';
+
+                        modal.show();
 
                     });
 
+                });
 
 
-                // ==================================================
-                // EDITAR PERSONA
-                // ==================================================
+            // ==================================================
+            // GUARDAR / EDITAR
+            // ==================================================
 
-                document
-                    .querySelectorAll('.btn-editar-persona')
-                    .forEach(function(boton) {
+            form.addEventListener('submit', function(e) {
 
+                e.preventDefault();
 
-                        boton.addEventListener('click', function() {
+                const datos =
+                    new FormData(form);
 
-
-                            form.action =
-                                '/inventario/favores/editar';
-
-
-                            idPersona.value =
-                                this.dataset.id;
-
-
-                            nombre.value =
-                                this.dataset.nombre;
-
-
-                            tipo.value =
-                                this.dataset.tipo;
-
-
-                            titulo.innerText =
-                                'Editar persona';
-
-
-                            modal.show();
-
-                        });
-
-                    });
-
-
-
-                // ==================================================
-                // GUARDAR / EDITAR
-                // ==================================================
-
-                form.addEventListener('submit', function(e) {
-
-
-                    e.preventDefault();
-
-
-                    const datos =
-                        new FormData(form);
-
-
-                    fetch(
-                        form.action,
-                        {
+                fetch(
+                        form.action, {
                             method: 'POST',
                             body: datos
                         }
                     )
-
 
                     .then(function(response) {
 
@@ -623,21 +615,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     })
 
-
                     .then(function(data) {
-
 
                         if (data.success) {
 
-
                             modal.hide();
-
 
                             window.location.reload();
 
-
                         } else {
-
 
                             alert(
                                 data.error ||
@@ -648,12 +634,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     })
 
-
                     .catch(function(error) {
 
-
                         console.error(error);
-
 
                         alert(
                             'Ocurrió un error al guardar.'
@@ -661,9 +644,43 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     });
 
-                });
+            });
 
+        });
+
+        // ==================================================
+        // BUSCAR POR PERSONA
+        // ==================================================
+
+        const buscarPersona =
+            document.getElementById('buscarPersona');
+
+        const tarjetasPersona =
+            document.querySelectorAll('.tarjeta-persona');
+
+        buscarPersona.addEventListener('input', function() {
+
+            const busqueda =
+                this.value.toLowerCase().trim();
+
+            tarjetasPersona.forEach(function(tarjeta) {
+
+                const persona =
+                    tarjeta.dataset.nombre;
+
+                tarjeta.style.display =
+                    persona.includes(busqueda) ?
+                    '' :
+                    'none';
 
             });
 
-            </script>
+        });
+        </script>
+
+           <?php
+
+require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../../includes/scripts.php';
+
+?>

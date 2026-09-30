@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../config/conexion.php';
 
+
 // ==================================================
 // VALIDAR DATOS
 // ==================================================
@@ -10,7 +11,8 @@ $movimientoId = (int) ($_GET['id'] ?? 0);
 $personaId = (int) ($_GET['persona_id'] ?? 0);
 
 if ($movimientoId <= 0 || $personaId <= 0) {
-    header('Location: index.php');
+
+    header('Location: /inventario/favores');
     exit;
 }
 
@@ -39,12 +41,17 @@ $stmtVerificar->execute();
 
 $resultado = $stmtVerificar->get_result();
 
+
+// ==================================================
+// MOVIMIENTO NO ENCONTRADO
+// ==================================================
+
 if ($resultado->num_rows === 0) {
 
     $stmtVerificar->close();
 
     header(
-        "Location: ver.php?id=" . $personaId
+        "Location: /inventario/favores/persona/ver?id=" . $personaId . "&error=movimiento"
     );
 
     exit;
@@ -77,11 +84,11 @@ $stmtEliminar->close();
 
 
 // ==================================================
-// REGRESAR
+// REGRESAR A LOS MOVIMIENTOS
 // ==================================================
 
 header(
-    "Location: ver.php?id=" . $personaId
+    "Location: /inventario/favores/persona/ver?id=" . $personaId . "&mensaje=eliminado"
 );
 
 exit;
