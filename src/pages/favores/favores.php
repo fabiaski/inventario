@@ -173,6 +173,8 @@ $sql = "
     LEFT JOIN favores_movimientos m
         ON m.persona_id = p.id
 
+    WHERE p.estado = 'activo'
+
     GROUP BY
         p.id,
         p.nombre,
@@ -191,7 +193,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 ?>
 
-
 <div class="main-panel">
 
     <div class="content-wrapper">
@@ -204,9 +205,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                     <div class="card-body">
 
-                        <!-- ==================================================
-                             ENCABEZADO
-                        ================================================== -->
+
+                        <!--==================================================
+                        ENCABEZADO
+                        ==================================================-->
 
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
@@ -217,40 +219,37 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <i class="bi bi-receipt"></i>
 
                                     Favores
-
                                 </h2>
 
                                 <p class="text-muted mb-0">
 
                                     Administra las personas y sus movimientos de favores.
 
+
                                 </p>
-                                <div class="mt-2" style="max-width: 350px;">
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-                                            <i class="mdi mdi-magnify"></i>
-                                        </span>
-
-                                        <input type="text" id="buscarPersona" class="form-control"
-                                            placeholder="Buscar persona..." autocomplete="off">
-
-                                    </div>
-
-                                </div>
 
                             </div>
 
 
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#modalPersona">
+                            <div class="d-flex gap-2">
 
-                                <i class="mdi mdi-plus"></i>
+                                <a href="/inventario/favores/finalizados" class="btn btn-secondary">
+                                    <i class="mdi mdi-archive"></i>
+                                    Finalizados
+                                </a>
 
-                                Nueva persona
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalPersona">
 
-                            </button>
+                                    <i class="mdi mdi-plus"></i>
+
+                                    Nueva persona
+
+                                </button>
+
+
+                            </div>
+
 
                         </div>
 
@@ -329,7 +328,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                         <!-- ACCIONES -->
 
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2 flex-wrap">
 
                                             <a href="/inventario/favores/persona/ver?id=<?= $persona['id'] ?>"
                                                 class="btn btn-primary btn-sm">
@@ -338,17 +337,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                             </a>
 
-
                                             <button type="button" class="btn btn-secondary btn-sm btn-editar-persona"
-                                                title="Editar" data-id="<?= $persona['id'] ?>" data-nombre="<?= htmlspecialchars(
-                                                            $persona['nombre'],
-                                                            ENT_QUOTES
-                                                        ) ?>" data-tipo="<?= htmlspecialchars(
-                                                            $persona['tipo'],
-                                                            ENT_QUOTES
-                                                        ) ?>">
+                                                title="Editar" data-id="<?= $persona['id'] ?>"
+                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
+                                                data-tipo="<?= htmlspecialchars($persona['tipo'], ENT_QUOTES) ?>">
 
                                                 <i class="mdi mdi-pencil"></i>
+
+                                            </button>
+
+                                            <button type="button" class="btn btn-success btn-sm btn-finalizar-persona"
+                                                data-id="<?= $persona['id'] ?>"
+                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
+                                                title="Finalizar">
+
+                                                <i class="mdi mdi-check"></i>
+
+                                            </button>
+
+                                            <button type="button" class="btn btn-danger btn-sm btn-eliminar-persona"
+                                                data-id="<?= $persona['id'] ?>"
+                                                data-nombre="<?= htmlspecialchars($persona['nombre'], ENT_QUOTES) ?>"
+                                                title="Eliminar">
+
+                                                <i class="mdi mdi-delete"></i>
 
                                             </button>
 
@@ -392,7 +404,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
         <!-- /.main-panel -->
 
 
-     
+
         <!-- ==================================================
      MODAL PERSONA
 ================================================== -->
@@ -504,11 +516,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
             </div>
 
         </div>
-
-
-        <!-- ==================================================
-     JAVASCRIPT
-================================================== -->
 
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -676,9 +683,151 @@ require_once __DIR__ . '/../../includes/sidebar.php';
             });
 
         });
+
+
+        // ==================================================
+        // FINALIZAR PERSONA
+        // ==================================================
+
+        document
+            .querySelectorAll('.btn-finalizar-persona')
+            .forEach(function(boton) {
+
+                boton.addEventListener('click', function() {
+
+                    const id = this.dataset.id;
+                    const nombre = this.dataset.nombre;
+
+                    const confirmar = confirm(
+                        '¿Desea finalizar a ' + nombre + '?\n\n' +
+                        'La persona dejará de aparecer en la lista de activos, ' +
+                        'pero sus movimientos se conservarán.'
+                    );
+
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    const datos = new FormData();
+
+                    datos.append('id', id);
+
+                    fetch('/inventario/favores/finalizar/', {
+                            method: 'POST',
+                            body: datos
+                        })
+                        .then(function(response) {
+
+                            return response.json();
+
+                        })
+                        .then(function(data) {
+
+                            if (data.success) {
+
+                                alert(
+                                    data.mensaje ||
+                                    'Persona finalizada correctamente.'
+                                );
+
+                                window.location.reload();
+
+                            } else {
+
+                                alert(
+                                    data.error ||
+                                    'No se pudo finalizar la persona.'
+                                );
+                            }
+
+                        })
+                        .catch(function(error) {
+
+                            console.error(error);
+
+                            alert(
+                                'Ocurrió un error al finalizar la persona.'
+                            );
+
+                        });
+
+                });
+
+            });
+
+
+        // ==================================================
+        // ELIMINAR PERSONA
+        // ==================================================
+
+        document
+            .querySelectorAll('.btn-eliminar-persona')
+            .forEach(function(boton) {
+
+                boton.addEventListener('click', function() {
+
+                    const id = this.dataset.id;
+                    const nombre = this.dataset.nombre;
+
+                    const confirmar = confirm(
+                        '¿Está seguro de eliminar a ' + nombre + '?\n\n' +
+                        'ATENCIÓN: se eliminará la persona y TODOS sus movimientos.\n\n' +
+                        'Esta acción no se puede deshacer.'
+                    );
+
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    const datos = new FormData();
+
+                    datos.append('id', id);
+
+                    fetch('/inventario/favores/eliminar/', {
+                            method: 'POST',
+                            body: datos
+                        })
+                        .then(function(response) {
+
+                            return response.json();
+
+                        })
+                        .then(function(data) {
+
+                            if (data.success) {
+
+                                alert(
+                                    data.mensaje ||
+                                    'Persona eliminada correctamente.'
+                                );
+
+                                window.location.reload();
+
+                            } else {
+
+                                alert(
+                                    data.error ||
+                                    'No se pudo eliminar la persona.'
+                                );
+                            }
+
+                        })
+                        .catch(function(error) {
+
+                            console.error(error);
+
+                            alert(
+                                'Ocurrió un error al eliminar la persona.'
+                            );
+
+                        });
+
+                });
+
+            });
         </script>
 
-           <?php
+        <?php
 
 require_once __DIR__ . '/../../includes/footer.php';
 require_once __DIR__ . '/../../includes/scripts.php';
