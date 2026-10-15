@@ -368,6 +368,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </a>
 
+<a
+    href="<?= BASE_URL ?>src/pages/facturacion/exportar_pdf.php?id=<?= (int) $contratoId ?>"
+    class="btn btn-danger"
+    target="_blank"
+>
+    <i class="bi bi-file-earmark-pdf"></i>
+    PDF
+</a>
+
 
                                 <?php if (tienePermiso('facturacion', 'agregar')): ?>
 
@@ -1074,9 +1083,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
     word-break: normal;
     line-height: 1.4;
 ">
-                                                    <?= htmlspecialchars($factura['numero_factura']) ?>
-                                                </td>
-
+                                                    <?= !empty($factura['numero_factura'])
+        ? htmlspecialchars($factura['numero_factura'])
+        : '<span class="text-muted">—</span>' ?>
+</td>
 
                                                 <!-- FECHA -->
 
