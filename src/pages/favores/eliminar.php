@@ -1,8 +1,41 @@
 <?php
 
+session_start();
+
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
 header('Content-Type: application/json; charset=utf-8');
+
+
+// ==================================================
+// VALIDAR SESIÓN
+// ==================================================
+
+if (!isset($_SESSION['usuario_id'])) {
+
+    echo json_encode([
+        'success' => false,
+        'error' => 'La sesión ha expirado. Inicie sesión nuevamente.'
+    ]);
+
+    exit;
+}
+
+
+// ==================================================
+// VALIDAR PERMISO
+// ==================================================
+
+if (!tienePermiso('favores', 'eliminar')) {
+
+    echo json_encode([
+        'success' => false,
+        'error' => 'No tiene permiso para eliminar favores.'
+    ]);
+
+    exit;
+}
 
 
 // ==================================================
@@ -23,11 +56,13 @@ if ($id <= 0) {
 
 
 // ==================================================
-// VERIFICAR PERSONA
+// VERIFICAR PERSONA Y OBTENER NOMBRE
 // ==================================================
 
 $stmt = $conexion->prepare("
-    SELECT id
+    SELECT
+        id,
+        nombre
     FROM favores_personas
     WHERE id = ?
     LIMIT 1
@@ -68,6 +103,10 @@ if ($resultado->num_rows === 0) {
     $stmt->close();
     exit;
 }
+
+$persona = $resultado->fetch_assoc();
+
+$nombrePersona = $persona['nombre'];
 
 $stmt->close();
 
@@ -166,11 +205,80 @@ $stmt->close();
 
 
 // ==================================================
-// CONFIRMAR
+// REGISTRAR ACTIVIDAD
+// ==================================================
+
+$usuarioId = (int) $_SESSION['usuario_id'];
+$modulo = 'favores';
+$accion = 'eliminar';
+$descripcion = 'Eliminó la persona "' . $nombrePersona . '"';
+$referenciaId = $id;
+$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+
+$actividad = $conexion->prepare("
+    INSERT INTO actividad
+    (
+        usuario_id,
+        modulo,
+        accion,
+        descripcion,
+        referencia_id,
+        ip
+    )
+    VALUES (?, ?, ?, ?, ?, ?)
+");
+
+if (!$actividad) {
+
+    $conexion->rollback();
+
+    echo json_encode([
+        'success' => false,
+        'error' => 'No se pudo registrar la actividad: ' . $conexion->error
+    ]);
+
+    exit;
+}
+
+$actividad->bind_param(
+    'isssis',
+    $usuarioId,
+    $modulo,
+    $accion,
+    $descripcion,
+    $referenciaId,
+    $ip
+);
+
+if (!$actividad->execute()) {
+
+    $error = $actividad->error;
+
+    $actividad->close();
+
+    $conexion->rollback();
+
+    echo json_encode([
+        'success' => false,
+        'error' => 'No se pudo registrar la actividad: ' . $error
+    ]);
+
+    exit;
+}
+
+$actividad->close();
+
+
+// ==================================================
+// CONFIRMAR TRANSACCIÓN
 // ==================================================
 
 $conexion->commit();
 
+
+// ==================================================
+// RESPUESTA
+// ==================================================
 
 echo json_encode([
     'success' => true,

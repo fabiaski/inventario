@@ -1,6 +1,38 @@
 <?php
 
+session_start();
+
+
+// ==================================================
+// VALIDAR SESIÓN
+// ==================================================
+
+if (!isset($_SESSION['usuario_id'])) {
+
+    header('Location: /inventario/login');
+    exit;
+}
+
+
+// ==================================================
+// CONEXIÓN
+// ==================================================
+
 require_once __DIR__ . '/../../config/conexion.php';
+
+
+// ==================================================
+// PERMISOS
+// ==================================================
+
+require_once __DIR__ . '/../../includes/permisos.php';
+
+
+// ==================================================
+// PERMISO: VER FAVORES
+// ==================================================
+
+requierePermiso('favores', 'ver');
 
 
 // ==================================================
@@ -24,7 +56,8 @@ $sqlPersona = "
     SELECT
         id,
         nombre,
-        tipo
+        tipo,
+        estado
     FROM favores_personas
     WHERE id = ?
     LIMIT 1
@@ -52,6 +85,10 @@ if (!$persona) {
     exit;
 }
 
+
+// ==================================================
+// REGISTRAR ACTIVIDAD - CONSULTAR FAVOR
+// ==================================================
 
 // ==================================================
 // CONSULTAR MOVIMIENTOS
@@ -112,10 +149,16 @@ $stmtTotal->execute();
 
 $resultadoTotal = $stmtTotal->get_result();
 
-$total = $resultadoTotal->fetch_assoc()['total'];
+$totalData = $resultadoTotal->fetch_assoc();
+
+$total = $totalData['total'] ?? 0;
 
 $stmtTotal->close();
 
+
+// ==================================================
+// INCLUDES
+// ==================================================
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -231,6 +274,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                 </a>
 
+                                <?php if (tienePermiso('favores', 'agregar')): ?>
 
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#modalMovimiento">
@@ -240,6 +284,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     Nuevo movimiento
 
                                 </button>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -391,22 +437,28 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- ACCIONES -->
 
+
                                                 <td>
+
+                                                    <?php if (tienePermiso('favores', 'editar')): ?>
 
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary btn-editar-movimiento"
                                                         title="Editar" data-id="<?= $movimiento['id'] ?>"
                                                         data-descripcion="<?= htmlspecialchars(
-                                                                    $movimiento['descripcion'],
-                                                                    ENT_QUOTES
-                                                                ) ?>" data-valor="<?= $movimiento['valor'] ?>"
-                                                        data-tipo="<?= $movimiento['tipo'] ?>"
+            $movimiento['descripcion'],
+            ENT_QUOTES
+        ) ?>" data-valor="<?= $movimiento['valor'] ?>" data-tipo="<?= $movimiento['tipo'] ?>"
                                                         data-fecha="<?= $movimiento['fecha'] ?>">
 
                                                         <i class="mdi mdi-pencil"></i>
 
                                                     </button>
 
+                                                    <?php endif; ?>
+
+
+                                                    <?php if (tienePermiso('favores', 'eliminar')): ?>
 
                                                     <a href="/inventario/favores/movimiento/eliminar?id=<?= $movimiento['id'] ?>&persona_id=<?= $personaId ?>"
                                                         class="btn btn-sm btn-danger"
@@ -417,8 +469,9 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                     </a>
 
-                                                </td>
+                                                    <?php endif; ?>
 
+                                                </td>
                                             </tr>
 
                                             <?php endwhile; ?>

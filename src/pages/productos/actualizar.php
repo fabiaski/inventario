@@ -1,7 +1,10 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
+requierePermiso('productos', 'editar');
 header('Content-Type: application/json; charset=utf-8');
 
 
@@ -178,6 +181,55 @@ $stmt->bind_param(
 // ==================================================
 
 if ($stmt->execute()) {
+
+    // ==================================================
+    // REGISTRAR ACTIVIDAD
+    // ==================================================
+
+    $usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+    $descripcion = 'Editó el producto "' . $producto . '"';
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad
+        (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad = $conexion->prepare($sqlActividad);
+
+    if ($stmtActividad) {
+
+        $modulo = 'productos';
+        $accion = 'editar';
+
+        $stmtActividad->bind_param(
+            'isssis',
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $id,
+            $ip
+        );
+
+        $stmtActividad->execute();
+        $stmtActividad->close();
+    }
+
+    // ==================================================
+    // RESPUESTA
+    // ==================================================
 
     $stmt->close();
     $conexion->close();

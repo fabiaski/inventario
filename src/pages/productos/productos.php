@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
+
+requierePermiso('productos', 'ver');
 
 
 $buscar = trim($_GET['buscar'] ?? '');
@@ -150,13 +153,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             </div>
 
 
-
+                            <?php if (tienePermiso('productos', 'agregar')): ?>
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#modalProducto" id="btnNuevoProducto">
                                 <i class="mdi mdi-plus"></i>
                                 Nuevo producto
                             </button>
-
+                            <?php endif; ?>
                         </div>
 
                         <br>
@@ -190,6 +193,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
                             <strong>Error.</strong> No fue posible eliminar el producto.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <?php elseif ($_GET['mensaje'] == 'importados'): ?>
+
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>¡Éxito!</strong> Los productos fueron importados correctamente.
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
 
@@ -334,6 +344,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         <!-- ACCIONES -->
                                         <td class="text-end" style="white-space: nowrap;">
 
+                                            <?php if (tienePermiso('productos', 'editar')): ?>
+
                                             <button type="button" class="btn btn-light btn-sm btn-editar-producto"
                                                 data-id="<?= $fila['id'] ?>"
                                                 data-producto="<?= htmlspecialchars($fila['producto'], ENT_QUOTES) ?>"
@@ -346,6 +358,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                             </button>
 
+                                            <?php endif; ?>
+
+                                            <?php if (tienePermiso('productos', 'eliminar')): ?>
+
                                             <button type="button"
                                                 class="btn btn-light btn-sm text-danger btn-eliminar-producto"
                                                 data-id="<?= $fila['id'] ?>" title="Eliminar">
@@ -353,6 +369,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 <i class="bi bi-trash"></i>
 
                                             </button>
+
+                                            <?php endif; ?>
 
                                         </td>
 
@@ -380,29 +398,29 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         </div>
                         <?php if ($totalPaginas > 1): ?>
 
-<div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="d-flex justify-content-between align-items-center mt-4">
 
-    <div class="text-muted">
-        Página <?= $pagina ?> de <?= $totalPaginas ?>
-    </div>
+                            <div class="text-muted">
+                                Página <?= $pagina ?> de <?= $totalPaginas ?>
+                            </div>
 
-    <nav>
-        <ul class="pagination mb-0">
+                            <nav>
+                                <ul class="pagination mb-0">
 
-            <!-- ANTERIOR -->
-            <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+                                    <!-- ANTERIOR -->
+                                    <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
 
-                <a class="page-link"
-                    href="?pagina=<?= $pagina - 1 ?>&buscar=<?= urlencode($buscar) ?>">
+                                        <a class="page-link"
+                                            href="?pagina=<?= $pagina - 1 ?>&buscar=<?= urlencode($buscar) ?>">
 
-                    <i class="bi bi-chevron-left"></i>
+                                            <i class="bi bi-chevron-left"></i>
 
-                </a>
+                                        </a>
 
-            </li>
+                                    </li>
 
 
-            <?php
+                                    <?php
 
             $inicio = max(1, $pagina - 2);
             $fin = min($totalPaginas, $pagina + 2);
@@ -410,38 +428,37 @@ require_once __DIR__ . '/../../includes/sidebar.php';
             for ($i = $inicio; $i <= $fin; $i++):
             ?>
 
-            <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
+                                    <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
 
-                <a class="page-link"
-                    href="?pagina=<?= $i ?>&buscar=<?= urlencode($buscar) ?>">
+                                        <a class="page-link" href="?pagina=<?= $i ?>&buscar=<?= urlencode($buscar) ?>">
 
-                    <?= $i ?>
+                                            <?= $i ?>
 
-                </a>
+                                        </a>
 
-            </li>
+                                    </li>
 
-            <?php endfor; ?>
+                                    <?php endfor; ?>
 
 
-            <!-- SIGUIENTE -->
-            <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+                                    <!-- SIGUIENTE -->
+                                    <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
 
-                <a class="page-link"
-                    href="?pagina=<?= $pagina + 1 ?>&buscar=<?= urlencode($buscar) ?>">
+                                        <a class="page-link"
+                                            href="?pagina=<?= $pagina + 1 ?>&buscar=<?= urlencode($buscar) ?>">
 
-                    <i class="bi bi-chevron-right"></i>
+                                            <i class="bi bi-chevron-right"></i>
 
-                </a>
+                                        </a>
 
-            </li>
+                                    </li>
 
-        </ul>
-    </nav>
+                                </ul>
+                            </nav>
 
-</div>
+                        </div>
 
-<?php endif; ?>
+                        <?php endif; ?>
 
 
                     </div>
@@ -457,7 +474,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <form action="guardar.php" method="POST" id="formProducto">
+                <form action="/inventario/productos/guardar" method="POST" id="formProducto">
 
                     <input type="hidden" name="id" id="idProducto">
 
@@ -632,7 +649,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
         document.getElementById('btnNuevoProducto')
             .addEventListener('click', function() {
 
-                form.action = 'guardar.php';
+                form.action = '/inventario/productos/guardar';
 
                 idProducto.value = '';
                 producto.value = '';
@@ -658,7 +675,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                 boton.addEventListener('click', function() {
 
-                    form.action = 'actualizar.php';
+                    form.action = '/inventario/productos/actualizar';
 
                     idProducto.value = this.dataset.id;
                     producto.value = this.dataset.producto;
@@ -752,32 +769,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         return;
                     }
 
-                    fetch('eliminar.php?id=' + id)
-
-                        .then(response => response.json())
-
-                        .then(data => {
-
-                            if (data.success) {
-
-                                window.location.reload();
-
-                            } else {
-
-                                alert(data.error);
-
-                            }
-
-                        })
-
-                        .catch(error => {
-
-                            console.error(error);
-
-                            alert('No fue posible eliminar el producto.');
-
-                        });
-
+                    window.location.href = '/inventario/productos/eliminar?id=' + id;
                 });
 
             });

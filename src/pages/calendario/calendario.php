@@ -1,6 +1,45 @@
 <?php
 
+// ==========================================================
+// INICIAR SESIÓN
+// ==========================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+// ==========================================================
+// EVITAR CACHÉ
+// ==========================================================
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Expires: 0');
+
+
+// ==========================================================
+// VERIFICAR SESIÓN
+// ==========================================================
+
+if (!isset($_SESSION['usuario_id'])) {
+
+    header('Location: /inventario/login?error=sesion');
+    exit;
+}
+
+
+// ==========================================================
+// CONEXIÓN
+// ==========================================================
+
 require_once __DIR__ . '/../../config/conexion.php';
+
+
+// ==========================================================
+// HEADER
+// ==========================================================
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';

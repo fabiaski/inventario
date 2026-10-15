@@ -2,8 +2,17 @@
 
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
+
+//==================================================
+// PERMISO PARA VER EL MÓDULO
+//==================================================
+
+requierePermiso('importar_excel', 'ver');
 
 
 //==================================================
@@ -24,6 +33,18 @@ $archivoCargado = false;
 //==================================================
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    //==================================================
+    // PERMISO PARA IMPORTAR
+    //==================================================
+
+    if (!tienePermiso('importar_excel', 'importar')) {
+
+        $errores[] =
+            'No tienes permiso para importar productos mediante Excel.';
+
+    }
+
 
     //==================================================
     // VALIDAR FECHA
@@ -126,39 +147,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $encabezados = [];
 
+                $ultimaColumna =
+                    $hoja->getHighestColumn();
 
-                foreach (
-                    $hoja->getRowIterator(1, 1)
-                    as $fila
+                $ultimaColumnaNumero =
+                    Coordinate::columnIndexFromString(
+                        $ultimaColumna
+                    );
+
+
+                // Leer directamente la fila 1
+                for (
+                    $columnaNumero = 1;
+                    $columnaNumero <= $ultimaColumnaNumero;
+                    $columnaNumero++
                 ) {
 
-                    foreach (
-                        $fila->getCellIterator()
-                        as $celda
-                    ) {
-
-                        $valor =
-                            trim(
-                                (string)
-                                $celda->getValue()
-                            );
+                    $letraColumna =
+                        Coordinate::stringFromColumnIndex(
+                            $columnaNumero
+                        );
 
 
-                        if ($valor !== '') {
+                    $celda =
+                        $hoja->getCell(
+                            $letraColumna . '1'
+                        );
 
-                            $encabezados[] = [
 
-                                'columna' =>
-                                    $celda->getColumn(),
+                    $valor =
+                        $celda->getValue();
 
-                                'nombre' =>
-                                    $valor
 
-                            ];
-
-                        }
-
+                    if ($valor === null) {
+                        continue;
                     }
+
+
+                    $valor =
+                        trim(
+                            (string) $valor
+                        );
+
+
+                    if ($valor === '') {
+                        continue;
+                    }
+
+
+                    $encabezados[] = [
+
+                        'columna' =>
+                            $letraColumna,
+
+                        'nombre' =>
+                            $valor
+
+                    ];
 
                 }
 
@@ -185,8 +230,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         );
 
 
+                    //==============================================
+                    // DESCRIPCIÓN
+                    //==============================================
+
                     if (
-                        $nombre === 'descripcion'
+                        in_array(
+                            $nombre,
+                            [
+                                'descripcion',
+                                'producto',
+                                'nombre',
+                                'nombre del producto'
+                            ],
+                            true
+                        )
                     ) {
 
                         $columnaDescripcion =
@@ -195,8 +253,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
 
+                    //==============================================
+                    // UNIDAD
+                    //==============================================
+
                     if (
-                        $nombre === 'unidad de medida'
+                        in_array(
+                            $nombre,
+                            [
+                                'unidad de medida',
+                                'unidad',
+                                'unidad medida'
+                            ],
+                            true
+                        )
                     ) {
 
                         $columnaUnidad =
@@ -205,8 +275,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
 
+                    //==============================================
+                    // PRECIO
+                    //==============================================
+
                     if (
-                        $nombre === 'valor unidad'
+                        in_array(
+                            $nombre,
+                            [
+                                'valor unidad',
+                                'valor de unidad',
+                                'precio',
+                                'precio unidad',
+                                'valor'
+                            ],
+                            true
+                        )
                     ) {
 
                         $columnaPrecio =
@@ -263,6 +347,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $fila++
                     ) {
 
+                        //==========================================
+                        // DESCRIPCIÓN
+                        //==========================================
+
                         $descripcion =
                             trim(
                                 (string)
@@ -273,6 +361,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     ->getValue()
                             );
 
+
+                        //==========================================
+                        // UNIDAD
+                        //==========================================
 
                         $unidad =
                             trim(
@@ -285,6 +377,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             );
 
 
+                        //==========================================
+                        // PRECIO
+                        //==========================================
+
                         $precioOriginal =
                             $hoja
                                 ->getCell(
@@ -293,9 +389,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 ->getValue();
 
 
-                        //==================================================
-                        // IGNORAR FILAS VACÍAS
-                        //==================================================
+                        //==========================================
+                        // IGNORAR FILAS COMPLETAMENTE VACÍAS
+                        //==========================================
 
                         if (
                             $descripcion === '' &&
@@ -311,9 +407,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
 
 
-                        //==================================================
+                        //==========================================
+                        // VALIDAR DESCRIPCIÓN
+                        //==========================================
+
+                        if ($descripcion === '') {
+
+                            $errores[] =
+                                'La fila ' . $fila .
+                                ' no tiene descripción.';
+
+                            continue;
+
+                        }
+
+
+                        //==========================================
+                        // VALIDAR UNIDAD
+                        //==========================================
+
+                        if ($unidad === '') {
+
+                            $errores[] =
+                                'La fila ' . $fila .
+                                ' no tiene unidad de medida.';
+
+                            continue;
+
+                        }
+
+
+                        //==========================================
                         // CONVERTIR PRECIO
-                        //==================================================
+                        //==========================================
 
                         $precio =
                             convertirNumero(
@@ -321,9 +447,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             );
 
 
-                        //==================================================
+                        //==========================================
                         // COMPROBAR SI YA EXISTE
-                        //==================================================
+                        //==========================================
 
                         $productoExistente =
                             buscarProductoExistente(
@@ -352,9 +478,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
 
 
-                        //==================================================
+                        //==========================================
                         // AGREGAR A VISTA PREVIA
-                        //==================================================
+                        //==========================================
 
                         $productosImportados[] = [
 
@@ -384,16 +510,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
 
-                    $archivoCargado = true;
-
-
                     //==================================================
-                    // VALIDAR RESULTADO
+                    // ARCHIVO PROCESADO
                     //==================================================
 
                     if (
-                        empty($productosImportados)
+                        !empty($productosImportados)
                     ) {
+
+                        $archivoCargado = true;
+
+                    } else {
 
                         $errores[] =
                             'No se encontraron productos en el archivo.';
@@ -407,8 +534,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } catch (Throwable $e) {
 
                 $errores[] =
-                    'No fue posible leer el archivo: '
-                    . $e->getMessage();
+                    'No fue posible leer el archivo: ' .
+                    $e->getMessage();
 
             }
 
@@ -499,13 +626,35 @@ function normalizarTexto($texto)
 {
 
     $texto =
-        trim(
-            mb_strtolower(
-                $texto,
-                'UTF-8'
-            )
+        (string) $texto;
+
+
+    // Eliminar BOM y caracteres invisibles
+
+    $texto =
+        str_replace(
+            [
+                "\xEF\xBB\xBF",
+                "\xC2\xA0",
+                "\r",
+                "\n",
+                "\t"
+            ],
+            ' ',
+            $texto
         );
 
+
+    // Convertir a minúsculas
+
+    $texto =
+        mb_strtolower(
+            $texto,
+            'UTF-8'
+        );
+
+
+    // Quitar tildes
 
     $texto =
         str_replace(
@@ -527,6 +676,22 @@ function normalizarTexto($texto)
             ],
             $texto
         );
+
+
+    // Eliminar espacios repetidos
+
+    $texto =
+        preg_replace(
+            '/\s+/',
+            ' ',
+            $texto
+        );
+
+
+    // Quitar espacios al inicio y final
+
+    $texto =
+        trim($texto);
 
 
     return $texto;
@@ -551,6 +716,8 @@ function convertirNumero($valor)
     }
 
 
+    // Excel normalmente entrega números como float/int
+
     if (is_numeric($valor)) {
 
         return (float) $valor;
@@ -564,6 +731,8 @@ function convertirNumero($valor)
         );
 
 
+    // Quitar símbolo $
+
     $valor =
         str_replace(
             '$',
@@ -572,9 +741,17 @@ function convertirNumero($valor)
         );
 
 
-    $valor =
-        trim($valor);
+    // Quitar espacios
 
+    $valor =
+        str_replace(
+            ' ',
+            '',
+            $valor
+        );
+
+
+    // Formato 12.000,50
 
     if (
         strpos($valor, ',') !== false &&
@@ -603,6 +780,8 @@ function convertirNumero($valor)
 
         } else {
 
+            // Formato 12,000.50
+
             $valor =
                 str_replace(
                     ',',
@@ -615,6 +794,8 @@ function convertirNumero($valor)
     } elseif (
         strpos($valor, ',') !== false
     ) {
+
+        // Formato 12000,50
 
         $valor =
             str_replace(
@@ -663,6 +844,10 @@ foreach (
 }
 
 
+//==================================================
+// DISEÑO
+//==================================================
+
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 require_once __DIR__ . '/../../includes/sidebar.php';
@@ -672,27 +857,33 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 <div class="main-panel">
 
     <div class="content-wrapper">
+
         <div class="row">
 
             <div class="col-lg-12 grid-margin stretch-card">
+
                 <div class="card">
 
-
                     <div class="card-body md-4">
+
                         <div class="panel-header d-flex justify-content-between align-items-center">
 
                             <div>
 
+                                <h2 class="mb-1 section-title">
 
-                                <h2 class=" mb-1 section-title">
                                     <i class="bi bi-receipt"></i>
+
                                     Importar Productos
 
                                 </h2>
 
                                 <p class="text-muted mb-0">
+
                                     Importe productos desde Excel
-                                    y revise los datos antes de guardarlos. </p>
+                                    y revise los datos antes de guardarlos.
+
+                                </p>
 
                             </div>
 
@@ -703,111 +894,417 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <?php if (!empty($errores)): ?>
 
-                        <div class="alert alert-danger">
+                            <div class="alert alert-danger">
 
-                            <strong>
-                                Error:
-                            </strong>
+                                <strong>
+                                    Error:
+                                </strong>
 
+                                <ul class="mb-0 mt-2">
 
-                            <ul class="mb-0 mt-2">
+                                    <?php foreach ($errores as $error): ?>
 
-                                <?php foreach (
-                                        $errores
-                                        as $error
-                                    ): ?>
+                                        <li>
+                                            <?= htmlspecialchars($error) ?>
+                                        </li>
 
-                                <li>
+                                    <?php endforeach; ?>
 
-                                    <?= htmlspecialchars($error) ?>
+                                </ul>
 
-                                </li>
-
-                                <?php endforeach; ?>
-
-                            </ul>
-
-                        </div>
+                            </div>
 
                         <?php endif; ?>
-
-
-
 
 
                         <?php if (!$archivoCargado): ?>
 
 
+                            <?php if (tienePermiso('importar_excel', 'importar')): ?>
+
+                                <form
+                                    method="POST"
+                                    enctype="multipart/form-data"
+                                >
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label">
+                                                Fecha de cotización
+                                            </label>
+
+                                            <input
+                                                type="date"
+                                                name="fecha_cotizacion"
+                                                class="form-control"
+                                                value="<?= htmlspecialchars($fechaCotizacion) ?>"
+                                                required
+                                            >
+
+                                            <div class="form-text">
+
+                                                Esta fecha se asignará
+                                                a los productos nuevos.
+
+                                            </div>
+
+                                        </div>
 
 
-                        <form method="POST" enctype="multipart/form-data">
+                                        <div class="col-md-8">
+
+                                            <label class="form-label">
+                                                Archivo Excel
+                                            </label>
+
+                                            <input
+                                                type="file"
+                                                name="archivo_excel"
+                                                class="form-control"
+                                                accept=".xlsx,.xls,.csv"
+                                                required
+                                            >
+
+                                            <div class="form-text">
+
+                                                El archivo debe contener:
+
+                                                <strong>
+                                                    Descripcion
+                                                </strong>,
+
+                                                <strong>
+                                                    Unidad de Medida
+                                                </strong>
+
+                                                y
+
+                                                <strong>
+                                                    Valor unidad
+                                                </strong>.
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
 
 
-                            <div class="row g-3">
+                                    <hr class="my-4">
 
 
-                                <!-- FECHA -->
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+
+                                        <i class="bi bi-search"></i>
+
+                                        Cargar y revisar
+
+                                    </button>
+
+
+                                    <a
+                                        href="/inventario/productos"
+                                        class="btn btn-secondary"
+                                    >
+
+                                        Cancelar
+
+                                    </a>
+
+                                </form>
+
+
+                            <?php else: ?>
+
+                                <div class="alert alert-warning">
+
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+
+                                    No tienes permiso para importar productos mediante Excel.
+
+                                </div>
+
+                            <?php endif; ?>
+
+
+                        <?php endif; ?>
+
+
+                        <?php if ($archivoCargado): ?>
+
+
+                            <!--==================================================
+                            VISTA PREVIA
+                            ==================================================-->
+
+                            <div class="alert alert-info">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                <strong>
+                                    Vista previa
+                                </strong>
+
+                                <br>
+
+                                Se encontraron
+
+                                <strong>
+                                    <?= $totalProductos ?>
+                                </strong>
+
+                                productos.
+
+                                <br>
+
+                                <small>
+
+                                    Los productos todavía
+
+                                    <strong>
+                                        NO han sido guardados
+                                    </strong>
+
+                                    en la base de datos.
+
+                                </small>
+
+                            </div>
+
+
+                            <!--==================================================
+                            RESUMEN
+                            ==================================================-->
+
+                            <div class="row g-3 mb-4">
 
                                 <div class="col-md-4">
 
-                                    <label class="form-label">
+                                    <div class="card shadow-sm">
 
-                                        Fecha de cotización
+                                        <div class="card-body">
 
-                                    </label>
+                                            <div class="text-muted">
+                                                Total encontrados
+                                            </div>
 
+                                            <h4 class="mb-0">
+                                                <?= $totalProductos ?>
+                                            </h4>
 
-                                    <input type="date" name="fecha_cotizacion" class="form-control" value="<?= htmlspecialchars(
-                                $fechaCotizacion
-                            ) ?>" required>
-
-
-                                    <div class="form-text">
-
-                                        Esta fecha se asignará
-                                        a los productos nuevos.
+                                        </div>
 
                                     </div>
 
                                 </div>
 
 
-                                <!-- ARCHIVO -->
+                                <div class="col-md-4">
 
-                                <div class="col-md-8">
+                                    <div class="card shadow-sm border-success">
 
-                                    <label class="form-label">
+                                        <div class="card-body">
 
-                                        Archivo Excel
+                                            <div class="text-success">
 
-                                    </label>
+                                                <i class="bi bi-plus-circle"></i>
 
+                                                Productos nuevos
 
-                                    <input type="file" name="archivo_excel" class="form-control"
-                                        accept=".xlsx,.xls,.csv" required>
+                                            </div>
 
+                                            <h4 class="mb-0 text-success">
 
-                                    <div class="form-text">
+                                                <?= $totalNuevos ?>
 
-                                        El archivo debe contener:
+                                            </h4>
 
-                                        <strong>
-                                            Descripcion
-                                        </strong>,
-
-                                        <strong>
-                                            Unidad de Medida
-                                        </strong>
-
-                                        y
-
-                                        <strong>
-                                            Valor unidad
-                                        </strong>.
+                                        </div>
 
                                     </div>
 
                                 </div>
+
+
+                                <div class="col-md-4">
+
+                                    <div class="card shadow-sm border-warning">
+
+                                        <div class="card-body">
+
+                                            <div class="text-warning">
+
+                                                <i class="bi bi-exclamation-circle"></i>
+
+                                                Ya existen
+
+                                            </div>
+
+                                            <h4 class="mb-0 text-warning">
+
+                                                <?= $totalExistentes ?>
+
+                                            </h4>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!--==================================================
+                            INFORMACIÓN
+                            ==================================================-->
+
+                            <div class="mb-3">
+
+                                <strong>
+                                    Fecha seleccionada:
+                                </strong>
+
+                                <?= date(
+                                    'd/m/Y',
+                                    strtotime($fechaCotizacion)
+                                ) ?>
+
+                            </div>
+
+
+                            <!--==================================================
+                            TABLA
+                            ==================================================-->
+
+                            <div class="table-responsive">
+
+                                <table class="table table-bordered table-hover align-middle">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th>
+                                                #
+                                            </th>
+
+                                            <th>
+                                                Descripción
+                                            </th>
+
+                                            <th>
+                                                Unidad de Medida
+                                            </th>
+
+                                            <th class="text-end">
+                                                Valor unidad
+                                            </th>
+
+                                            <th>
+                                                Fecha
+                                            </th>
+
+                                            <th>
+                                                Estado
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <?php foreach (
+                                            $productosImportados
+                                            as $indice => $producto
+                                        ): ?>
+
+                                            <tr>
+
+                                                <td>
+                                                    <?= $indice + 1 ?>
+                                                </td>
+
+                                                <td>
+
+                                                    <?= htmlspecialchars(
+                                                        $producto['producto']
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td>
+
+                                                    <?= htmlspecialchars(
+                                                        $producto['unidad_medida']
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td class="text-end">
+
+                                                    $<?= number_format(
+                                                        $producto['precio'],
+                                                        0,
+                                                        ',',
+                                                        '.'
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td>
+
+                                                    <?= date(
+                                                        'd/m/Y',
+                                                        strtotime(
+                                                            $producto['fecha_cotizacion']
+                                                        )
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td>
+
+                                                    <?php if (
+                                                        $producto['estado'] === 'existente'
+                                                    ): ?>
+
+                                                        <span class="badge bg-warning text-dark">
+
+                                                            <i class="bi bi-exclamation-circle"></i>
+
+                                                            Ya existe
+
+                                                        </span>
+
+                                                    <?php else: ?>
+
+                                                        <span class="badge bg-success">
+
+                                                            <i class="bi bi-plus-circle"></i>
+
+                                                            Nuevo
+
+                                                        </span>
+
+                                                    <?php endif; ?>
+
+                                                </td>
+
+                                            </tr>
+
+                                        <?php endforeach; ?>
+
+                                    </tbody>
+
+                                </table>
 
                             </div>
 
@@ -815,409 +1312,82 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <hr class="my-4">
 
 
-                            <button type="submit" class="btn btn-primary">
+                            <!--==================================================
+                            BOTONES
+                            ==================================================-->
 
-                                <i class="bi bi-search"></i>
+                            <div class="d-flex gap-2">
 
-                                Cargar y revisar
+                                <a
+                                    href="/inventario/importarprodu"
+                                    class="btn btn-secondary"
+                                >
 
-                            </button>
+                                    <i class="bi bi-arrow-left"></i>
+
+                                    Volver
+
+                                </a>
 
 
+                                <form
+                                    method="POST"
+                                    action="/inventario/importarprodu/guardar"
+                                    class="d-inline"
+                                >
 
-                            <a href="productos.php" class="btn btn-secondary">
+                                    <input
+                                        type="hidden"
+                                        name="fecha_cotizacion"
+                                        value="<?= htmlspecialchars($fechaCotizacion) ?>"
+                                    >
 
-                                Cancelar
 
-                            </a>
+                                    <input
+                                        type="hidden"
+                                        name="productos"
+                                        value="<?= htmlspecialchars(
+                                            json_encode(
+                                                $productosImportados,
+                                                JSON_UNESCAPED_UNICODE
+                                            ),
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
+                                    >
 
 
-                        </form>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                        onclick="return confirm('¿Desea guardar únicamente los productos nuevos?');"
+                                    >
+
+                                        <i class="bi bi-database-add"></i>
+
+                                        Guardar productos nuevos
+
+                                    </button>
+
+                                </form>
+
+                            </div>
 
 
                         <?php endif; ?>
-
-
-                        <!--==================================================
-        VISTA PREVIA
-        ==================================================-->
-
-                        <?php if ($archivoCargado): ?>
-
-
-                        <div class="alert alert-info">
-
-                            <i class="bi bi-info-circle"></i>
-
-                            <strong>
-                                Vista previa
-                            </strong>
-
-
-                            <br>
-
-
-                            Se encontraron
-
-                            <strong>
-                                <?= $totalProductos ?>
-                            </strong>
-
-                            productos.
-
-
-                            <br>
-
-
-                            <small>
-
-                                Los productos todavía
-
-                                <strong>
-                                    NO han sido guardados
-                                </strong>
-
-                                en la base de datos.
-
-                            </small>
-
-                        </div>
-
-
-                        <!--==================================================
-            RESUMEN
-            ==================================================-->
-
-                        <div class="row g-3 mb-4">
-
-
-                            <!-- TOTAL -->
-
-                            <div class="col-md-4">
-
-                                <div class="card shadow-sm">
-
-                                    <div class="card-body">
-
-                                        <div class="text-muted">
-
-                                            Total encontrados
-
-                                        </div>
-
-
-                                        <h4 class="mb-0">
-
-                                            <?= $totalProductos ?>
-
-                                        </h4>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- NUEVOS -->
-
-                            <div class="col-md-4">
-
-                                <div class="card shadow-sm border-success">
-
-                                    <div class="card-body">
-
-                                        <div class="text-success">
-
-                                            <i class="bi bi-plus-circle"></i>
-
-                                            Productos nuevos
-
-                                        </div>
-
-
-                                        <h4 class="mb-0 text-success">
-
-                                            <?= $totalNuevos ?>
-
-                                        </h4>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- EXISTENTES -->
-
-                            <div class="col-md-4">
-
-                                <div class="card shadow-sm border-warning">
-
-                                    <div class="card-body">
-
-                                        <div class="text-warning">
-
-                                            <i class="bi bi-exclamation-circle"></i>
-
-                                            Ya existen
-
-                                        </div>
-
-
-                                        <h4 class="mb-0 text-warning">
-
-                                            <?= $totalExistentes ?>
-
-                                        </h4>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!--==================================================
-            INFORMACIÓN
-            ==================================================-->
-
-                        <div class="mb-3">
-
-                            <strong>
-                                Fecha seleccionada:
-                            </strong>
-
-                            <?= date(
-                    'd/m/Y',
-                    strtotime(
-                        $fechaCotizacion
-                    )
-                ) ?>
-
-                        </div>
-
-
-                        <!--==================================================
-            TABLA
-            ==================================================-->
-
-                        <div class="table-responsive">
-
-                            <table class="table table-bordered table-hover align-middle">
-
-                                <thead class="table-light">
-
-                                    <tr>
-
-                                        <th>
-                                            #
-                                        </th>
-
-                                        <th>
-                                            Descripción
-                                        </th>
-
-                                        <th>
-                                            Unidad de Medida
-                                        </th>
-
-                                        <th class="text-end">
-                                            Valor unidad
-                                        </th>
-
-                                        <th>
-                                            Fecha
-                                        </th>
-
-                                        <th>
-                                            Estado
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-
-                                    <?php foreach (
-                            $productosImportados
-                            as $indice => $producto
-                        ): ?>
-
-
-                                    <tr>
-
-
-                                        <!-- # -->
-
-                                        <td>
-
-                                            <?= $indice + 1 ?>
-
-                                        </td>
-
-
-                                        <!-- PRODUCTO -->
-
-                                        <td>
-
-                                            <?= htmlspecialchars(
-                                        $producto['producto']
-                                    ) ?>
-
-                                        </td>
-
-
-                                        <!-- UNIDAD -->
-
-                                        <td>
-
-                                            <?= htmlspecialchars(
-                                        $producto['unidad_medida']
-                                    ) ?>
-
-                                        </td>
-
-
-                                        <!-- PRECIO -->
-
-                                        <td class="text-end">
-
-                                            $<?= number_format(
-                                        $producto['precio'],
-                                        0,
-                                        ',',
-                                        '.'
-                                    ) ?>
-
-                                        </td>
-
-
-                                        <!-- FECHA -->
-
-                                        <td>
-
-                                            <?= date(
-                                        'd/m/Y',
-                                        strtotime(
-                                            $producto[
-                                                'fecha_cotizacion'
-                                            ]
-                                        )
-                                    ) ?>
-
-                                        </td>
-
-
-                                        <!-- ESTADO -->
-
-                                        <td>
-
-                                            <?php if (
-                                        $producto['estado']
-                                        === 'existente'
-                                    ): ?>
-
-
-                                            <span class="badge bg-warning text-dark">
-
-                                                <i class="bi bi-exclamation-circle"></i>
-
-                                                Ya existe
-
-                                            </span>
-
-
-                                            <?php else: ?>
-
-
-                                            <span class="badge bg-success">
-
-                                                <i class="bi bi-plus-circle"></i>
-
-                                                Nuevo
-
-                                            </span>
-
-
-                                            <?php endif; ?>
-
-                                        </td>
-
-
-                                    </tr>
-
-
-                                    <?php endforeach; ?>
-
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-
-                        <hr class="my-4">
-
-
-                        <!--==================================================
-            BOTONES
-            ==================================================-->
-
-                        <div class="d-flex gap-2">
-
-
-                            <a href="importar.php" class="btn btn-secondary">
-
-                                <i class="bi bi-arrow-left"></i>
-
-                                Volver
-
-                            </a>
-
-
-                            <form method="POST" action="guardar_importados.php" class="d-inline">
-                                <input type="hidden" name="fecha_cotizacion"
-                                    value="<?= htmlspecialchars($fechaCotizacion) ?>">
-
-                                <input type="hidden" name="productos" value="<?= htmlspecialchars(
-            json_encode($productosImportados),
-            ENT_QUOTES,
-            'UTF-8'
-        ) ?>">
-
-                                <button type="submit" class="btn btn-success" onclick="
-            return confirm(
-                '¿Desea guardar únicamente los productos nuevos?'
-            );
-        ">
-                                    <i class="bi bi-database-add"></i>
-
-                                    Guardar productos nuevos
-                                </button>
-                            </form>
-
-
-                        </div>
-
-
-                        <?php endif; ?>
-
-
-                        </section>
 
 
                     </div>
 
+                </div>
 
-                    <?php
+            </div>
+
+        </div>
+
+   
+
+<?php
 
 include __DIR__ . '/../../includes/footer.php';
 

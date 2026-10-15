@@ -3,7 +3,7 @@
 $host = "localhost";
 $usuario = "root";
 $password = "";
-$baseDatos = "inventario";
+$baseDatos = "inventarios";
 
 $conexion = new mysqli($host, $usuario, $password, $baseDatos);
 
@@ -14,3 +14,4 @@ if ($conexion->connect_error) {
 $conexion->set_charset("utf8mb4");
 
 ?>
+

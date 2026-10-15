@@ -1,9 +1,19 @@
+
+
+
+<?php
+
+require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/permisos.php';
+
+?>
 <div class="container-fluid page-body-wrapper">
-    <!-- partial:partials/_sidebar.html -->
+
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
         <ul class="nav">
 
-            <!-- Dashboard -->
+            <!-- DASHBOARD -->
             <li class="nav-item">
                 <a class="nav-link" href="/inventario/calendario">
                     <i class="mdi mdi-grid-large menu-icon"></i>
@@ -13,120 +23,201 @@
 
 
             <!-- INVENTARIO -->
-            <li class="nav-item nav-category">Inventario</li>
+            <?php if (tienePermiso('productos', 'ver') || tienePermiso('importar_excel', 'ver')): ?>
 
-            <li class="nav-item">
-    <a class="nav-link" href="/inventario/productos">
-        <i class="menu-icon mdi mdi-package-variant"></i>
-        <span class="menu-title">Productos</span>
-    </a>
-</li>
+                <li class="nav-item nav-category">Inventario</li>
 
-<li class="nav-item">
-    <a class="nav-link" href="/inventario/importarprodu">
-        <i class="menu-icon fa fa-file-excel-o"></i>
-        <span class="menu-title">Importar Excel</span>
-    </a>
-</li>
+            <?php endif; ?>
+
+
+            <!-- PRODUCTOS -->
+            <?php if (tienePermiso('productos', 'ver')): ?>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/inventario/productos">
+                        <i class="menu-icon mdi mdi-package-variant"></i>
+                        <span class="menu-title">Productos</span>
+                    </a>
+                </li>
+
+            <?php endif; ?>
+
+
+            <!-- IMPORTAR EXCEL -->
+            <?php if (tienePermiso('importar_excel', 'ver')): ?>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/inventario/importarprodu">
+                        <i class="menu-icon fa fa-file-excel-o"></i>
+                        <span class="menu-title">Importar Excel</span>
+                    </a>
+                </li>
+
+            <?php endif; ?>
 
 
             <!-- COTIZACIONES -->
-            <li class="nav-item nav-category">Cotizaciones</li>
+            <?php if (tienePermiso('cotizaciones', 'ver')): ?>
 
-            <li class="nav-item">
-                <a class="nav-link"
-                   data-bs-toggle="collapse"
-                   href="#form-elements"
-                   aria-expanded="false"
-                   aria-controls="form-elements">
+                <li class="nav-item nav-category">Cotizaciones</li>
 
-                    <i class="menu-icon mdi mdi-file-document-edit"></i>
-                    <span class="menu-title">Cotizaciones</span>
-                    <i class="menu-arrow"></i>
-                </a>
+                <li class="nav-item">
 
-                <div class="collapse" id="form-elements">
-                    <ul class="nav flex-column sub-menu">
+                    <a class="nav-link"
+                       data-bs-toggle="collapse"
+                       href="#form-elements"
+                       aria-expanded="false"
+                       aria-controls="form-elements">
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/cotizaciones">
-                                Ver cotizaciones
-                            </a>
-                        </li>
+                        <i class="menu-icon mdi mdi-file-document-edit"></i>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/cotizaciones-agregar">
-                                Nueva cotización
-                            </a>
-                        </li>
+                        <span class="menu-title">Cotizaciones</span>
 
-                    </ul>
-                </div>
-            </li>
+                        <i class="menu-arrow"></i>
+
+                    </a>
+
+                    <div class="collapse" id="form-elements">
+
+                        <ul class="nav flex-column sub-menu">
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="/inventario/cotizaciones">
+                                    Ver cotizaciones
+                                </a>
+                            </li>
+
+                            <?php if (tienePermiso('cotizaciones', 'agregar')): ?>
+
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="/inventario/cotizaciones-agregar">
+                                        Nueva cotización
+                                    </a>
+                                </li>
+
+                            <?php endif; ?>
+
+                        </ul>
+
+                    </div>
+
+                </li>
+
+            <?php endif; ?>
 
 
             <!-- FACTURACIÓN -->
-            <li class="nav-item nav-category">Facturación</li>
+            <?php if (tienePermiso('facturacion', 'ver')): ?>
 
-            <li class="nav-item">
-                <a class="nav-link"
-                   data-bs-toggle="collapse"
-                   href="#form-Factura"
-                   aria-expanded="false"
-                   aria-controls="form-Factura">
+                <li class="nav-item nav-category">Facturación</li>
 
-                    <i class="menu-icon mdi mdi-receipt-text"></i>
-                    <span class="menu-title">Facturación</span>
-                    <i class="menu-arrow"></i>
-                </a>
+                <li class="nav-item">
 
-                <div class="collapse" id="form-Factura">
-                    <ul class="nav flex-column sub-menu">
+                    <a class="nav-link"
+                       data-bs-toggle="collapse"
+                       href="#form-Factura"
+                       aria-expanded="false"
+                       aria-controls="form-Factura">
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/facturacion">
-                                Ver facturación
-                            </a>
-                        </li>
+                        <i class="menu-icon mdi mdi-receipt-text"></i>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/facturacion-agregar">
-                                Nueva factura
-                            </a>
-                        </li>
+                        <span class="menu-title">Facturación</span>
 
-                    </ul>
-                </div>
-            </li>
+                        <i class="menu-arrow"></i>
+
+                    </a>
+
+                    <div class="collapse" id="form-Factura">
+
+                        <ul class="nav flex-column sub-menu">
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="/inventario/facturacion">
+                                    Ver facturación
+                                </a>
+                            </li>
+
+                            <?php if (tienePermiso('facturacion', 'agregar')): ?>
+
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="/inventario/facturacion-agregar">
+                                    Nueva factura
+                                    </a>
+                                </li>
+
+                            <?php endif; ?>
+
+                        </ul>
+
+                    </div>
+
+                </li>
+
+            <?php endif; ?>
 
 
             <!-- REPORTES -->
-            <li class="nav-item nav-category">Reportes</li>
+            <?php if (tienePermiso('reportes', 'ver')): ?>
 
-            <li class="nav-item">
-                <a class="nav-link" href="/inventario/reportes">
-                    <i class="menu-icon mdi mdi-chart-line"></i>
-                    <span class="menu-title">Cuatrimestres</span>
-                </a>
-            </li>
+                <li class="nav-item nav-category">Reportes</li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="/inventario/reportes">
+
+                        <i class="menu-icon mdi mdi-chart-line"></i>
+
+                        <span class="menu-title">Cuatrimestres</span>
+
+                    </a>
+
+                </li>
+
+            <?php endif; ?>
 
 
             <!-- SMMLV -->
-            <li class="nav-item">
-                <a class="nav-link" href="/inventario/smmlv">
-                    <i class="menu-icon mdi mdi-file-document"></i>
-                    <span class="menu-title">SMMLV</span>
-                </a>
-            </li>
+            <?php if (tienePermiso('smmlv', 'ver')): ?>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="/inventario/smmlv">
+
+                        <i class="menu-icon mdi mdi-file-document"></i>
+
+                        <span class="menu-title">SMMLV</span>
+
+                    </a>
+
+                </li>
+
+            <?php endif; ?>
 
 
             <!-- FAVORES -->
-            <li class="nav-item">
-                <a class="nav-link" href="/inventario/favores">
-                    <i class="menu-icon mdi mdi-handshake"></i>
-                    <span class="menu-title">Favores</span>
-                </a>
-            </li>
+            <?php if (tienePermiso('favores', 'ver')): ?>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="/inventario/favores">
+
+                        <i class="menu-icon mdi mdi-handshake"></i>
+
+                        <span class="menu-title">Favores</span>
+
+                    </a>
+
+                </li>
+
+            <?php endif; ?>
 
         </ul>
+
     </nav>
