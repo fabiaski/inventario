@@ -3,6 +3,55 @@
 require_once __DIR__ . '/../../config/conexion.php';
 
 
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+    $accion = 'crear';
+
+    $descripcion =
+        'Creó la factura #'
+        . $facturaId
+        . ' del contrato '
+        . $numeroContrato;
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad = $conexion->prepare(
+        $sqlActividad
+    );
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $facturaId,
+            $ip
+        );
+
+        $stmtActividad->execute();
+
+        $stmtActividad->close();
+    }
+}
+
 //==================================================
 // VALIDAR CONTRATO
 //==================================================
@@ -141,31 +190,47 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </div>
 
 
-                                <!--==================================================
-                                NÚMERO DE FACTURA
-                                ==================================================-->
 
-                                <div class="col-md-6">
+                                <!-- NÚMERO DE FACTURA OPCIONAL -->
 
-                                    <label for="numero_factura" class="form-label">
 
-                                        N° de Factura
 
-                                        <span class="text-danger">*</span>
+                                <div class="col-md-4">
 
-                                    </label>
+                                    <div class="form-check mb-1" style="margin-left: 35px;">
+                                        <input class="form-check-input" type="checkbox" name="tiene_numero_factura"
+                                            id="tiene_numero_factura" value="1">
 
-                                    <input type="text" name="numero_factura" id="numero_factura" class="form-control"
-                                        maxlength="100" required>
+                                        <label class="form-check-label fs-6" for="tiene_numero_factura" style="font-size: 26px; margin-left: 2px;">
+                                            Tiene N.º de factura
+                                        </label>
+                                    </div>
+
+                                    <div id="contenedor_numero_factura" style="display: none;">
+
+                                        <input type="text" name="numero_factura" id="numero_factura"
+                                            class="form-control" maxlength="100" placeholder="Ingrese el número">
+                                    </div>
 
                                 </div>
 
+                                <!-- FECHA DE FACTURA SIEMPRE VISIBLE -->
+                                <div class="col-md-3">
+
+                                    <label for="fecha_factura" class="form-label">
+                                        Fecha de Factura <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="date" name="fecha_factura" id="fecha_factura" class="form-control"
+                                        required>
+
+                                </div>
 
                                 <!--==================================================
                                 VALOR DE LA FACTURA
                                 ==================================================-->
 
-                                <div class="col-md-6">
+                                <div class="col-md-3">
 
                                     <label for="valor" class="form-label">
 
@@ -426,6 +491,28 @@ include __DIR__ . '/../../includes/scripts.php';
 
 
         <script>
+        const tieneNumeroFactura =
+            document.getElementById('tiene_numero_factura');
+
+        const numeroFactura =
+            document.getElementById('numero_factura');
+
+        const contenedorNumeroFactura =
+            document.getElementById('contenedor_numero_factura');
+
+        tieneNumeroFactura.addEventListener('change', function() {
+            contenedorNumeroFactura.style.display =
+                this.checked ? 'block' : 'none';
+
+            numeroFactura.required = this.checked;
+
+            if (!this.checked) {
+                numeroFactura.value = '';
+            }
+        });
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
 
             const formulario = document.getElementById('formFactura');
@@ -532,55 +619,55 @@ include __DIR__ . '/../../includes/scripts.php';
 
             function formatearValor(campo) {
 
-    campo.addEventListener('input', function () {
+                campo.addEventListener('input', function() {
 
-        let valor = this.value;
+                    let valor = this.value;
 
-        // Permitir solamente números y coma
-        valor = valor.replace(/[^\d,]/g, '');
+                    // Permitir solamente números y coma
+                    valor = valor.replace(/[^\d,]/g, '');
 
-        // Permitir solamente una coma decimal
-        const partes = valor.split(',');
+                    // Permitir solamente una coma decimal
+                    const partes = valor.split(',');
 
-        let parteEntera = partes[0];
+                    let parteEntera = partes[0];
 
-        let parteDecimal =
-            partes.length > 1
-                ? partes[1].substring(0, 3)
-                : null;
+                    let parteDecimal =
+                        partes.length > 1 ?
+                        partes[1].substring(0, 3) :
+                        null;
 
-        // Quitar ceros innecesarios al inicio
-        if (parteEntera !== '') {
+                    // Quitar ceros innecesarios al inicio
+                    if (parteEntera !== '') {
 
-            parteEntera =
-                parteEntera.replace(/^0+(?=\d)/, '');
+                        parteEntera =
+                            parteEntera.replace(/^0+(?=\d)/, '');
 
-        }
+                    }
 
-        // Formatear miles
-        if (parteEntera !== '') {
+                    // Formatear miles
+                    if (parteEntera !== '') {
 
-            parteEntera =
-                Number(parteEntera)
-                    .toLocaleString('es-CO');
-        }
+                        parteEntera =
+                            Number(parteEntera)
+                            .toLocaleString('es-CO');
+                    }
 
-        // Reconstruir valor
-        if (parteDecimal !== null) {
+                    // Reconstruir valor
+                    if (parteDecimal !== null) {
 
-            this.value =
-                parteEntera + ',' + parteDecimal;
+                        this.value =
+                            parteEntera + ',' + parteDecimal;
 
-        } else {
+                    } else {
 
-            this.value =
-                parteEntera;
+                        this.value =
+                            parteEntera;
 
-        }
+                    }
 
-    });
+                });
 
-}
+            }
 
 
             formatearValor(valor);

@@ -1,6 +1,15 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
+
+
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Expires: 0');
+
 
 
 //==================================================
@@ -64,10 +73,14 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
+                            <?php if (tienePermiso('facturacion', 'agregar')): ?>
+
                             <a href="/inventario/facturacion-agregar" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
                                 Nuevo Contrato
                             </a>
+
+                            <?php endif; ?>
 
                         </div>
 
@@ -180,14 +193,19 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                 <!-- VER -->
 
+                                                <?php if (tienePermiso('facturacion', 'ver')): ?>
+
                                                 <a href="/inventario/facturacion/ver/<?= $contrato['id'] ?>"
                                                     class="btn btn-info btn-sm" title="Ver contrato">
 
                                                     <i class="bi bi-eye"></i>
                                                 </a>
 
+                                                <?php endif; ?>
+
 
                                                 <!-- EDITAR -->
+                                                <?php if (tienePermiso('facturacion', 'editar')): ?>
 
                                                 <a href="/inventario/facturacion/editar/<?= $contrato['id'] ?>"
                                                     class="btn btn-warning btn-sm" title="Editar contrato">
@@ -195,8 +213,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
 
+                                                <?php endif; ?>
 
                                                 <!-- ELIMINAR -->
+
+                                                <?php if (tienePermiso('facturacion', 'eliminar')): ?>
 
                                                 <a href="/inventario/facturacion/eliminar?id=<?= $contrato['id'] ?>"
                                                     class="btn btn-danger btn-sm" title="Eliminar contrato"
@@ -205,6 +226,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                     <i class="bi bi-trash"></i>
                                                 </a>
 
+                                                <?php endif; ?>
 
 
 

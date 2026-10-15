@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
-
+require_once __DIR__ . '/../../includes/permisos.php';
 
 //==================================================
 // VALIDAR ID DEL CONTRATO
@@ -73,6 +73,7 @@ $sqlFacturas = "
         id,
         proveedor,
         numero_factura,
+        fecha_factura,
         valor,
         tiene_iva,
         valor_iva,
@@ -368,6 +369,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                 </a>
 
 
+                                <?php if (tienePermiso('facturacion', 'agregar')): ?>
+
                                 <a href="/inventario/facturacion/agregar-factura/<?= $contratoId ?>"
                                     class="btn btn-success">
 
@@ -376,6 +379,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     Agregar Factura
 
                                 </a>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -992,6 +997,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 </th>
 
                                                 <th>
+                                                    Fecha
+                                                </th>
+
+                                                <th>
                                                     Valor
                                                 </th>
 
@@ -1069,13 +1078,33 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                 </td>
 
 
+                                                <!-- FECHA -->
+
+                                                <td>
+
+                                                    <?php if (!empty($factura['fecha_factura'])): ?>
+
+                                                    <?= date(
+            'd/m/Y',
+            strtotime($factura['fecha_factura'])
+        ) ?>
+
+                                                    <?php else: ?>
+
+                                                    <span class="text-muted">—</span>
+
+                                                    <?php endif; ?>
+
+                                                </td>
+
+
                                                 <!-- VALOR -->
 
                                                 <td class="text-end">
 
                                                     <?= dinero(
-                                                            $factura['valor']
-                                                        ) ?>
+        $factura['valor']
+    ) ?>
 
                                                 </td>
 
@@ -1229,6 +1258,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         <!-- EDITAR -->
 
+                                                        <?php if (tienePermiso('facturacion', 'editar')): ?>
+
                                                         <a href="/inventario/facturacion/editar-factura/<?= $factura['id'] ?>"
                                                             class="btn btn-warning btn-sm" title="Editar factura">
 
@@ -1236,8 +1267,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         </a>
 
+                                                        <?php endif; ?>
 
                                                         <!-- ELIMINAR -->
+
+                                                        <?php if (tienePermiso('facturacion', 'eliminar')): ?>
 
                                                         <a href="/inventario/facturacion/eliminar-factura?id=<?= $factura['id'] ?>"
                                                             class="btn btn-danger btn-sm" title="Eliminar factura"
@@ -1246,6 +1280,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                                             <i class="bi bi-trash"></i>
 
                                                         </a>
+
+                                                        <?php endif; ?>
 
 
                                                     </div>
@@ -1298,12 +1334,10 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
             </div>
 
-        </div>
-
-    </div>
 
 
-    <?php
+
+            <?php
 
     include __DIR__ . '/../../includes/footer.php';
 
@@ -1311,4 +1345,4 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
     ?>
 
-</div>
+        </div>

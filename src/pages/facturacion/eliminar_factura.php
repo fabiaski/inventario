@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// INICIAR SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR ID
 //==================================================
 
@@ -72,6 +81,54 @@ if (!$factura) {
 
 $contratoId =
     (int) $factura['contrato_id'];
+
+
+//==================================================
+// BUSCAR NÚMERO DEL CONTRATO
+//==================================================
+
+$numeroContrato = '';
+
+
+$sqlContrato = "
+    SELECT
+        numero_contrato
+    FROM contratos
+    WHERE id = ?
+";
+
+
+$stmtContrato =
+    $conexion->prepare(
+        $sqlContrato
+    );
+
+
+if ($stmtContrato) {
+
+    $stmtContrato->bind_param(
+        "i",
+        $contratoId
+    );
+
+    $stmtContrato->execute();
+
+    $resultadoContrato =
+        $stmtContrato->get_result();
+
+    $contrato =
+        $resultadoContrato->fetch_assoc();
+
+    if ($contrato) {
+
+        $numeroContrato =
+            $contrato['numero_contrato'];
+
+    }
+
+    $stmtContrato->close();
+
+}
 
 
 //==================================================
@@ -254,6 +311,84 @@ if (
 
 $stmtEliminar->close();
 
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId =
+    (int) ($_SESSION['usuario_id'] ?? 0);
+
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+
+    $accion = 'eliminar';
+
+    if ($numeroContrato !== '') {
+
+        $descripcion =
+            'Eliminó la factura #'
+            . $facturaId
+            . ' del contrato '
+            . $numeroContrato;
+
+    } else {
+
+        $descripcion =
+            'Eliminó la factura #'
+            . $facturaId;
+
+    }
+
+    $ip =
+        $_SERVER['REMOTE_ADDR']
+        ?? null;
+
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+
+    $stmtActividad =
+        $conexion->prepare(
+            $sqlActividad
+        );
+
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $facturaId,
+            $ip
+        );
+
+
+        $stmtActividad->execute();
+
+
+        $stmtActividad->close();
+
+    }
+
+}
+
+
 //==================================================
 // VOLVER AL CONTRATO
 //==================================================
@@ -263,4 +398,4 @@ header(
     . $contratoId
 );
 
-exit;   
+exit;

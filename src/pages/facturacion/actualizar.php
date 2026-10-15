@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR MÉTODO
 //==================================================
 
@@ -146,25 +155,25 @@ if ($tieneIva) {
 
 
     $valorIva = str_replace('.', '', $valorIva);
-$valorIva = str_replace(',', '.', $valorIva);
+    $valorIva = str_replace(',', '.', $valorIva);
 
-if (
-    $valorIva === ''
-    || !is_numeric($valorIva)
-) {
+    if (
+        $valorIva === ''
+        || !is_numeric($valorIva)
+    ) {
 
-    exit(
-        'Debe ingresar un valor válido para el IVA.'
+        exit(
+            'Debe ingresar un valor válido para el IVA.'
+        );
+
+    }
+
+    $valorIva = number_format(
+        (float) $valorIva,
+        3,
+        '.',
+        ''
     );
-
-}
-
-$valorIva = number_format(
-    (float) $valorIva,
-    3,
-    '.',
-    ''
-);  
 
 
     if ($valorIva < 0) {
@@ -277,7 +286,9 @@ if ($tieneRetencion) {
 //==================================================
 
 $sqlExiste = "
-    SELECT id
+    SELECT
+        id,
+        numero_contrato
     FROM contratos
     WHERE id = ?
 ";
@@ -310,18 +321,20 @@ $resultado =
     $stmtExiste->get_result();
 
 
-if (!$resultado->fetch_assoc()) {
+$contratoExistente =
+    $resultado->fetch_assoc();
 
-    $stmtExiste->close();
+
+$stmtExiste->close();
+
+
+if (!$contratoExistente) {
 
     exit(
         'El contrato no existe.'
     );
 
 }
-
-
-$stmtExiste->close();
 
 
 //==================================================
@@ -380,6 +393,7 @@ $stmtActualizar->bind_param(
     $contratoId
 );
 
+
 //==================================================
 // EJECUTAR ACTUALIZACIÓN
 //==================================================
@@ -400,6 +414,59 @@ if (!$stmtActualizar->execute()) {
 
 
 $stmtActualizar->close();
+
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+
+    $accion = 'editar';
+
+    $descripcion =
+        'Editó el contrato '
+        . $numeroContrato;
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad = $conexion->prepare(
+        $sqlActividad
+    );
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $contratoId,
+            $ip
+        );
+
+        $stmtActividad->execute();
+
+        $stmtActividad->close();
+    }
+}
 
 
 //==================================================

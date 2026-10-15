@@ -6,12 +6,32 @@ RewriteEngine On
 
 RewriteRule ^productos/?$ src/pages/productos/productos.php [L]
 
-# Importar productos desde Excel
-RewriteRule ^importarprodu/?$ src/pages/productos/importar.php [L]
-
+# Agregar producto
 RewriteRule ^productos/agregar/?$ src/pages/productos/agregar-produ.php [L]
+
+# Guardar producto desde el modal
+RewriteRule ^productos/guardar/?$ src/pages/productos/guardar.php [L]
+
+# Editar producto
 RewriteRule ^productos/editar/([0-9]+)/?$ src/pages/productos/editar.php?id=$1 [L]
 
+# Actualizar producto desde el modal
+RewriteRule ^productos/actualizar/?$ src/pages/productos/actualizar.php [L]
+
+# Eliminar producto
+RewriteRule ^productos/eliminar/?$ src/pages/productos/eliminar.php [L]
+
+
+# ==========================================================
+# IMPORTAR PRODUCTOS DESDE EXCEL
+# ==========================================================
+# ==========================================================
+# IMPORTAR PRODUCTOS DESDE EXCEL
+# ==========================================================
+
+RewriteRule ^importarprodu/?$ src/pages/productos/importar.php [L]
+
+RewriteRule ^importarprodu/guardar/?$ src/pages/productos/guardar_importados.php [L]
 
 # ==========================================================
 # COTIZACIONES
@@ -101,3 +121,55 @@ RewriteRule ^reportes/exportar_cuatrimestre\.php/?$ src/pages/reportes/exportar_
 RewriteRule ^smmlv/?$ src/pages/smmlv/smmlv.php [L]
 RewriteRule ^smmlv/agregar/?$ src/pages/smmlv/agregar.php [L]
 RewriteRule ^smmlv/editar/([0-9]+)/?$ src/pages/smmlv/editar.php?id=$1 [L]
+
+
+
+
+# ==========================================================
+# LOGIN
+# ==========================================================
+
+RewriteRule ^login/?$ src/login/index.php [L]
+RewriteRule ^login/ingresar/?$ src/login/ingresar.php [L]
+RewriteRule ^login/cerrar/?$ src/login/cerrar.php [L]
+
+
+# ==========================================================
+# ADMIN
+# ==========================================================
+RewriteRule ^admin/?$ src/admin/index.php [L]
+
+
+# ==========================================================
+# USUARIOS
+# ==========================================================
+RewriteRule ^usuarios/?$ src/admin/usuarios/index.php [L]
+RewriteRule ^usuarios/agregar/?$ src/admin/usuarios/agregar.php [L]
+RewriteRule ^usuarios/guardar/?$ src/admin/usuarios/guardar.php [L]
+RewriteRule ^usuarios/editar/([0-9]+)/?$ src/admin/usuarios/editar.php?id=$1 [L]
+RewriteRule ^usuarios/actualizar/?$ src/admin/usuarios/actualizar.php [L]
+RewriteRule ^usuarios/eliminar/?$ src/admin/usuarios/eliminar.php [L]
+
+
+
+# ==========================================================
+# PERMISOS
+# ==========================================================
+RewriteRule ^permisos/?$ src/admin/permisos/index.php [L]
+RewriteRule ^permisos/guardar/?$ src/admin/permisos/guardar.php [L]
+
+RewriteRule ^permisos/gestionar/([0-9]+)/?$ src/admin/permisos/gestionar.php?id=$1 [L]
+
+
+# ==========================================================
+# ACTIVIDAD
+# ==========================================================
+RewriteRule ^actividad/?$ src/admin/actividad/index.php [L]
+
+
+# ==========================================================
+# PERFIL
+# ==========================================================
+
+RewriteRule ^perfil/?$ src/pages/perfil/perfil.php [L]
+RewriteRule ^perfil/actualizar/?$ src/pages/perfil/actualizar.php [L]

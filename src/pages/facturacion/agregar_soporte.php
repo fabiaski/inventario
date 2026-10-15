@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR MÉTODO
 //==================================================
 
@@ -435,6 +444,61 @@ if (
 
 
 $stmtSoporte->close();
+
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+
+    $accion = 'agregar_soporte';
+
+    $descripcion =
+        'Agregó el soporte de la factura #'
+        . $facturaId
+        . ' del contrato '
+        . $numeroContrato;
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad = $conexion->prepare(
+        $sqlActividad
+    );
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $facturaId,
+            $ip
+        );
+
+        $stmtActividad->execute();
+
+        $stmtActividad->close();
+    }
+}
 
 
 //==================================================

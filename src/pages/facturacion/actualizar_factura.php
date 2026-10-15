@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR MÉTODO
 //==================================================
 
@@ -235,6 +244,44 @@ $contratoId = (int) $factura['contrato_id'];
 
 
 //==================================================
+// BUSCAR NÚMERO DEL CONTRATO
+//==================================================
+
+$numeroContrato = '';
+
+$sqlContrato = "
+    SELECT numero_contrato
+    FROM contratos
+    WHERE id = ?
+    LIMIT 1
+";
+
+$stmtContrato = $conexion->prepare($sqlContrato);
+
+if ($stmtContrato) {
+
+    $stmtContrato->bind_param(
+        "i",
+        $contratoId
+    );
+
+    $stmtContrato->execute();
+
+    $resultadoContrato = $stmtContrato->get_result();
+
+    $contrato = $resultadoContrato->fetch_assoc();
+
+    if ($contrato) {
+        $numeroContrato = trim(
+            (string) $contrato['numero_contrato']
+        );
+    }
+
+    $stmtContrato->close();
+}
+
+
+//==================================================
 // ACTUALIZAR FACTURA
 //==================================================
 
@@ -306,6 +353,70 @@ if (!$stmtActualizar->execute()) {
 
 
 $stmtActualizar->close();
+
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+
+    $accion = 'editar';
+
+    if ($numeroContrato !== '') {
+
+        $descripcion =
+            'Editó la factura #'
+            . $facturaId
+            . ' del contrato '
+            . $numeroContrato;
+
+    } else {
+
+        $descripcion =
+            'Editó la factura #'
+            . $facturaId;
+    }
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad = $conexion->prepare(
+        $sqlActividad
+    );
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $facturaId,
+            $ip
+        );
+
+        $stmtActividad->execute();
+
+        $stmtActividad->close();
+    }
+}
 
 
 //==================================================

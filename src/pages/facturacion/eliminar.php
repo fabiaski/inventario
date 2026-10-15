@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// INICIAR SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR ID DEL CONTRATO
 //==================================================
 
@@ -20,7 +29,8 @@ if ($contratoId <= 0) {
 
 $sqlContrato = "
     SELECT
-        id
+        id,
+        numero_contrato
     FROM contratos
     WHERE id = ?
 ";
@@ -59,6 +69,9 @@ $stmtContrato->close();
 if (!$contrato) {
     exit('El contrato no existe.');
 }
+
+
+$numeroContrato = $contrato['numero_contrato'];
 
 
 //==================================================
@@ -127,7 +140,8 @@ $stmtSoportes->close();
 
 $directorioSoportes =
     __DIR__
-. '/../../../uploads/soportes_facturas/';
+    . '/../../../uploads/soportes_facturas/';
+
 
 foreach ($soportes as $archivo) {
 
@@ -190,6 +204,68 @@ if (!$stmtEliminar->execute()) {
 
 
 $stmtEliminar->close();
+
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+    $accion = 'eliminar';
+
+    $descripcion =
+        'Eliminó el contrato '
+        . $numeroContrato;
+
+    $ip =
+        $_SERVER['REMOTE_ADDR']
+        ?? null;
+
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+
+    $stmtActividad =
+        $conexion->prepare(
+            $sqlActividad
+        );
+
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $contratoId,
+            $ip
+        );
+
+
+        $stmtActividad->execute();
+
+
+        $stmtActividad->close();
+
+    }
+
+}
 
 
 //==================================================

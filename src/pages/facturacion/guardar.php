@@ -4,6 +4,15 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 
 //==================================================
+// SESIÓN
+//==================================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+//==================================================
 // VALIDAR MÉTODO
 //==================================================
 
@@ -80,22 +89,26 @@ if ($tieneIva) {
 
     // Quitar puntos y comas
     $valorIva = str_replace('.', '', $valorIva);
-$valorIva = str_replace(',', '.', $valorIva);
+    $valorIva = str_replace(',', '.', $valorIva);
 
 
     if ($valorIva === '' || !is_numeric($valorIva)) {
-header("Location: /inventario/facturacion-agregar?error=iva");
 
-exit;
+        header(
+            "Location: /inventario/facturacion-agregar?error=iva"
+        );
+
+        exit;
+
     }
 
 
-$valorIva = number_format(
-    (float) $valorIva,
-    3,
-    '.',
-    ''
-);
+    $valorIva = number_format(
+        (float) $valorIva,
+        3,
+        '.',
+        ''
+    );
 
     if ($valorIva < 0) {
 
@@ -110,7 +123,8 @@ $valorIva = number_format(
 // IMPOCONSUMO
 //==================================================
 
-$tieneImpoconsumo = isset($_POST['tiene_impoconsumo']) ? 1 : 0;
+$tieneImpoconsumo =
+    isset($_POST['tiene_impoconsumo']) ? 1 : 0;
 
 $valorImpoconsumo = null;
 
@@ -122,26 +136,39 @@ if ($tieneImpoconsumo) {
     );
 
     // Quitar puntos y comas
-$valorImpoconsumo = str_replace('.', '', $valorImpoconsumo);
-$valorImpoconsumo = str_replace(',', '.', $valorImpoconsumo);
+    $valorImpoconsumo =
+        str_replace('.', '', $valorImpoconsumo);
+
+    $valorImpoconsumo =
+        str_replace(',', '.', $valorImpoconsumo);
 
 
-    if ($valorImpoconsumo === '' || !is_numeric($valorImpoconsumo)) {
+    if (
+        $valorImpoconsumo === '' ||
+        !is_numeric($valorImpoconsumo)
+    ) {
 
-header("Location: /inventario/facturacion-agregar?error=impoconsumo");exit;
+        header(
+            "Location: /inventario/facturacion-agregar?error=impoconsumo"
+        );
+
+        exit;
+
     }
 
 
-$valorImpoconsumo = number_format(
-    (float) $valorImpoconsumo,
-    3,
-    '.',
-    ''
-);
+    $valorImpoconsumo = number_format(
+        (float) $valorImpoconsumo,
+        3,
+        '.',
+        ''
+    );
 
     if ($valorImpoconsumo < 0) {
 
-        exit('El valor del Impoconsumo no puede ser negativo.');
+        exit(
+            'El valor del Impoconsumo no puede ser negativo.'
+        );
 
     }
 
@@ -152,7 +179,8 @@ $valorImpoconsumo = number_format(
 // RETENCIÓN
 //==================================================
 
-$tieneRetencion = isset($_POST['tiene_retencion']) ? 1 : 0;
+$tieneRetencion =
+    isset($_POST['tiene_retencion']) ? 1 : 0;
 
 $valorRetencion = null;
 
@@ -164,27 +192,40 @@ if ($tieneRetencion) {
     );
 
     // Quitar puntos y comas
-$valorRetencion = str_replace('.', '', $valorRetencion);
-$valorRetencion = str_replace(',', '.', $valorRetencion);
+    $valorRetencion =
+        str_replace('.', '', $valorRetencion);
 
-    if ($valorRetencion === '' || !is_numeric($valorRetencion)) {
+    $valorRetencion =
+        str_replace(',', '.', $valorRetencion);
 
-header("Location: /inventario/facturacion-agregar?error=retencion");
-exit;
+
+    if (
+        $valorRetencion === '' ||
+        !is_numeric($valorRetencion)
+    ) {
+
+        header(
+            "Location: /inventario/facturacion-agregar?error=retencion"
+        );
+
+        exit;
+
     }
 
 
-$valorRetencion = number_format(
-    (float) $valorRetencion,
-    3,
-    '.',
-    ''
-);
+    $valorRetencion = number_format(
+        (float) $valorRetencion,
+        3,
+        '.',
+        ''
+    );
 
 
     if ($valorRetencion < 0) {
 
-        exit('El valor de la Retención no puede ser negativo.');
+        exit(
+            'El valor de la Retención no puede ser negativo.'
+        );
 
     }
 
@@ -253,6 +294,7 @@ if (!$stmt) {
 //==================================================
 // VINCULAR DATOS
 //==================================================
+
 $stmt->bind_param(
     "sssisissis",
     $numeroContrato,
@@ -266,6 +308,7 @@ $stmt->bind_param(
     $valorRetencion,
     $fecha
 );
+
 
 //==================================================
 // EJECUTAR
@@ -291,17 +334,76 @@ if (!$stmt->execute()) {
 
 $contratoId = $conexion->insert_id;
 
-
 $stmt->close();
+
+
+//==================================================
+// REGISTRAR ACTIVIDAD
+//==================================================
+
+$usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+
+if ($usuarioId > 0) {
+
+    $modulo = 'facturacion';
+
+    $accion = 'crear';
+
+    $descripcion =
+        'Creó el contrato #' .
+        $contratoId .
+        ' - Número de contrato: ' .
+        $numeroContrato;
+
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $sqlActividad = "
+        INSERT INTO actividad (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    $stmtActividad =
+        $conexion->prepare(
+            $sqlActividad
+        );
+
+    if ($stmtActividad) {
+
+        $stmtActividad->bind_param(
+            "isssis",
+            $usuarioId,
+            $modulo,
+            $accion,
+            $descripcion,
+            $contratoId,
+            $ip
+        );
+
+        $stmtActividad->execute();
+
+        $stmtActividad->close();
+
+    }
+
+}
 
 
 //==================================================
 // REDIRECCIONAR
 //==================================================
+
 header(
-    "Location: /inventario/facturacion/ver/" . $contratoId
+    "Location: /inventario/facturacion/ver/" .
+    $contratoId
 );
 
-
-
 exit;
+
+?>
