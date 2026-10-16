@@ -1,67 +1,28 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 //==================================================
-// VALIDAR SESIÓN
+// VALIDAR SESIÓN E ID DEL CONTRATO
 //==================================================
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 if (empty($_SESSION['usuario_id'])) {
-    exit('Debe iniciar sesión para consultar este informe.');
+    exit('Debe iniciar sesión para generar este PDF.');
 }
-
-//==================================================
-// VALIDAR CONTRATO
-//==================================================
 
 $contratoId = (int) ($_GET['id'] ?? 0);
 
 if ($contratoId <= 0) {
     exit('Contrato no válido.');
-}
-
-//==================================================
-// FUNCIONES
-//==================================================
-
-function escaparPDF($valor): string
-{
-    return htmlspecialchars(
-        (string) ($valor ?? ''),
-        ENT_QUOTES,
-        'UTF-8'
-    );
-}
-
-function dineroPDF($valor): string
-{
-    return '$ ' . number_format(
-        (float) ($valor ?? 0),
-        2,
-        ',',
-        '.'
-    );
-}
-
-function fechaPDF($fecha): string
-{
-    if (empty($fecha) || $fecha === '0000-00-00') {
-        return '—';
-    }
-
-    $fechaObj = DateTime::createFromFormat('!Y-m-d', $fecha);
-
-    return $fechaObj
-        ? $fechaObj->format('d/m/Y')
-        : escaparPDF($fecha);
 }
 
 //==================================================
@@ -86,17 +47,21 @@ $sqlContrato = "
     LIMIT 1
 ";
 
-$stmt = $conexion->prepare($sqlContrato);
-$stmt->bind_param('i', $contratoId);
-$stmt->execute();
+$stmtContrato = $conexion->prepare($sqlContrato);
 
-$resultadoContrato = $stmt->get_result();
-$contrato = $resultadoContrato->fetch_assoc();
+if (!$stmtContrato) {
+    exit('Error preparando consulta del contrato: ' . $conexion->error);
+}
 
-$stmt->close();
+$stmtContrato->bind_param('i', $contratoId);
+$stmtContrato->execute();
+
+$contrato = $stmtContrato->get_result()->fetch_assoc();
+
+$stmtContrato->close();
 
 if (!$contrato) {
-    exit('No se encontró el contrato solicitado.');
+    exit('El contrato no existe.');
 }
 
 //==================================================
@@ -119,365 +84,376 @@ $sqlFacturas = "
         observacion
     FROM facturas
     WHERE contrato_id = ?
-    ORDER BY fecha_factura ASC, id ASC
+    ORDER BY id ASC
 ";
 
-$stmt = $conexion->prepare($sqlFacturas);
-$stmt->bind_param('i', $contratoId);
-$stmt->execute();
+$stmtFacturas = $conexion->prepare($sqlFacturas);
 
-$resultadoFacturas = $stmt->get_result();
+if (!$stmtFacturas) {
+    exit('Error preparando consulta de facturas: ' . $conexion->error);
+}
+
+$stmtFacturas->bind_param('i', $contratoId);
+$stmtFacturas->execute();
+
+$resultadoFacturas = $stmtFacturas->get_result();
 
 $facturas = [];
 
-$totalBase = 0;
-$totalIva = 0;
-$totalImpoconsumo = 0;
-$totalRetencion = 0;
-
 while ($factura = $resultadoFacturas->fetch_assoc()) {
     $facturas[] = $factura;
+}
 
-    $totalBase += (float) $factura['valor'];
+$stmtFacturas->close();
 
-    if ((int) $factura['tiene_iva'] === 1) {
-        $totalIva += (float) $factura['valor_iva'];
+//==================================================
+// FUNCIONES DE FORMATO
+//==================================================
+
+function pdfDinero($valor): string
+{
+    return '$' . number_format(
+        (float) ($valor ?? 0),
+        2,
+        ',',
+        '.'
+    );
+}
+
+function pdfFecha(?string $fecha): string
+{
+    if (empty($fecha)) {
+        return '—';
     }
 
-    if ((int) $factura['tiene_impoconsumo'] === 1) {
-        $totalImpoconsumo += (float) $factura['valor_impoconsumo'];
+    $timestamp = strtotime($fecha);
+
+    return $timestamp !== false
+        ? date('d/m/Y', $timestamp)
+        : '—';
+}
+
+function pdfTexto($valor): string
+{
+    return htmlspecialchars(
+        (string) ($valor ?? ''),
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        'UTF-8'
+    );
+}
+
+function pdfTributoContrato(
+    array $contrato,
+    string $campoTiene,
+    string $campoValor
+): string {
+    return (int) ($contrato[$campoTiene] ?? 0) === 1
+        ? pdfDinero($contrato[$campoValor] ?? 0)
+        : 'No aplica';
+}
+
+function pdfTributoFactura(
+    array $factura,
+    string $campoTiene,
+    string $campoValor
+): string {
+    return (int) ($factura[$campoTiene] ?? 0) === 1
+        ? pdfDinero($factura[$campoValor] ?? 0)
+        : 'No aplica';
+}
+
+//==================================================
+// CÁLCULOS DEL CONTRATO
+//==================================================
+
+$valorContrato = (float) ($contrato['valor_contrato'] ?? 0);
+
+$ivaContrato = (int) ($contrato['tiene_iva'] ?? 0) === 1
+    ? (float) ($contrato['valor_iva'] ?? 0)
+    : 0;
+
+$impoconsumoContrato = (int) ($contrato['tiene_impoconsumo'] ?? 0) === 1
+    ? (float) ($contrato['valor_impoconsumo'] ?? 0)
+    : 0;
+
+$retencionContrato = (int) ($contrato['tiene_retencion'] ?? 0) === 1
+    ? (float) ($contrato['valor_retencion'] ?? 0)
+    : 0;
+
+//==================================================
+// TOTALES DE FACTURAS
+//==================================================
+
+$totalFacturas = 0;
+$totalIvaFacturado = 0;
+$totalImpoconsumoFacturado = 0;
+$totalRetencionFacturada = 0;
+
+foreach ($facturas as $factura) {
+    $totalFacturas += (float) ($factura['valor'] ?? 0);
+
+    if ((int) ($factura['tiene_iva'] ?? 0) === 1) {
+        $totalIvaFacturado += (float) ($factura['valor_iva'] ?? 0);
     }
 
-    if ((int) $factura['tiene_retencion'] === 1) {
-        $totalRetencion += (float) $factura['valor_retencion'];
+    if ((int) ($factura['tiene_impoconsumo'] ?? 0) === 1) {
+        $totalImpoconsumoFacturado += (float) ($factura['valor_impoconsumo'] ?? 0);
+    }
+
+    if ((int) ($factura['tiene_retencion'] ?? 0) === 1) {
+        $totalRetencionFacturada += (float) ($factura['valor_retencion'] ?? 0);
     }
 }
 
-$stmt->close();
-
 //==================================================
-// CALCULAR RESUMEN
+// SALDOS
 //==================================================
 
-$valorContrato = (float) $contrato['valor_contrato'];
-$valorFacturas = $totalBase;
+$saldoContrato = $valorContrato - $totalFacturas;
 
-// Impuestos y retención configurados en el contrato.
-// NULL significa que el concepto no aplica.
+$saldoIva = $ivaContrato - $totalIvaFacturado;
 
-$ivaContrato = (int) $contrato['tiene_iva'] === 1
-    ? (float) $contrato['valor_iva']
-    : null;
+$saldoImpoconsumo = $impoconsumoContrato - $totalImpoconsumoFacturado;
 
-$impoconsumoContrato = (int) $contrato['tiene_impoconsumo'] === 1
-    ? (float) $contrato['valor_impoconsumo']
-    : null;
+$saldoRetencion = $retencionContrato - $totalRetencionFacturada;
 
-$retencionContrato = (int) $contrato['tiene_retencion'] === 1
-    ? (float) $contrato['valor_retencion']
-    : null;
+$totalRegistrado = $totalFacturas
+    + $totalIvaFacturado
+    + $totalImpoconsumoFacturado
+    - $totalRetencionFacturada;
 
-// Saldos
-
-$saldoContrato = $valorContrato - $valorFacturas;
-
-$saldoIva = $ivaContrato !== null
-    ? $ivaContrato - $totalIva
-    : 0;
-
-$saldoImpoconsumo = $impoconsumoContrato !== null
-    ? $impoconsumoContrato - $totalImpoconsumo
-    : 0;
-
-$saldoRetencion = $retencionContrato !== null
-    ? $retencionContrato - $totalRetencion
-    : 0;
-
-$totalRegistrado = $totalBase
-    + $totalIva
-    + $totalImpoconsumo
-    - $totalRetencion;
+//==================================================
+// ENCABEZADO: LOGO Y FECHA DE EMISIÓN
+//==================================================
 
 $fechaGeneracion = date('d/m/Y H:i');
 
-//==================================================
-// LOGO
-//==================================================
-
 $rutaLogo = __DIR__ . '/../../assets/images/myglogo.svg';
 
-$logoHTML = '';
+$logoHtml = '';
 
 if (is_file($rutaLogo)) {
-    $logoHTML = '
-        <img
-            src="' . escaparPDF($rutaLogo) . '"
-            class="logo"
-            alt="M&G BRO"
-        >
-    ';
-}
+    $contenidoLogo = file_get_contents($rutaLogo);
 
-//==================================================
-// CONSTRUIR TABLA DE FACTURAS
-//==================================================
-
-$filasFacturas = '';
-
-if (count($facturas) > 0) {
-    foreach ($facturas as $indice => $factura) {
-        $filasFacturas .= '
-            <tr>
-                <td class="center">' . ($indice + 1) . '</td>
-
-                <td>' . escaparPDF($factura['proveedor']) . '</td>
-
-                <td>' . (
-                    !empty($factura['numero_factura'])
-                    ? escaparPDF($factura['numero_factura'])
-                    : '—'
-                ) . '</td>
-
-                <td class="center">
-                    ' . fechaPDF($factura['fecha_factura']) . '
-                </td>
-
-                <td class="money">
-                    ' . dineroPDF($factura['valor']) . '
-                </td>
-
-                <td class="money">
-                    ' . dineroPDF(
-                        (int) $factura['tiene_iva'] === 1
-                            ? $factura['valor_iva']
-                            : 0
-                    ) . '
-                </td>
-
-                <td class="money">
-                    ' . dineroPDF(
-                        (int) $factura['tiene_impoconsumo'] === 1
-                            ? $factura['valor_impoconsumo']
-                            : 0
-                    ) . '
-                </td>
-
-                <td class="money">
-                    ' . dineroPDF(
-                        (int) $factura['tiene_retencion'] === 1
-                            ? $factura['valor_retencion']
-                            : 0
-                    ) . '
-                </td>
-
-                <td class="observacion">
-                    ' . (
-                        !empty($factura['observacion'])
-                            ? nl2br(escaparPDF($factura['observacion']))
-                            : '—'
-                    ) . '
-                </td>
-            </tr>
-        ';
+    if ($contenidoLogo !== false) {
+        $logoHtml = '<div class="logo">' . $contenidoLogo . '</div>';
     }
-} else {
-    $filasFacturas = '
-        <tr>
-            <td colspan="9" class="center">
-                No se encuentran facturas registradas para este contrato.
-            </td>
-        </tr>
-    ';
 }
 
 //==================================================
-// CONSTRUIR DOCUMENTO PDF
-// ORDEN: CONTRATO, RESUMEN, FACTURAS
+// CONSTRUIR HTML DEL PDF
 //==================================================
 
-$html = '
-<!DOCTYPE html>
+$html = '<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 
 <style>
+
     @page {
-        margin: 30px 28px 45px 28px;
+        margin: 28px 30px 38px 30px;
     }
 
     body {
         font-family: DejaVu Sans, sans-serif;
         font-size: 9px;
         color: #263238;
-        line-height: 1.5;
+        line-height: 1.35;
     }
+
+    /* ENCABEZADO */
 
     .encabezado {
         width: 100%;
-        border-bottom: 2px solid #243746;
-        padding-bottom: 12px;
-        margin-bottom: 18px;
+        border-collapse: collapse;
+        border-bottom: 2px solid #263746;
+        margin-bottom: 14px;
     }
 
     .encabezado td {
+        border: none;
         vertical-align: middle;
+        padding: 5px 0 12px;
     }
 
     .logo {
-        max-width: 125px;
-        max-height: 65px;
+        width: 130px;
+        max-height: 55px;
+    }
+
+    .logo svg {
+        width: 125px;
+        height: auto;
+        max-height: 55px;
     }
 
     .empresa {
-        font-size: 18px;
-        font-weight: bold;
-        color: #243746;
+        text-align: center;
     }
 
-    .subtitulo-empresa {
+    .empresa h1 {
+        font-size: 17px;
+        margin: 0 0 4px;
+        color: #263746;
+    }
+
+    .empresa p {
+        margin: 0;
+        color: #66737c;
         font-size: 9px;
-        color: #64748b;
     }
 
-    .titulo {
+    .fecha-emision {
+        text-align: right;
+        font-size: 9px;
+        color: #263746;
+    }
+
+    /* TÍTULOS */
+
+    .titulo-documento {
         text-align: center;
         font-size: 15px;
         font-weight: bold;
-        color: #243746;
-        margin: 15px 0 5px;
+        margin: 12px 0 4px;
+        text-transform: uppercase;
     }
 
-    .descripcion-titulo {
+    .subtitulo {
         text-align: center;
-        color: #64748b;
+        color: #66737c;
+        margin: 0 0 15px;
         font-size: 9px;
-        margin-bottom: 18px;
     }
 
-    .seccion {
+    .seccion-titulo {
+        background: #263746;
+        color: #ffffff;
+        padding: 7px 9px;
         font-size: 10px;
         font-weight: bold;
-        color: #243746;
-        background: #edf1f5;
-        border-left: 4px solid #243746;
-        padding: 7px;
-        margin-top: 16px;
-        margin-bottom: 8px;
+        margin: 12px 0 7px;
+        text-transform: uppercase;
     }
 
-    table {
+    /* INFORMACIÓN DEL CONTRATO */
+
+    .tarjetas {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 5px;
+        margin: 0 -5px 6px;
     }
 
-    .datos td {
-        border: 1px solid #d8dee5;
-        padding: 7px;
+    .tarjetas td {
+        width: 33.33%;
+        border: 1px solid #d7dee3;
+        padding: 8px;
         vertical-align: top;
     }
 
     .etiqueta {
+        display: block;
+        font-size: 8px;
+        color: #65727a;
+        margin-bottom: 4px;
+    }
+
+    .valor {
+        font-size: 10px;
         font-weight: bold;
-        color: #475569;
-        width: 20%;
-        background: #f8fafc;
+        overflow-wrap: break-word;
     }
 
-    .facturas {
-        font-size: 7.5px;
-        table-layout: fixed;
+    .objeto {
+        border: 1px solid #d7dee3;
+        padding: 9px;
+        margin: 5px 0 10px;
+        line-height: 1.5;
     }
 
-    .seccion-detalle-facturas {
-    page-break-before: always;
-}
+    /* TABLAS */
 
-    .facturas th {
-        background: #243746;
-        color: #ffffff;
-        font-weight: bold;
-        text-align: center;
-        padding: 7px 4px;
-        border: 1px solid #243746;
-    }
-
-    .facturas td {
-        border: 1px solid #d8dee5;
-        padding: 6px 4px;
-        vertical-align: top;
-        word-wrap: break-word;
-    }
-
-    .facturas tr {
-        page-break-inside: avoid;
-    }
-
-    .center {
-        text-align: center;
-    }
-
-    .money {
-        text-align: right;
-        white-space: nowrap;
-    }
-
-    .observacion {
-        font-size: 7px;
-    }
-
-    .resumen-completo {
+    .tabla {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 8px;
-        font-size: 8.5px;
-        table-layout: fixed;
+        margin-bottom: 10px;
     }
 
-    .resumen-completo th {
-        background: #243746;
-        color: #ffffff;
+    .tabla th {
+        background: #e9eef2;
+        color: #263746;
+        font-weight: bold;
         text-align: left;
-        padding: 8px 6px;
-        border: 1px solid #243746;
     }
 
-    .resumen-completo td {
-        border: 1px solid #d8dee5;
-        padding: 8px 6px;
-        vertical-align: middle;
+    .tabla th,
+    .tabla td {
+        border: 1px solid #cbd3d9;
+        padding: 6px;
+        vertical-align: top;
     }
 
-    .resumen-completo td.money {
+    .tabla .derecha {
         text-align: right;
         white-space: nowrap;
     }
 
-    .resumen-completo tr.total {
-        background: #edf1f5;
-        color: #243746;
-        font-weight: bold;
+    .tabla .centro {
+        text-align: center;
     }
 
-    .nota {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #d8dee5;
-        color: #475569;
-        font-size: 8px;
+    .grupo-resumen {
+        background: #f1f4f6;
+        font-weight: bold;
+        color: #263746;
     }
+
+    /* NOTAS Y DETALLE */
+
+    .nota {
+        color: #5f6b73;
+        font-size: 8px;
+        margin-top: 6px;
+        line-height: 1.45;
+    }
+
+    .sin-datos {
+        text-align: center;
+        color: #66737c;
+        padding: 18px;
+        border: 1px solid #d7dee3;
+    }
+
+    .detalle-facturas {
+        page-break-before: always;
+    }
+
+    .tabla-facturas {
+        font-size: 7.5px;
+    }
+
+    .tabla-facturas th,
+    .tabla-facturas td {
+        padding: 5px 4px;
+        overflow-wrap: break-word;
+    }
+
+    /* PIE DE PÁGINA */
 
     .pie {
         position: fixed;
-        bottom: -28px;
+        bottom: -22px;
         left: 0;
         right: 0;
-        border-top: 1px solid #d8dee5;
-        padding-top: 6px;
-        font-size: 8px;
-        color: #64748b;
         text-align: center;
+        font-size: 7px;
+        color: #7a858c;
+        border-top: 1px solid #d7dee3;
+        padding-top: 5px;
     }
+
 </style>
 </head>
 
@@ -487,225 +463,254 @@ $html = '
 
 <table class="encabezado">
     <tr>
-        <td style="width: 25%;">
-            ' . $logoHTML . '
+
+        <td style="width: 25%; text-align: left;">
+            ' . $logoHtml . '
         </td>
 
         <td style="width: 50%; text-align: center;">
-            <div class="empresa">M&G BRO</div>
-            <div class="subtitulo-empresa">
-                Informe de control de facturación
+            <div class="empresa">
+                <h1>M&amp;G BRO</h1>
+                <p>Informe de control de facturación</p>
             </div>
         </td>
 
-        <td style="width: 25%; text-align: right;">
-            <strong>Fecha de emisión</strong><br>
-            ' . escaparPDF($fechaGeneracion) . '
+        <td style="width: 25%;">
+            <div class="fecha-emision">
+                <strong>Fecha de emisión</strong><br>
+                ' . pdfTexto($fechaGeneracion) . '
+            </div>
+        </td>
+
+    </tr>
+</table>
+
+<div class="titulo-documento">Informe de facturación</div>
+
+<div class="subtitulo">
+    Contrato N.º ' . pdfTexto($contrato['numero_contrato'] ?? '') . '
+</div>
+
+<!-- 1. INFORMACIÓN DEL CONTRATO -->
+
+<div class="seccion-titulo">1. Información del contrato</div>
+
+<table class="tarjetas">
+    <tr>
+        <td>
+            <span class="etiqueta">Número de contrato</span>
+            <span class="valor">' . pdfTexto($contrato['numero_contrato'] ?? '') . '</span>
+        </td>
+
+        <td>
+            <span class="etiqueta">Fecha</span>
+            <span class="valor">' . pdfFecha($contrato['fecha'] ?? null) . '</span>
+        </td>
+
+        <td>
+            <span class="etiqueta">Valor del contrato</span>
+            <span class="valor">' . pdfDinero($valorContrato) . '</span>
         </td>
     </tr>
 </table>
 
-<div class="titulo">
-    INFORME DE FACTURACIÓN DEL CONTRATO
+<div class="objeto">
+    <span class="etiqueta">Objeto del contrato</span>
+    ' . nl2br(pdfTexto($contrato['objeto_contrato'] ?? '')) . '
 </div>
 
-<div class="descripcion-titulo">
-    Relación de facturas, valores e impuestos registrados
-</div>
+<!-- 2. RESUMEN -->
 
-<!--================================================
-    1. INFORMACIÓN DEL CONTRATO
-=================================================-->
+<div class="seccion-titulo">2. Resumen</div>
 
-<div class="seccion">1. INFORMACIÓN DEL CONTRATO</div>
-
-<table class="datos">
-    <tr>
-        <td class="etiqueta">Número de contrato</td>
-        <td>' . escaparPDF($contrato['numero_contrato']) . '</td>
-
-        <td class="etiqueta">Fecha del contrato</td>
-        <td>' . fechaPDF($contrato['fecha']) . '</td>
-    </tr>
-
-    <tr>
-        <td class="etiqueta">Valor del contrato</td>
-        <td colspan="3">
-            <strong>' . dineroPDF($valorContrato) . '</strong>
-        </td>
-    </tr>
-
-    <tr>
-        <td class="etiqueta">Objeto del contrato</td>
-        <td colspan="3">
-            ' . nl2br(escaparPDF($contrato['objeto_contrato'])) . '
-        </td>
-    </tr>
-</table>
-
-<!--================================================
-    2. RESUMEN
-=================================================-->
-
-<div class="seccion">2. RESUMEN</div>
-
-<table class="resumen-completo">
+<table class="tabla">
     <thead>
         <tr>
-            <th style="width: 30%;">Concepto</th>
-            <th style="width: 20%;">Valor</th>
-            <th style="width: 30%;">Concepto</th>
-            <th style="width: 20%;">Valor</th>
+            <th style="width: 34%;">Concepto</th>
+            <th style="width: 22%;">Valor del Contrato</th>
+            <th style="width: 22%;">Valor Facturado</th>
+            <th style="width: 22%;">Saldo</th>
         </tr>
     </thead>
 
     <tbody>
-        <tr>
-            <td>Valor del Contrato</td>
-            <td class="money">' . dineroPDF($valorContrato) . '</td>
 
-            <td>Valor Facturas</td>
-            <td class="money">' . dineroPDF($valorFacturas) . '</td>
+        <tr>
+            <td><strong>Valor del Contrato</strong></td>
+            <td class="derecha">' . pdfDinero($valorContrato) . '</td>
+            <td class="derecha">' . pdfDinero($totalFacturas) . '</td>
+            <td class="derecha"><strong>' . pdfDinero($saldoContrato) . '</strong></td>
         </tr>
 
-        <tr class="total">
-            <td>Saldo del Contrato</td>
-            <td class="money">' . dineroPDF($saldoContrato) . '</td>
-
-            <td>IVA del Contrato</td>
-            <td class="money">' . (
-                $ivaContrato !== null
-                    ? dineroPDF($ivaContrato)
-                    : 'No aplica'
+        <tr>
+            <td>IVA</td>
+            <td class="derecha">' . pdfTributoContrato($contrato, 'tiene_iva', 'valor_iva') . '</td>
+            <td class="derecha">' . pdfDinero($totalIvaFacturado) . '</td>
+            <td class="derecha">' . pdfDinero(
+                (int) ($contrato['tiene_iva'] ?? 0) === 1 ? $saldoIva : 0
             ) . '</td>
         </tr>
 
         <tr>
-            <td>IVA Facturado</td>
-            <td class="money">' . dineroPDF($totalIva) . '</td>
-
-            <td>Saldo IVA</td>
-            <td class="money">' . dineroPDF($saldoIva) . '</td>
-        </tr>
-
-        <tr>
-            <td>Impoconsumo del Contrato</td>
-            <td class="money">' . (
-                $impoconsumoContrato !== null
-                    ? dineroPDF($impoconsumoContrato)
-                    : 'No aplica'
-            ) . '</td>
-
-            <td>Impoconsumo Facturado</td>
-            <td class="money">' . dineroPDF($totalImpoconsumo) . '</td>
-        </tr>
-
-        <tr class="total">
-            <td>Saldo Impoconsumo</td>
-            <td class="money">' . dineroPDF($saldoImpoconsumo) . '</td>
-
-            <td>Retención del Contrato</td>
-            <td class="money">' . (
-                $retencionContrato !== null
-                    ? dineroPDF($retencionContrato)
-                    : 'No aplica'
+            <td>Impoconsumo</td>
+            <td class="derecha">' . pdfTributoContrato($contrato, 'tiene_impoconsumo', 'valor_impoconsumo') . '</td>
+            <td class="derecha">' . pdfDinero($totalImpoconsumoFacturado) . '</td>
+            <td class="derecha">' . pdfDinero(
+                (int) ($contrato['tiene_impoconsumo'] ?? 0) === 1 ? $saldoImpoconsumo : 0
             ) . '</td>
         </tr>
 
         <tr>
-            <td>Retención Facturada</td>
-            <td class="money">' . dineroPDF($totalRetencion) . '</td>
-
-            <td>Saldo Retención</td>
-            <td class="money">' . dineroPDF($saldoRetencion) . '</td>
+            <td>Retención</td>
+            <td class="derecha">' . pdfTributoContrato($contrato, 'tiene_retencion', 'valor_retencion') . '</td>
+            <td class="derecha">' . pdfDinero($totalRetencionFacturada) . '</td>
+            <td class="derecha">' . pdfDinero(
+                (int) ($contrato['tiene_retencion'] ?? 0) === 1 ? $saldoRetencion : 0
+            ) . '</td>
         </tr>
-    </tbody>
-</table>
 
-<table class="resumen-completo" style="margin-top: 10px;">
-    <tr class="total">
-        <td style="width: 70%;">
-            Total calculado de facturas con impuestos y retenciones
-        </td>
-        <td class="money" style="width: 30%;">
-            ' . dineroPDF($totalRegistrado) . '
-        </td>
-    </tr>
-</table>
-
-<!--================================================
-    3. DETALLE DE FACTURAS
-=================================================-->
-
-<div class="seccion seccion-detalle-facturas">
-    3. DETALLE DE FACTURAS
-</div>
-
-<table class="facturas">
-    <thead>
-        <tr>
-            <th style="width: 4%;">#</th>
-            <th style="width: 13%;">Proveedor</th>
-            <th style="width: 10%;">N.º factura</th>
-            <th style="width: 9%;">Fecha</th>
-            <th style="width: 12%;">Valor</th>
-            <th style="width: 10%;">IVA</th>
-            <th style="width: 10%;">Impoconsumo</th>
-            <th style="width: 10%;">Retención</th>
-            <th style="width: 22%;">Observación</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        ' . $filasFacturas . '
     </tbody>
 </table>
 
 <div class="nota">
-    <strong>Nota:</strong>
-    Este documento presenta la información registrada en el sistema
-    a la fecha de generación. Los valores se calculan con base en las
-    facturas y los conceptos registrados en el contrato. Se recomienda
-    verificar los soportes y documentos originales para cualquier
-    trámite oficial.
+    Nota: el saldo del contrato corresponde al valor del contrato menos el valor base acumulado de las facturas.
+    Los saldos tributarios corresponden a la diferencia entre el valor registrado en el contrato y el valor
+    acumulado en las facturas. Si un tributo no aplica al contrato, su saldo se muestra en $0,00.
 </div>
 
+<!-- 3. DETALLE DE FACTURAS -->
+
+<div class="detalle-facturas">
+
+    <div class="seccion-titulo">3. Detalle de facturas</div>';
+
+if (!empty($facturas)) {
+
+    $html .= '
+    <table class="tabla tabla-facturas">
+
+        <thead>
+            <tr>
+                <th style="width: 3%;">#</th>
+                <th style="width: 15%;">Proveedor</th>
+                <th style="width: 10%;">N.º factura</th>
+                <th style="width: 8%;">Fecha</th>
+                <th style="width: 11%;">Valor</th>
+                <th style="width: 8%;">IVA</th>
+                <th style="width: 10%;">Impoconsumo</th>
+                <th style="width: 9%;">Retención</th>
+                <th style="width: 26%;">Observación</th>
+            </tr>
+        </thead>
+
+        <tbody>';
+
+    foreach ($facturas as $indice => $factura) {
+
+        $proveedor = trim((string) ($factura['proveedor'] ?? ''));
+
+        $numeroFactura = trim((string) ($factura['numero_factura'] ?? ''));
+
+        $observacion = trim((string) ($factura['observacion'] ?? ''));
+
+        $html .= '
+            <tr>
+
+                <td class="centro">' . ($indice + 1) . '</td>
+
+                <td>' . ($proveedor !== '' ? pdfTexto($proveedor) : '—') . '</td>
+
+                <td>' . ($numeroFactura !== '' ? pdfTexto($numeroFactura) : '—') . '</td>
+
+                <td>' . pdfFecha($factura['fecha_factura'] ?? null) . '</td>
+
+                <td class="derecha">' . pdfDinero($factura['valor'] ?? 0) . '</td>
+
+                <td class="derecha">' . pdfTributoFactura(
+                    $factura,
+                    'tiene_iva',
+                    'valor_iva'
+                ) . '</td>
+
+                <td class="derecha">' . pdfTributoFactura(
+                    $factura,
+                    'tiene_impoconsumo',
+                    'valor_impoconsumo'
+                ) . '</td>
+
+                <td class="derecha">' . pdfTributoFactura(
+                    $factura,
+                    'tiene_retencion',
+                    'valor_retencion'
+                ) . '</td>
+
+                <td>' . ($observacion !== '' ? nl2br(pdfTexto($observacion)) : '—') . '</td>
+
+            </tr>';
+    }
+
+    $html .= '
+        </tbody>
+    </table>';
+
+} else {
+
+    $html .= '
+    <div class="sin-datos">
+        Este contrato todavía no tiene facturas registradas.
+    </div>';
+
+}
+
+$html .= '
+
+</div>
+
+<!-- PIE DE PÁGINA -->
+
 <div class="pie">
-    M&G BRO | Informe de facturación del contrato
-    ' . escaparPDF($contrato['numero_contrato']) . '
-    | Generado el ' . escaparPDF($fechaGeneracion) . '
+    M&amp;G BRO — Informe de facturación del contrato N.º '
+    . pdfTexto($contrato['numero_contrato'] ?? '') . '
 </div>
 
 </body>
-</html>
-';
+</html>';
 
 //==================================================
 // GENERAR PDF
 //==================================================
 
 $options = new Options();
+
 $options->set('isRemoteEnabled', true);
 $options->set('isHtml5ParserEnabled', true);
 $options->set('defaultFont', 'DejaVu Sans');
 
 $dompdf = new Dompdf($options);
+
 $dompdf->loadHtml($html, 'UTF-8');
+
 $dompdf->setPaper('A4', 'landscape');
+
 $dompdf->render();
 
-$numeroContrato = preg_replace(
+//==================================================
+// NOMBRE DEL ARCHIVO
+//==================================================
+
+$nombreContrato = preg_replace(
     '/[^A-Za-z0-9_-]/',
     '_',
-    (string) $contrato['numero_contrato']
+    (string) ($contrato['numero_contrato'] ?? 'contrato')
 );
 
-$nombreArchivo = 'Informe_Facturacion_Contrato_'
-    . ($numeroContrato !== '' ? $numeroContrato : $contratoId)
-    . '.pdf';
+//==================================================
+// MOSTRAR PDF EN EL NAVEGADOR
+//==================================================
 
-$dompdf->stream($nombreArchivo, [
-    'Attachment' => true
-]);
+$dompdf->stream(
+    'facturacion_contrato_' . $nombreContrato . '.pdf',
+    ['Attachment' => false]
+);
 
 exit;
