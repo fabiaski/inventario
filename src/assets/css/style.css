@@ -25962,7 +25962,6 @@ select.tt-hint, .select2-container--default .select2-selection--single select.se
   outline: 1px solid #dee2e6;
   color: #c9c8c8;
   appearance: none;
-  background: url("../../images/arrow-down.svg");
   background-repeat: no-repeat;
   background-position: 99% center;
 }
@@ -26071,7 +26070,6 @@ select.form-select {
   outline: 1px solid #dee2e6;
   color: #c9c8c8;
   appearance: none;
-  background: url("../../images/arrow-down.svg");
   background-repeat: no-repeat;
   background-position: 99% center;
 }

@@ -73,7 +73,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                             </div>
 
-                            <?php if (tienePermiso('facturacion', 'agregar')): ?>
+                            <?php if (tienePermiso('facturacion', 'contrato_crear')): ?>
 
                             <a href="/inventario/facturacion-agregar" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i>
