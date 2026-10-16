@@ -378,7 +378,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 </a>
 
 
-                                <?php if (tienePermiso('facturacion', 'agregar')): ?>
+                                <?php if (tienePermiso('facturacion', 'factura_crear')): ?>
 
                                 <a href="/inventario/facturacion/agregar-factura/<?= $contratoId ?>"
                                     class="btn btn-success">
