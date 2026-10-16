@@ -1268,7 +1268,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         <!-- EDITAR -->
 
-                                                        <?php if (tienePermiso('facturacion', 'editar')): ?>
+                                                        <?php if (tienePermiso('facturacion', 'factura_editar')): ?>
 
                                                         <a href="/inventario/facturacion/editar-factura/<?= $factura['id'] ?>"
                                                             class="btn btn-warning btn-sm" title="Editar factura">
@@ -1281,7 +1281,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                                                         <!-- ELIMINAR -->
 
-                                                        <?php if (tienePermiso('facturacion', 'eliminar')): ?>
+                                                        <?php if (tienePermiso('facturacion', 'factura_eliminar')): ?>
 
                                                         <a href="/inventario/facturacion/eliminar-factura?id=<?= $factura['id'] ?>"
                                                             class="btn btn-danger btn-sm" title="Eliminar factura"
