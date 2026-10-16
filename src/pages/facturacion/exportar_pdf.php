@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
@@ -157,8 +156,42 @@ while ($factura = $resultadoFacturas->fetch_assoc()) {
 $stmt->close();
 
 //==================================================
-// RESUMEN
+// CALCULAR RESUMEN
 //==================================================
+
+$valorContrato = (float) $contrato['valor_contrato'];
+$valorFacturas = $totalBase;
+
+// Impuestos y retención configurados en el contrato.
+// NULL significa que el concepto no aplica.
+
+$ivaContrato = (int) $contrato['tiene_iva'] === 1
+    ? (float) $contrato['valor_iva']
+    : null;
+
+$impoconsumoContrato = (int) $contrato['tiene_impoconsumo'] === 1
+    ? (float) $contrato['valor_impoconsumo']
+    : null;
+
+$retencionContrato = (int) $contrato['tiene_retencion'] === 1
+    ? (float) $contrato['valor_retencion']
+    : null;
+
+// Saldos
+
+$saldoContrato = $valorContrato - $valorFacturas;
+
+$saldoIva = $ivaContrato !== null
+    ? $ivaContrato - $totalIva
+    : 0;
+
+$saldoImpoconsumo = $impoconsumoContrato !== null
+    ? $impoconsumoContrato - $totalImpoconsumo
+    : 0;
+
+$saldoRetencion = $retencionContrato !== null
+    ? $retencionContrato - $totalRetencion
+    : 0;
 
 $totalRegistrado = $totalBase
     + $totalIva
@@ -216,32 +249,32 @@ if (count($facturas) > 0) {
                 <td class="money">
                     ' . dineroPDF(
                         (int) $factura['tiene_iva'] === 1
-                        ? $factura['valor_iva']
-                        : 0
+                            ? $factura['valor_iva']
+                            : 0
                     ) . '
                 </td>
 
                 <td class="money">
                     ' . dineroPDF(
                         (int) $factura['tiene_impoconsumo'] === 1
-                        ? $factura['valor_impoconsumo']
-                        : 0
+                            ? $factura['valor_impoconsumo']
+                            : 0
                     ) . '
                 </td>
 
                 <td class="money">
                     ' . dineroPDF(
                         (int) $factura['tiene_retencion'] === 1
-                        ? $factura['valor_retencion']
-                        : 0
+                            ? $factura['valor_retencion']
+                            : 0
                     ) . '
                 </td>
 
                 <td class="observacion">
                     ' . (
                         !empty($factura['observacion'])
-                        ? nl2br(escaparPDF($factura['observacion']))
-                        : '—'
+                            ? nl2br(escaparPDF($factura['observacion']))
+                            : '—'
                     ) . '
                 </td>
             </tr>
@@ -258,7 +291,8 @@ if (count($facturas) > 0) {
 }
 
 //==================================================
-// DOCUMENTO PDF
+// CONSTRUIR DOCUMENTO PDF
+// ORDEN: CONTRATO, RESUMEN, FACTURAS
 //==================================================
 
 $html = '
@@ -355,6 +389,10 @@ $html = '
         table-layout: fixed;
     }
 
+    .seccion-detalle-facturas {
+    page-break-before: always;
+}
+
     .facturas th {
         background: #243746;
         color: #ffffff;
@@ -388,23 +426,37 @@ $html = '
         font-size: 7px;
     }
 
-    .resumen {
-        width: 55%;
-        margin-left: auto;
-        margin-top: 12px;
+    .resumen-completo {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 8.5px;
+        table-layout: fixed;
     }
 
-    .resumen td {
-        border-bottom: 1px solid #d8dee5;
-        padding: 7px;
+    .resumen-completo th {
+        background: #243746;
+        color: #ffffff;
+        text-align: left;
+        padding: 8px 6px;
+        border: 1px solid #243746;
     }
 
-    .resumen .total {
+    .resumen-completo td {
+        border: 1px solid #d8dee5;
+        padding: 8px 6px;
+        vertical-align: middle;
+    }
+
+    .resumen-completo td.money {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .resumen-completo tr.total {
         background: #edf1f5;
         color: #243746;
         font-weight: bold;
-        font-size: 10px;
-        border-top: 2px solid #243746;
     }
 
     .nota {
@@ -430,6 +482,8 @@ $html = '
 </head>
 
 <body>
+
+<!-- ENCABEZADO -->
 
 <table class="encabezado">
     <tr>
@@ -459,6 +513,10 @@ $html = '
     Relación de facturas, valores e impuestos registrados
 </div>
 
+<!--================================================
+    1. INFORMACIÓN DEL CONTRATO
+=================================================-->
+
 <div class="seccion">1. INFORMACIÓN DEL CONTRATO</div>
 
 <table class="datos">
@@ -473,7 +531,7 @@ $html = '
     <tr>
         <td class="etiqueta">Valor del contrato</td>
         <td colspan="3">
-            <strong>' . dineroPDF($contrato['valor_contrato']) . '</strong>
+            <strong>' . dineroPDF($valorContrato) . '</strong>
         </td>
     </tr>
 
@@ -485,7 +543,103 @@ $html = '
     </tr>
 </table>
 
-<div class="seccion">2. DETALLE DE FACTURAS</div>
+<!--================================================
+    2. RESUMEN
+=================================================-->
+
+<div class="seccion">2. RESUMEN</div>
+
+<table class="resumen-completo">
+    <thead>
+        <tr>
+            <th style="width: 30%;">Concepto</th>
+            <th style="width: 20%;">Valor</th>
+            <th style="width: 30%;">Concepto</th>
+            <th style="width: 20%;">Valor</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Valor del Contrato</td>
+            <td class="money">' . dineroPDF($valorContrato) . '</td>
+
+            <td>Valor Facturas</td>
+            <td class="money">' . dineroPDF($valorFacturas) . '</td>
+        </tr>
+
+        <tr class="total">
+            <td>Saldo del Contrato</td>
+            <td class="money">' . dineroPDF($saldoContrato) . '</td>
+
+            <td>IVA del Contrato</td>
+            <td class="money">' . (
+                $ivaContrato !== null
+                    ? dineroPDF($ivaContrato)
+                    : 'No aplica'
+            ) . '</td>
+        </tr>
+
+        <tr>
+            <td>IVA Facturado</td>
+            <td class="money">' . dineroPDF($totalIva) . '</td>
+
+            <td>Saldo IVA</td>
+            <td class="money">' . dineroPDF($saldoIva) . '</td>
+        </tr>
+
+        <tr>
+            <td>Impoconsumo del Contrato</td>
+            <td class="money">' . (
+                $impoconsumoContrato !== null
+                    ? dineroPDF($impoconsumoContrato)
+                    : 'No aplica'
+            ) . '</td>
+
+            <td>Impoconsumo Facturado</td>
+            <td class="money">' . dineroPDF($totalImpoconsumo) . '</td>
+        </tr>
+
+        <tr class="total">
+            <td>Saldo Impoconsumo</td>
+            <td class="money">' . dineroPDF($saldoImpoconsumo) . '</td>
+
+            <td>Retención del Contrato</td>
+            <td class="money">' . (
+                $retencionContrato !== null
+                    ? dineroPDF($retencionContrato)
+                    : 'No aplica'
+            ) . '</td>
+        </tr>
+
+        <tr>
+            <td>Retención Facturada</td>
+            <td class="money">' . dineroPDF($totalRetencion) . '</td>
+
+            <td>Saldo Retención</td>
+            <td class="money">' . dineroPDF($saldoRetencion) . '</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="resumen-completo" style="margin-top: 10px;">
+    <tr class="total">
+        <td style="width: 70%;">
+            Total calculado de facturas con impuestos y retenciones
+        </td>
+        <td class="money" style="width: 30%;">
+            ' . dineroPDF($totalRegistrado) . '
+        </td>
+    </tr>
+</table>
+
+<!--================================================
+    3. DETALLE DE FACTURAS
+=================================================-->
+
+<div class="seccion seccion-detalle-facturas">
+    3. DETALLE DE FACTURAS
+</div>
 
 <table class="facturas">
     <thead>
@@ -507,42 +661,13 @@ $html = '
     </tbody>
 </table>
 
-<div class="seccion">3. RESUMEN FINANCIERO</div>
-
-<table class="resumen">
-    <tr>
-        <td>Valor registrado de facturas</td>
-        <td class="money">' . dineroPDF($totalBase) . '</td>
-    </tr>
-
-    <tr>
-        <td>Total IVA</td>
-        <td class="money">' . dineroPDF($totalIva) . '</td>
-    </tr>
-
-    <tr>
-        <td>Total impoconsumo</td>
-        <td class="money">' . dineroPDF($totalImpoconsumo) . '</td>
-    </tr>
-
-    <tr>
-        <td>Total retenciones</td>
-        <td class="money">' . dineroPDF($totalRetencion) . '</td>
-    </tr>
-
-    <tr class="total">
-        <td>Total calculado con impuestos y retenciones</td>
-        <td class="money">' . dineroPDF($totalRegistrado) . '</td>
-    </tr>
-</table>
-
 <div class="nota">
     <strong>Nota:</strong>
     Este documento presenta la información registrada en el sistema
-    a la fecha de generación. El total calculado corresponde a la suma
-    de los valores de las facturas, más los impuestos registrados,
-    menos las retenciones registradas. Se recomienda verificar los
-    soportes y documentos originales para cualquier trámite oficial.
+    a la fecha de generación. Los valores se calculan con base en las
+    facturas y los conceptos registrados en el contrato. Se recomienda
+    verificar los soportes y documentos originales para cualquier
+    trámite oficial.
 </div>
 
 <div class="pie">
