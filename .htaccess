@@ -173,3 +173,16 @@ RewriteRule ^actividad/?$ src/admin/actividad/index.php [L]
 
 RewriteRule ^perfil/?$ src/pages/perfil/perfil.php [L]
 RewriteRule ^perfil/actualizar/?$ src/pages/perfil/actualizar.php [L]
+
+
+# ==========================================================
+# EVIDENCIAS FOTOGRÁFICAS
+# ==========================================================
+
+RewriteRule ^evidencias/?$ src/pages/evidencias/index.php [L]
+RewriteRule ^evidencias/galeria/?$ src/pages/evidencias/galeria.php [L]
+RewriteRule ^evidencias/guardar/?$ src/pages/evidencias/guardar.php [L]
+RewriteRule ^evidencias/eliminar/?$ src/pages/evidencias/eliminar.php [L]
+
+RewriteRule ^evidencias/descargar-zip/?$ src/pages/evidencias/descargar_zip.php [L]
+RewriteRule ^evidencias/configuracion/?$ src/pages/evidencias/configuracion.php [L]
