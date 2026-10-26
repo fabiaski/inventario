@@ -157,17 +157,39 @@ try {
         redirigirGaleria($contratoId);
     }
 
+ 
     // ======================================================
-    // CARPETAS DE DOCUMENTOS
+    // CARPETAS DE DOCUMENTOS: LOCAL Y PRODUCCIÓN
     // ======================================================
 
-    $baseDocumentos = 'C:\\Users\\loshe\\Documents\\MYG';
+    $rutasPosibles = [
+        'C:\\Users\\loshe\\Documents\\MYG',
+        'C:\\Users\\USUARIO\\Documents\\MYG'
+    ];
 
-    if (!is_dir($baseDocumentos)) {
+    $baseDocumentos = null;
+
+    foreach ($rutasPosibles as $ruta) {
+        if (is_dir($ruta)) {
+            $baseDocumentos = $ruta;
+            break;
+        }
+    }
+
+    if ($baseDocumentos === null) {
         throw new RuntimeException(
-            'No existe la carpeta principal: ' . $baseDocumentos
+            'No existe ninguna carpeta principal configurada. '
+            . 'Verifica estas rutas: '
+            . implode(' | ', $rutasPosibles)
         );
     }
+
+    if (!is_writable($baseDocumentos)) {
+        throw new RuntimeException(
+            'PHP no tiene permiso para escribir en: ' . $baseDocumentos
+        );
+    }
+
 
     if (!is_writable($baseDocumentos)) {
         throw new RuntimeException(
