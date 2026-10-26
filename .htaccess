@@ -186,3 +186,5 @@ RewriteRule ^evidencias/eliminar/?$ src/pages/evidencias/eliminar.php [L]
 
 RewriteRule ^evidencias/descargar-zip/?$ src/pages/evidencias/descargar_zip.php [L]
 RewriteRule ^evidencias/configuracion/?$ src/pages/evidencias/configuracion.php [L]
+
+RewriteRule ^evidencias/descargar-zip/?$ src/pages/evidencias/descargar_zip.php [L]

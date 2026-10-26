@@ -65,15 +65,36 @@ unset($_SESSION['mensaje_evidencias'], $_SESSION['tipo_mensaje_evidencias']);
 
 $numeroContrato = trim((string) $contrato['numero_contrato']);
 
-// Debe coincidir con la carpeta utilizada en guardar.php
+
 $numeroSeguro = preg_replace('/[^a-zA-Z0-9_-]/', '_', $numeroContrato);
 
 if ($numeroSeguro === '') {
     $numeroSeguro = 'SIN_NUMERO';
 }
 
-$rutaCarpeta = 'C:\\Users\\loshe\\Documents\\MYG\\evidencias_contratos\\Contrato_'
-    . $numeroSeguro;
+// Rutas para local y producción.
+$rutasPosibles = [
+    'C:\\Users\\loshe\\Documents\\MYG',
+    'C:\\Users\\USUARIO\\Documents\\MYG'
+];
+
+$baseDocumentos = null;
+
+foreach ($rutasPosibles as $ruta) {
+    if (is_dir($ruta)) {
+        $baseDocumentos = $ruta;
+        break;
+    }
+}
+
+if ($baseDocumentos === null) {
+    $baseDocumentos = $rutasPosibles[0];
+}
+
+$rutaCarpeta = $baseDocumentos
+    . DIRECTORY_SEPARATOR . 'evidencias_contratos'
+    . DIRECTORY_SEPARATOR . 'Contrato_' . $numeroSeguro;
+
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -100,6 +121,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <i class="bi bi-arrow-left"></i>
                                     Volver a contratos
                                 </a>
+                                
+                        <a href="/inventario/evidencias/descargar-zip?contrato_id=<?= (int) $contrato['id'] ?>"
+                           class="btn btn-success mt-2">
+
+                            <i class="bi bi-file-earmark-zip"></i>
+                            Descargar todas las fotografías (.ZIP)
+
+                        </a>
+
                             </div>
 
                             <div>
@@ -237,13 +267,17 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                             $tipoMime = '';
                                         }
                                         ?>
-
                             <?php if ($tipoMime !== ''): ?>
-                            <a target="_blank" rel="noopener noreferrer" title="Abrir fotografía en otra pestaña">
-                                <img src="data:<?= htmlspecialchars($tipoMime) ?>;base64,<?= base64_encode(file_get_contents($rutaArchivo)) ?>"
+
+                            <a href="/inventario/evidencias/imagen?id=<?= (int) $evidencia['id'] ?>" target="_blank"
+                                rel="noopener noreferrer" title="Abrir fotografía en otra pestaña">
+
+                                <img src="data:<?= htmlspecialchars($tipoMime, ENT_QUOTES, 'UTF-8') ?>;base64,<?= base64_encode(file_get_contents($rutaArchivo)) ?>"
                                     alt="Fotografía del contrato" class="card-img-top"
                                     style="height:220px; object-fit:contain; background:#f5f5f5;">
                             </a>
+
+
                             <?php else: ?>
                             <div class="p-3 text-danger">
                                 El archivo no tiene un formato de imagen compatible.
@@ -297,6 +331,6 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 
 
-<?php require_once __DIR__ . '/../../includes/footer.php'; ?>
+    <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
 
-<?php require_once __DIR__ . '/../../includes/scripts.php'; ?>
+    <?php require_once __DIR__ . '/../../includes/scripts.php'; ?>

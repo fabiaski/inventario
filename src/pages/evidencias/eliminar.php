@@ -132,7 +132,27 @@ try {
     // CONSTRUIR LA RUTA DEL ARCHIVO
     // ======================================================
 
-    $baseDocumentos = 'C:\\Users\\loshe\\Documents\\MYG';
+    // Rutas para local y producción.
+$rutasPosibles = [
+    'C:\\Users\\loshe\\Documents\\MYG',
+    'C:\\Users\\USUARIO\\Documents\\MYG'
+];
+
+$baseDocumentos = null;
+
+foreach ($rutasPosibles as $ruta) {
+    if (is_dir($ruta)) {
+        $baseDocumentos = $ruta;
+        break;
+    }
+}
+
+if ($baseDocumentos === null) {
+    throw new RuntimeException(
+        'No existe ninguna carpeta principal configurada: '
+        . implode(' | ', $rutasPosibles)
+    );
+}
 
     $numeroContrato = limpiarNumeroContrato(
         (string) $evidencia['numero_contrato']
