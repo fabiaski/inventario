@@ -121,14 +121,13 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     <i class="bi bi-arrow-left"></i>
                                     Volver a contratos
                                 </a>
-                                
-                        <a href="/inventario/evidencias/descargar-zip?contrato_id=<?= (int) $contrato['id'] ?>"
-                           class="btn btn-success mt-2">
 
-                            <i class="bi bi-file-earmark-zip"></i>
-                            Descargar todas las fotografías (.ZIP)
+                                <a href="/inventario/evidencias/descargar-zip?contrato_id=<?= (int) $contrato['id'] ?>"
+                                    class="btn btn-success">
 
-                        </a>
+                                    <i class="bi bi-file-earmark-zip"></i>
+                                    Descargar todas las fotografías (.ZIP)
+                                </a>
 
                             </div>
 
