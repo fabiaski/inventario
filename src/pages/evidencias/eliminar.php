@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 session_start();
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
 // ==========================================================
 // FUNCIONES AUXILIARES
@@ -45,6 +44,15 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 // ==========================================================
+// VALIDAR PERMISO
+// ==========================================================
+
+if (!tienePermiso('evidencias', 'eliminar')) {
+    http_response_code(403);
+    die('No tienes permiso para eliminar evidencias.');
+}
+
+// ==========================================================
 // VALIDAR MÉTODO POST
 // ==========================================================
 
@@ -80,7 +88,12 @@ if (
     exit;
 }
 
+$usuarioId = (int) $_SESSION['usuario_id'];
+$ipUsuario = $_SERVER['REMOTE_ADDR'] ?? null;
+$transaccionIniciada = false;
+
 try {
+
     // ======================================================
     // CONSULTAR LA EVIDENCIA Y SU CONTRATO
     // ======================================================
@@ -132,27 +145,26 @@ try {
     // CONSTRUIR LA RUTA DEL ARCHIVO
     // ======================================================
 
-    // Rutas para local y producción.
-$rutasPosibles = [
-    'C:\\Users\\loshe\\Documents\\MYG',
-    'C:\\Users\\USUARIO\\Documents\\MYG'
-];
+    $rutasPosibles = [
+        'C:\\Users\\loshe\\Documents\\MYG',
+        'C:\\Users\\USUARIO\\Documents\\MYG'
+    ];
 
-$baseDocumentos = null;
+    $baseDocumentos = null;
 
-foreach ($rutasPosibles as $ruta) {
-    if (is_dir($ruta)) {
-        $baseDocumentos = $ruta;
-        break;
+    foreach ($rutasPosibles as $ruta) {
+        if (is_dir($ruta)) {
+            $baseDocumentos = $ruta;
+            break;
+        }
     }
-}
 
-if ($baseDocumentos === null) {
-    throw new RuntimeException(
-        'No existe ninguna carpeta principal configurada: '
-        . implode(' | ', $rutasPosibles)
-    );
-}
+    if ($baseDocumentos === null) {
+        throw new RuntimeException(
+            'No existe ninguna carpeta principal configurada: '
+            . implode(' | ', $rutasPosibles)
+        );
+    }
 
     $numeroContrato = limpiarNumeroContrato(
         (string) $evidencia['numero_contrato']
@@ -166,7 +178,8 @@ if ($baseDocumentos === null) {
 
     $nombreArchivo = (string) $evidencia['nombre_archivo'];
 
-    // Evitar nombres de archivo que intenten salir de la carpeta.
+    // Evitar nombres que intenten salir de la carpeta.
+
     if (
         $nombreArchivo === '' ||
         basename($nombreArchivo) !== $nombreArchivo ||
@@ -183,36 +196,29 @@ if ($baseDocumentos === null) {
         . $nombreArchivo;
 
     // ======================================================
-    // ELIMINAR ARCHIVO FÍSICO
+    // PREPARAR DESCRIPCIÓN DE ACTIVIDAD
     // ======================================================
 
-    if (file_exists($rutaArchivo)) {
-        if (!is_file($rutaArchivo)) {
-            throw new RuntimeException(
-                'La ruta de la fotografía no corresponde a un archivo.'
-            );
-        }
-
-        if (!is_writable($rutaArchivo)) {
-            throw new RuntimeException(
-                'PHP no tiene permiso para eliminar la fotografía.'
-            );
-        }
-
-        if (!unlink($rutaArchivo)) {
-            throw new RuntimeException(
-                'No se pudo eliminar el archivo de la carpeta.'
-            );
-        }
-    }
+    $descripcion = sprintf(
+        'El usuario eliminó la fotografía %s del contrato %s.',
+        $nombreArchivo,
+        $numeroContrato
+    );
 
     // ======================================================
-    // ELIMINAR REGISTRO DE LA BASE DE DATOS
+    // INICIAR TRANSACCIÓN
+    // ======================================================
+
+    $conexion->begin_transaction();
+    $transaccionIniciada = true;
+
+    // ======================================================
+    // ELIMINAR REGISTRO DE EVIDENCIAS
     // ======================================================
 
     $stmtEliminar = $conexion->prepare(
-        'DELETE FROM evidencias_contratos
-         WHERE id = ? AND contrato_id = ?'
+        "DELETE FROM evidencias_contratos
+         WHERE id = ? AND contrato_id = ?"
     );
 
     if (!$stmtEliminar) {
@@ -246,17 +252,100 @@ if ($baseDocumentos === null) {
     }
 
     // ======================================================
-    // CONFIRMAR OPERACIÓN
+    // REGISTRAR ACTIVIDAD
     // ======================================================
 
+    $stmtActividad = $conexion->prepare(
+        "INSERT INTO actividad
+        (
+            usuario_id,
+            modulo,
+            accion,
+            descripcion,
+            referencia_id,
+            ip
+        )
+        VALUES (?, ?, ?, ?, ?, ?)"
+    );
+
+    if (!$stmtActividad) {
+        throw new RuntimeException(
+            'No se pudo preparar el registro de actividad.'
+        );
+    }
+
+    $modulo = 'evidencias';
+    $accion = 'eliminar';
+
+    $stmtActividad->bind_param(
+        'isssis',
+        $usuarioId,
+        $modulo,
+        $accion,
+        $descripcion,
+        $contratoId,
+        $ipUsuario
+    );
+
+    if (!$stmtActividad->execute()) {
+        $stmtActividad->close();
+
+        throw new RuntimeException(
+            'No se pudo registrar la actividad de eliminación.'
+        );
+    }
+
+    $stmtActividad->close();
+
+    // ======================================================
+    // ELIMINAR ARCHIVO FÍSICO
+    // ======================================================
+
+    if (file_exists($rutaArchivo)) {
+
+        if (!is_file($rutaArchivo)) {
+            throw new RuntimeException(
+                'La ruta de la fotografía no corresponde a un archivo.'
+            );
+        }
+
+        if (!is_writable($rutaArchivo)) {
+            throw new RuntimeException(
+                'PHP no tiene permiso para eliminar la fotografía.'
+            );
+        }
+
+        if (!unlink($rutaArchivo)) {
+            throw new RuntimeException(
+                'No se pudo eliminar el archivo de la carpeta.'
+            );
+        }
+    }
+
+    // ======================================================
+    // CONFIRMAR TRANSACCIÓN
+    // ======================================================
+
+    $conexion->commit();
+    $transaccionIniciada = false;
+
     mensajeEliminar(
-        'La fotografía y su registro se eliminaron correctamente.',
+        'La fotografía se eliminó correctamente y la actividad quedó registrada.',
         'success'
     );
 
     redirigirGaleriaEliminar($contratoId);
 
 } catch (Throwable $e) {
+
+    // ======================================================
+    // REVERTIR TRANSACCIÓN SI EXISTE UN ERROR
+    // ======================================================
+
+    if ($transaccionIniciada) {
+        $conexion->rollback();
+    }
+
     error_log(
         '[EVIDENCIAS - ELIMINAR] '
         . $e->getMessage()

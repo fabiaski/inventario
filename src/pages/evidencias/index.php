@@ -7,9 +7,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ==========================================================
+// VALIDAR SESIÓN
+// ==========================================================
+
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: /inventario/login');
     exit;
+}
+
+// ==========================================================
+// VALIDAR PERMISO PARA VER EVIDENCIAS
+// ==========================================================
+
+if (!tienePermiso('evidencias', 'ver')) {
+    http_response_code(403);
+    die('No tienes permiso para consultar las evidencias.');
 }
 
 // ==========================================================
@@ -17,7 +30,6 @@ if (!isset($_SESSION['usuario_id'])) {
 // ==========================================================
 
 $buscar = trim($_GET['buscar'] ?? '');
-
 // ==========================================================
 // CONSULTAR CONTRATOS Y TOTAL DE EVIDENCIAS
 // ==========================================================

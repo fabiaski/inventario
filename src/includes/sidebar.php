@@ -91,58 +91,38 @@ require_once __DIR__ . '/permisos.php';
 
                         <?php endif; ?>
 
+
                     </ul>
 
+                    
                 </div>
 
             </li>
 
             <?php endif; ?>
-
-
             <!-- FACTURACIÓN -->
-            <?php if (tienePermiso('facturacion', 'ver')): ?>
+                     <!-- FACTURACIÓN -->
+            <?php if (tienePermiso('facturacion', 'ver') || tienePermiso('evidencias', 'ver')): ?>
 
             <li class="nav-item nav-category">Facturación</li>
 
+            <?php if (tienePermiso('facturacion', 'ver')): ?>
             <li class="nav-item">
-
-                <a class="nav-link" data-bs-toggle="collapse" href="#form-Factura" aria-expanded="false"
-                    aria-controls="form-Factura">
-
+                <a class="nav-link" href="/inventario/facturacion">
                     <i class="menu-icon mdi mdi-receipt-text"></i>
-
                     <span class="menu-title">Facturación</span>
-
-                    <i class="menu-arrow"></i>
-
                 </a>
-
-                <div class="collapse" id="form-Factura">
-
-                    <ul class="nav flex-column sub-menu">
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/facturacion">
-                                Ver facturación
-                            </a>
-                        </li>
-
-                        <?php if (tienePermiso('facturacion', 'agregar')): ?>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inventario/facturacion-agregar">
-                                Nueva factura
-                            </a>
-                        </li>
-
-                        <?php endif; ?>
-
-                    </ul>
-
-                </div>
-
             </li>
+            <?php endif; ?>
+
+            <?php if (tienePermiso('evidencias', 'ver')): ?>
+            <li class="nav-item">
+                <a class="nav-link" href="/inventario/evidencias">
+                    <i class="menu-icon mdi mdi-folder-multiple-image"></i>
+                    <span class="menu-title">Evidencias</span>
+                </a>
+            </li>
+            <?php endif; ?>
 
             <?php endif; ?>
 

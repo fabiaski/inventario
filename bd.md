@@ -21,3 +21,48 @@ upload_max_filesize=40M
 post_max_size=100M
 max_file_uploads=30
 upload_tmp_dir="C:\xampp\tmp"
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO permisos (modulo, accion, nombre, descripcion)
+SELECT 'evidencias', 'ver', 'Ver evidencias', 'Consultar contratos y sus evidencias'
+WHERE NOT EXISTS (
+    SELECT 1 FROM permisos
+    WHERE modulo = 'evidencias' AND accion = 'ver'
+);
+
+INSERT INTO permisos (modulo, accion, nombre, descripcion)
+SELECT 'evidencias', 'agregar', 'Agregar evidencias', 'Subir fotografías a los contratos'
+WHERE NOT EXISTS (
+    SELECT 1 FROM permisos
+    WHERE modulo = 'evidencias' AND accion = 'agregar'
+);
+
+INSERT INTO permisos (modulo, accion, nombre, descripcion)
+SELECT 'evidencias', 'exportar', 'Exportar evidencias ZIP', 'Descargar fotografías en formato ZIP'
+WHERE NOT EXISTS (
+    SELECT 1 FROM permisos
+    WHERE modulo = 'evidencias' AND accion = 'exportar'
+);
+
+INSERT INTO permisos (modulo, accion, nombre, descripcion)
+SELECT
+    'evidencias',
+    'eliminar',
+    'Eliminar evidencias',
+    'Eliminar fotografías de los contratos'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM permisos
+    WHERE modulo = 'evidencias'
+      AND accion = 'eliminar'
+);

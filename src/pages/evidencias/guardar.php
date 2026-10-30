@@ -1,8 +1,10 @@
+
 <?php
 
 session_start();
 
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
 // ==========================================================
 // FUNCIONES AUXILIARES
@@ -41,6 +43,7 @@ function siguienteNumeroEvidencia(
     string $directorio,
     string $numeroContrato
 ): int {
+
     $maximo = 0;
 
     $patron = $directorio
@@ -51,7 +54,9 @@ function siguienteNumeroEvidencia(
     $archivos = glob($patron);
 
     if ($archivos !== false) {
+
         foreach ($archivos as $ruta) {
+
             $nombre = basename($ruta);
 
             if (
@@ -80,6 +85,15 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 // ==========================================================
+// VALIDAR PERMISO PARA AGREGAR EVIDENCIAS
+// ==========================================================
+
+if (!tienePermiso('evidencias', 'agregar')) {
+    http_response_code(403);
+    die('No tienes permiso para agregar evidencias.');
+}
+
+// ==========================================================
 // VALIDAR MÉTODO POST
 // ==========================================================
 
@@ -87,6 +101,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /inventario/evidencias');
     exit;
 }
+
+// ==========================================================
+// DATOS DEL USUARIO
+// ==========================================================
+
+$usuarioId = (int) $_SESSION['usuario_id'];
+$ipUsuario = $_SERVER['REMOTE_ADDR'] ?? null;
 
 // ==========================================================
 // VALIDAR CONTRATO
@@ -105,6 +126,11 @@ if (!$contratoId || $contratoId <= 0) {
 }
 
 try {
+
+    // ======================================================
+    // CONSULTAR CONTRATO
+    // ======================================================
+
     $stmtContrato = $conexion->prepare(
         'SELECT id, numero_contrato
          FROM contratos
@@ -122,6 +148,7 @@ try {
     $stmtContrato->execute();
 
     $contrato = $stmtContrato->get_result()->fetch_assoc();
+
     $stmtContrato->close();
 
     if (!$contrato) {
@@ -157,7 +184,6 @@ try {
         redirigirGaleria($contratoId);
     }
 
- 
     // ======================================================
     // CARPETAS DE DOCUMENTOS: LOCAL Y PRODUCCIÓN
     // ======================================================
@@ -170,6 +196,7 @@ try {
     $baseDocumentos = null;
 
     foreach ($rutasPosibles as $ruta) {
+
         if (is_dir($ruta)) {
             $baseDocumentos = $ruta;
             break;
@@ -186,14 +213,8 @@ try {
 
     if (!is_writable($baseDocumentos)) {
         throw new RuntimeException(
-            'PHP no tiene permiso para escribir en: ' . $baseDocumentos
-        );
-    }
-
-
-    if (!is_writable($baseDocumentos)) {
-        throw new RuntimeException(
-            'PHP no tiene permiso para escribir en: ' . $baseDocumentos
+            'PHP no tiene permiso para escribir en: '
+            . $baseDocumentos
         );
     }
 
@@ -257,7 +278,7 @@ try {
     $finfo = new finfo(FILEINFO_MIME_TYPE);
 
     // ======================================================
-    // PREPARAR INSERCIÓN EN LA BASE DE DATOS
+    // PREPARAR INSERCIÓN DE EVIDENCIAS
     // ======================================================
 
     $stmtInsertar = $conexion->prepare(
@@ -279,6 +300,43 @@ try {
     );
 
     // ======================================================
+    // PREPARAR REGISTRO DE ACTIVIDADES
+    // ======================================================
+
+    $stmtActividad = $conexion->prepare(
+        'INSERT INTO actividad
+            (
+                usuario_id,
+                modulo,
+                accion,
+                descripcion,
+                referencia_id,
+                ip
+            )
+         VALUES (?, ?, ?, ?, ?, ?)'
+    );
+
+    if (!$stmtActividad) {
+        throw new RuntimeException(
+            'No se pudo preparar el registro de actividades.'
+        );
+    }
+
+    $moduloActividad = 'evidencias';
+    $accionActividad = 'agregar';
+    $descripcionActividad = '';
+
+    $stmtActividad->bind_param(
+        'isssis',
+        $usuarioId,
+        $moduloActividad,
+        $accionActividad,
+        $descripcionActividad,
+        $contratoId,
+        $ipUsuario
+    );
+
+    // ======================================================
     // INICIAR CONSECUTIVO ÚNICO
     // ======================================================
 
@@ -295,9 +353,15 @@ try {
     $errores = [];
 
     for ($i = 0; $i < $cantidadArchivos; $i++) {
+
         $nombreOriginal = (string) ($archivos['name'][$i] ?? '');
+
         $archivoTemporal = (string) ($archivos['tmp_name'][$i] ?? '');
-        $errorSubida = (int) ($archivos['error'][$i] ?? UPLOAD_ERR_NO_FILE);
+
+        $errorSubida = (int) (
+            $archivos['error'][$i] ?? UPLOAD_ERR_NO_FILE
+        );
+
         $tamano = (int) ($archivos['size'][$i] ?? 0);
 
         if (
@@ -308,9 +372,11 @@ try {
         }
 
         if ($errorSubida !== UPLOAD_ERR_OK) {
+
             $errores[] = $nombreOriginal
                 . ': error al subir el archivo (código '
                 . $errorSubida . ').';
+
             continue;
         }
 
@@ -320,31 +386,37 @@ try {
         ) {
             $errores[] = $nombreOriginal
                 . ': el archivo temporal no es válido.';
+
             continue;
         }
 
         // Máximo 10 MB por fotografía.
         if ($tamano <= 0 || $tamano > 10 * 1024 * 1024) {
+
             $errores[] = $nombreOriginal
                 . ': debe pesar como máximo 10 MB.';
+
             continue;
         }
 
         $mime = $finfo->file($archivoTemporal);
 
         if (!isset($tiposPermitidos[$mime])) {
+
             $errores[] = $nombreOriginal
                 . ': formato no permitido. Usa JPG, PNG, WEBP o GIF.';
+
             continue;
         }
 
         $extension = $tiposPermitidos[$mime];
 
         // ==================================================
-        // GENERAR NOMBRE ÚNICO ENTRE TODAS LAS EXTENSIONES
+        // GENERAR NOMBRE ÚNICO
         // ==================================================
 
         do {
+
             $nombreArchivo = 'Contrato_'
                 . $numeroContrato
                 . '_Evidencia_'
@@ -362,49 +434,100 @@ try {
                 . $nombreArchivo;
 
             $numeroEvidencia++;
+
         } while (file_exists($rutaDestino));
 
-        // Guardar fotografía en la carpeta del contrato.
+        // ==================================================
+        // GUARDAR ARCHIVO FÍSICO
+        // ==================================================
+
         if (!move_uploaded_file($archivoTemporal, $rutaDestino)) {
+
             $errores[] = $nombreOriginal
                 . ': no se pudo guardar en la carpeta del contrato.';
+
             continue;
         }
 
-        // Registrar fotografía en MySQL.
-        if (!$stmtInsertar->execute()) {
+        // ==================================================
+        // REGISTRAR EVIDENCIA Y ACTIVIDAD
+        // ==================================================
+
+        try {
+
+            $descripcionActividad = 'El usuario agregó la fotografía '
+                . $nombreArchivo
+                . ' al contrato '
+                . $numeroContrato
+                . '.';
+
+            $conexion->begin_transaction();
+
+            // Registrar fotografía.
+            if (!$stmtInsertar->execute()) {
+                throw new RuntimeException(
+                    'No se pudo registrar la fotografía en la base de datos.'
+                );
+            }
+
+            // Registrar actividad.
+            if (!$stmtActividad->execute()) {
+                throw new RuntimeException(
+                    'No se pudo registrar la actividad de la fotografía.'
+                );
+            }
+
+            $conexion->commit();
+
+            $guardadas++;
+
+        } catch (Throwable $e) {
+
+            $conexion->rollback();
+
+            // Si falla el registro, eliminar el archivo físico.
             if (is_file($rutaDestino)) {
                 unlink($rutaDestino);
             }
 
             $errores[] = $nombreOriginal
-                . ': no se pudo registrar en la base de datos.';
-            continue;
+                . ': no se pudo completar el registro. '
+                . $e->getMessage();
         }
-
-        $guardadas++;
     }
 
+    // ======================================================
+    // CERRAR CONSULTAS
+    // ======================================================
+
     $stmtInsertar->close();
+    $stmtActividad->close();
 
     // ======================================================
     // RESULTADO
     // ======================================================
 
     if ($guardadas > 0 && empty($errores)) {
+
         mensajeEvidencias(
-            'Se guardaron correctamente ' . $guardadas
-            . ' fotografía(s).',
+            'Se guardaron correctamente '
+            . $guardadas
+            . ' fotografía(s) y se registraron las actividades.',
             'success'
         );
+
     } elseif ($guardadas > 0) {
+
         mensajeEvidencias(
-            'Se guardaron ' . $guardadas
+            'Se guardaron '
+            . $guardadas
             . ' fotografía(s). Algunos archivos presentaron errores: '
             . implode(' | ', $errores),
             'warning'
         );
+
     } else {
+
         $mensajeError = empty($errores)
             ? 'No se guardó ninguna fotografía. Selecciona archivos válidos.'
             : implode(' | ', $errores);
@@ -415,6 +538,7 @@ try {
     redirigirGaleria($contratoId);
 
 } catch (Throwable $e) {
+
     error_log(
         '[EVIDENCIAS] Error al guardar fotografías: '
         . $e->getMessage()
@@ -426,5 +550,5 @@ try {
         'danger'
     );
 
-    redirigirGaleria($contratoId);
+    redirigirGaleria((int) $contratoId);
 }

@@ -1,14 +1,41 @@
 <?php
+
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/permisos.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ==========================================================
+// VALIDAR SESIÓN
+// ==========================================================
+
 if (empty($_SESSION['usuario_id'])) {
     header('Location: /inventario/login');
     exit;
 }
+
+// ==========================================================
+// VALIDAR PERMISO PARA VER EVIDENCIAS
+// ==========================================================
+
+if (!tienePermiso('evidencias', 'ver')) {
+    http_response_code(403);
+    die('No tienes permiso para consultar las evidencias.');
+}
+
+// ==========================================================
+// VALIDAR PERMISOS ADICIONALES
+// ==========================================================
+
+$puedeAgregar = tienePermiso('evidencias', 'agregar');
+$puedeExportar = tienePermiso('evidencias', 'exportar');
+$puedeEliminar = tienePermiso('evidencias', 'eliminar');
+
+// ==========================================================
+// VALIDAR CONTRATO
+// ==========================================================
 
 $contratoId = filter_input(INPUT_GET, 'contrato_id', FILTER_VALIDATE_INT);
 
@@ -36,7 +63,10 @@ if (!$contrato) {
     exit;
 }
 
-// Consultar fotografías
+// ==========================================================
+// CONSULTAR FOTOGRAFÍAS
+// ==========================================================
+
 $sqlEvidencias = "
     SELECT id, nombre_archivo
     FROM evidencias_contratos
@@ -57,14 +87,23 @@ while ($fila = $resultadoEvidencias->fetch_assoc()) {
 
 $stmt->close();
 
-// Mensajes
+// ==========================================================
+// MENSAJES
+// ==========================================================
+
 $mensaje = $_SESSION['mensaje_evidencias'] ?? '';
 $tipoMensaje = $_SESSION['tipo_mensaje_evidencias'] ?? 'success';
 
-unset($_SESSION['mensaje_evidencias'], $_SESSION['tipo_mensaje_evidencias']);
+unset(
+    $_SESSION['mensaje_evidencias'],
+    $_SESSION['tipo_mensaje_evidencias']
+);
+
+// ==========================================================
+// RUTA DE EVIDENCIAS
+// ==========================================================
 
 $numeroContrato = trim((string) $contrato['numero_contrato']);
-
 
 $numeroSeguro = preg_replace('/[^a-zA-Z0-9_-]/', '_', $numeroContrato);
 
@@ -95,10 +134,14 @@ $rutaCarpeta = $baseDocumentos
     . DIRECTORY_SEPARATOR . 'evidencias_contratos'
     . DIRECTORY_SEPARATOR . 'Contrato_' . $numeroSeguro;
 
+// ==========================================================
+// INCLUIR ESTRUCTURA
+// ==========================================================
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 require_once __DIR__ . '/../../includes/sidebar.php';
+
 ?>
 
 <div class="main-panel">
@@ -122,12 +165,16 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     Volver a contratos
                                 </a>
 
+                                <?php if ($puedeExportar): ?>
+
                                 <a href="/inventario/evidencias/descargar-zip?contrato_id=<?= (int) $contrato['id'] ?>"
                                     class="btn btn-success">
 
                                     <i class="bi bi-file-earmark-zip"></i>
                                     Descargar todas las fotografías (.ZIP)
                                 </a>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -140,6 +187,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                         </div>
 
                         <?php if ($mensaje !== ''): ?>
+
                         <div class="alert alert-<?= htmlspecialchars($tipoMensaje, ENT_QUOTES, 'UTF-8') ?> alert-dismissible fade show mt-3"
                             role="alert">
 
@@ -148,6 +196,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                             <button type="button" class="btn-close" data-bs-dismiss="alert"
                                 aria-label="Cerrar"></button>
                         </div>
+
                         <?php endif; ?>
 
                     </div>
@@ -189,6 +238,8 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         <hr>
 
+                        <?php if ($puedeAgregar): ?>
+
                         <h5 class="mb-3">Agregar fotografías</h5>
 
                         <form action="/inventario/evidencias/guardar" method="POST" enctype="multipart/form-data">
@@ -215,14 +266,21 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
                         </form>
 
+                        <?php else: ?>
+
+
+
+                        <?php endif; ?>
+
                     </div>
                 </div>
             </div>
         </div>
 
-
+        <!-- GALERÍA -->
         <div class="card">
             <div class="card-body">
+
                 <h4 class="card-title">Galería de fotografías</h4>
 
                 <?php if (empty($evidencias)): ?>
@@ -234,24 +292,30 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                 <?php else: ?>
 
                 <div class="row">
+
                     <?php foreach ($evidencias as $evidencia): ?>
 
                     <?php
+
                             $nombreArchivo = basename($evidencia['nombre_archivo']);
+
                             $rutaArchivo = $rutaCarpeta . DIRECTORY_SEPARATOR . $nombreArchivo;
 
                             $existeImagen = is_file($rutaArchivo) && is_readable($rutaArchivo);
 
                             $urlImagen = '/inventario/evidencias/imagen?id='
                                 . (int) $evidencia['id'];
+
                             ?>
 
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+
                         <div class="card h-100 shadow-sm">
 
                             <?php if ($existeImagen): ?>
 
                             <?php
+
                                         $tipoMime = function_exists('mime_content_type')
                                             ? mime_content_type($rutaArchivo)
                                             : '';
@@ -265,10 +329,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         ) {
                                             $tipoMime = '';
                                         }
+
                                         ?>
+
                             <?php if ($tipoMime !== ''): ?>
 
-                            <a href="/inventario/evidencias/imagen?id=<?= (int) $evidencia['id'] ?>" target="_blank"
+                            <a href="<?= htmlspecialchars($urlImagen, ENT_QUOTES, 'UTF-8') ?>" target="_blank"
                                 rel="noopener noreferrer" title="Abrir fotografía en otra pestaña">
 
                                 <img src="data:<?= htmlspecialchars($tipoMime, ENT_QUOTES, 'UTF-8') ?>;base64,<?= base64_encode(file_get_contents($rutaArchivo)) ?>"
@@ -276,35 +342,44 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                     style="height:220px; object-fit:contain; background:#f5f5f5;">
                             </a>
 
-
                             <?php else: ?>
+
                             <div class="p-3 text-danger">
                                 El archivo no tiene un formato de imagen compatible.
                             </div>
+
                             <?php endif; ?>
 
                             <?php else: ?>
 
                             <div class="d-flex align-items-center justify-content-center text-danger"
                                 style="height:220px; background:#f5f5f5;">
+
                                 <div class="text-center p-3">
                                     <i class="bi bi-image" style="font-size:35px;"></i>
+
                                     <p class="mb-0">Archivo no encontrado</p>
+
                                     <small>
-                                        <?= htmlspecialchars($nombreArchivo) ?>
+                                        <?= htmlspecialchars($nombreArchivo, ENT_QUOTES, 'UTF-8') ?>
                                     </small>
                                 </div>
+
                             </div>
 
                             <?php endif; ?>
 
                             <div class="card-body">
+
                                 <p class="card-text text-break" style="font-size:13px;">
-                                    <?= htmlspecialchars($nombreArchivo) ?>
+                                    <?= htmlspecialchars($nombreArchivo, ENT_QUOTES, 'UTF-8') ?>
                                 </p>
+
+                                <?php if ($puedeEliminar): ?>
 
                                 <form action="/inventario/evidencias/eliminar" method="POST"
                                     onsubmit="return confirm('¿Seguro que deseas eliminar esta fotografía? Esta acción no se puede deshacer.');">
+
                                     <input type="hidden" name="id" value="<?= (int) $evidencia['id'] ?>">
 
                                     <input type="hidden" name="contrato_id" value="<?= (int) $contrato['id'] ?>">
@@ -313,23 +388,29 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                                         <i class="bi bi-trash"></i>
                                         Eliminar
                                     </button>
+
                                 </form>
+
+                                <?php endif; ?>
+
                             </div>
 
                         </div>
+
                     </div>
 
                     <?php endforeach; ?>
+
                 </div>
 
                 <?php endif; ?>
+
             </div>
         </div>
-    </div>
-
-
+</div>
 
 
     <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
+
 
     <?php require_once __DIR__ . '/../../includes/scripts.php'; ?>
